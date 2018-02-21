@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.coredb.transaction.AdminBusinessMapper" >
+  <resultMap id="BaseResultMap" type="AdminBusiness" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="project_id" property="projectId" jdbcType="INTEGER" />
+    <result column="project_name" property="projectName" jdbcType="VARCHAR" />
+    <result column="admin_id" property="adminId" jdbcType="INTEGER" />
+    <result column="admin_name" jdbcType="VARCHAR" property="adminName" />
+    <result column="business_type" property="businessType" jdbcType="INTEGER" />
+    <result column="result" property="result" jdbcType="INTEGER" />
+    <result column="comment" property="comment" jdbcType="VARCHAR" />
+    <result column="time" jdbcType="VARCHAR" property="time" />
+    <result column="device_type" property="deviceType" jdbcType="INTEGER" />
+    <result column="device_info" property="deviceInfo" jdbcType="VARCHAR" />
+    <result column="access_ip" property="accessIp" jdbcType="VARCHAR" />
+    <result column="extend1" property="extend1" jdbcType="VARCHAR" />
+    <result column="extend2" property="extend2" jdbcType="VARCHAR" />
+    <result column="extend3" property="extend3" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, company_id, project_id, admin_id, business_type, result, comment, device_type, device_info, access_ip
+    ,extend1, extend2, extend3, create_time, create_user_id, update_time, update_user_id, version
+  </sql>
+  
+  <insert id="insertAdminTransaction" parameterType="AdminBusiness"
+  useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+  	insert into t_admin_business
+  	<trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="projectId != null" >
+        project_id,
+      </if>
+      <if test="adminId != null" >
+        admin_id,
+      </if>
+      <if test="businessType != null" >
+        business_type,
+      </if>
+      <if test="result != null" >
+        result,
+      </if>
+      <if test="comment != null" >
+        comment,
+      </if>
+      <if test="deviceType != null">
+        device_type,
+      </if>
+      <if test="deviceInfo != null">
+        device_info,
+      </if>
+      <if test="accessIp != null" >
+        access_ip,
+      </if>
+      <if test="extend1 != null" >
+        extend1,
+      </if>
+      <if test="extend2 != null" >
+        extend2,
+      </if>
+      <if test="extend3 != null" >
+        extend3,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="projectId != null" >
+        #{projectId,jdbcType=INTEGER},
+      </if>
+      <if test="adminId != null" >
+        #{adminId,jdbcType=INTEGER},
+      </if>
+      <if test="businessType != null" >
+        #{businessType,jdbcType=INTEGER},
+      </if>
+      <if test="result != null" >
+        #{result,jdbcType=INTEGER},
+      </if>
+      <if test="comment != null" >
+        #{comment,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceType != null">
+        #{deviceType,jdbcType=INTEGER},
+      </if>
+      <if test="deviceInfo != null">
+        #{deviceInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="accessIp != null" >
+        #{accessIp,jdbcType=VARCHAR},
+      </if>
+      <if test="extend1 != null" >
+        #{extend1,jdbcType=VARCHAR},
+      </if>
+      <if test="extend2 != null" >
+        #{extend2,jdbcType=VARCHAR},
+      </if>
+      <if test="extend3 != null" >
+        #{extend3,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateAdminTransaction" parameterType="AdminBusiness">
+  	update t_admin_business
+  	<set>
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="projectId != null" >
+        project_id = #{projectId,jdbcType=INTEGER},
+      </if>
+  	  <if test="adminId != null" >
+        admin_id = #{adminId,jdbcType=INTEGER},
+      </if>
+      <if test="businessType != null" >
+        business_type = #{businessType,jdbcType=INTEGER},
+      </if>
+      <if test="result != null" >
+        result = #{result,jdbcType=INTEGER},
+      </if>
+      <if test="comment != null" >
+        comment = #{comment,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceType != null">
+        device_type = #{deviceType,jdbcType=INTEGER},
+      </if>
+      <if test="deviceInfo != null">
+        device_info = #{deviceInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="accessIp != null" >
+        access_ip = #{accessIp,jdbcType=VARCHAR},
+      </if>
+      <if test="extend1 != null" >
+        extend1 = #{extend1,jdbcType=VARCHAR},
+      </if>
+      <if test="extend2 != null" >
+        extend2 = #{extend2,jdbcType=VARCHAR},
+      </if>
+      <if test="extend3 != null" >
+        extend3 = #{extend3,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+        version = version + 1
+  	</set>
+  	where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getAdminTransactionList" parameterType="AdminBusinessQuery"
+  resultMap="BaseResultMap">
+  	select a.* from (
+  	 (select tab.id, tab.admin_id, tab.business_type, tab.result, tab.comment, tab.access_ip,
+		tab.extend1, tab.extend2, tab.extend3, tab.create_time, tab.create_user_id, 
+		tab.update_time, tab.update_user_id , 
+		date_format(tab.create_time,'%Y/%m/%d %H:%i') as time,tab.version,
+		ifnull(ta.name,ta.username) as admin_name ,tab.device_type, tab.device_info, zp.name project_name
+	  from t_admin_business tab 
+	  left join t_admin ta on tab.admin_id = ta.id 
+	  left join z_project zp on tab.company_id=zp.company_id and tab.project_id=zp.id
+	  WHERE tab.id !=0
+            <if test="companyId != null" >
+                and tab.company_id = #{companyId,jdbcType=INTEGER}
+            </if>
+            <if test="projectId != null">
+                and tab.project_id = #{projectId,jdbcType=INTEGER}
+            </if>
+	)union(
+	  select tab.id, tab.admin_id, tab.business_type, tab.result, tab.comment, tab.access_ip, tab.extend1, tab.extend2, tab.extend3, 
+            tab.create_time, tab.create_user_id, tab.update_time, tab.update_user_id, tab.version,date_format(tab.create_time,'%Y-%m-%d %H:%i:%S') as
+	        time, tab.extend1 as admin_name ,tab.device_type, tab.device_info, zp.name project_name
+	  from t_admin_business tab 
+      left join z_project zp on tab.company_id=zp.company_id and tab.project_id=zp.id
+	  WHERE tab.id =0
+            <if test="companyId != null" >
+                and tab.company_id = #{companyId,jdbcType=INTEGER}
+            </if>
+            <if test="projectId != null">
+                and tab.project_id = #{projectId,jdbcType=INTEGER}
+            </if>
+	 )
+	) a
+	<where>
+		<trim prefixOverrides="and">
+			<if test="adminName != null" >
+		        a.admin_name like '%' #{adminName,jdbcType=VARCHAR} '%'
+		    </if>
+		    <if test="projectName != null" >
+		        a.project_name like '%' #{projectName,jdbcType=VARCHAR} '%'
+		    </if>
+		    <if test="businessType != null">
+		    	and a.business_type = #{businessType,jdbcType=INTEGER}
+		    </if>
+		    <if test="extendedMsg != null">
+				and concat_ws(",",a.extend1,a.extend2,a.extend3) like concat("%",#{extendedMsg,jdbcType=VARCHAR},"%")
+			</if>
+		</trim>
+	</where>
+  		order by a.create_time desc
+  		limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+  
+  <select id="getAdminTransactionCount" parameterType="AdminBusinessQuery" resultType="int">
+  	select count(tab.id) 
+  	from t_admin_business tab 
+  	left join t_admin ta on ( tab.admin_id = ta.id or tab.admin_id = 0)
+  	<where>
+		<trim prefixOverrides="and">
+			<if test="adminName != null" >
+		        ta.name like '%' #{adminName,jdbcType=VARCHAR} '%'
+		    </if>
+		    <if test="businessType != null">
+		    	and tab.business_type = #{businessType,jdbcType=INTEGER}
+		    </if>
+            <if test="companyId != null" >
+                and tab.company_id = #{companyId,jdbcType=INTEGER}
+            </if>
+            <if test="projectId != null">
+                and tab.project_id = #{projectId,jdbcType=INTEGER}
+            </if>
+		</trim>
+	</where>
+  </select>
+  
+</mapper>

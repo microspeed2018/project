@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>资料上传</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+    </head>
+    <body>
+        <header class="header">
+            <img src="../../images/svg/left.svg" class="icon-40" id="goback" />
+            <span class="tit">资料上传</span>
+            <i></i>
+        </header>
+        <div class='upload bg'>
+            <h3>资料类型选择</h3>
+            <ul class="type"></ul>
+            <h3>点击图标上传</h3>
+            <ul class="img">
+                <li>
+                    <div class='con'>
+                        <div class="upload-img">
+                            <img src="../../images/pic/1x1.png" />
+                            <input type="file" name="" class="fileAddress" class="input" />
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class='wrap'>
+            <input type="button" value='提交' class='btn btn-max' id="submit"  />
+        </div>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/jquery.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script>
+        (function($, doc) {
+            $.init();
+
+            // 校验app或wap
+            myInit(indexFun);
+            function indexFun() {
+                // 历史url
+                var historyUrl = myGetLocalStorage("curr");
+                // goback
+                doc.querySelector("#goback").addEventListener("click", function () {
+                    myOpenWindow("/tpl/upload/list.html", '');
+                });
+
+                (function getBasic() {
+                    myLoading();
+                    $.ajax(global.apiURL + '/fileUpLoad/user/getProjectFile.htm', {
+                        data : {},
+                        dataType : 'json',
+                        type     : 'post',
+                        timeout  : 10000,
+                        success  : function(data){
+                            if (data.success) {
+                                createList(data.data);
+                            } else {
+                                myToast(data.resultMsg);
+                            }
+                            myLoadingOver();
+                        },
+                        error : function(xhr, type , errorThrown) {
+                            myLoadingOver();
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                })();
+                function createList(datas) {
+                    var dom = "",
+                        box = jQuery(".type");
+                    for (var i = 0; i < datas.length; i++) {
+                        dom += "<li data-id='"+ datas[i].id +"'>"+ datas[i].name +"</li>";
+                    }
+                    box.html(dom);
+                    jQuery(".type li").eq(0).addClass('active');
+                }
+
+                jQuery(".type").on("click", "li", function () {
+                    jQuery(this).addClass("active").siblings('').removeClass("active");
+                });
+
+                // 文件上传
+                $(".upload-img").on("change", "input", function (event) {
+                    var that = jQuery(this);
+                    var formData = new FormData();
+                    var fileName;
+                    var type = jQuery(".type .active").data("id");
+                    for (var i = 0; i < jQuery('.fileAddress')[0].files.length; i++) {
+                        var file = jQuery('.fileAddress')[0].files[i];
+                        fileName = file.name;
+                        formData.append('fileAddress', file);
+                    }
+                    $.ajax({
+                        url: global.apiURL + '/fileUpLoad/user/fileUpLoad.htm',
+                        type: 'POST',
+                        cache: false,
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success : function (data) {
+                            data = JSON.parse(data);
+                            if (data.success) {
+                                addImgBox(data.data[0], fileName, type);
+                            }
+                        }
+                    });
+                });
+                function addImgBox(url, fileName, type) {
+                    console.log(fileName)
+                    var dom = "<li data-url='"+ url +"' data-type='"+ type +"'>"+
+                        "<div class='con'>"+
+                            "<div class='upload-img'>"+
+                                "<span>"+ fileName +"</span>"+
+                                "<input type='file' name=' class='fileAddress' class='input' />"+
+                                "<i class='del'>删除</i>"
+                            "</div>"+
+                        "</div>"+
+                    "</li>";
+                    jQuery(".img").append(dom);
+                }
+
+                // 删除图片
+                jQuery(".img").on("click", ".del", function () {
+                    jQuery(this).closest("li").remove();
+                });
+
+                // 提交
+                var obj = {};
+                obj.fileName = "";
+                obj.fileUrl = "";
+                obj.type = "";
+                doc.querySelector("#submit").addEventListener("tap", function () {
+                    jQuery(".del").each(function () {
+                        obj.fileName += jQuery(this).closest('li').find("span").html() + ",";
+                        obj.fileUrl += jQuery(this).closest('li').data("url") + ",";
+                        obj.type += jQuery(this).closest('li').data("type") + ",";
+                    });
+                    console.log(obj);
+                    myLoading();
+                    $.ajax(global.apiURL + '/fileUpLoad/user/fileUpLoad.htm', {
+                        data : {
+                            fileName : obj.fileName,
+                            fileUrl: obj.fileUrl,
+                            type: obj.type
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                myOpenWindow("list.html", "list");
+                            } else {
+                                myToast(data.resultMsg);
+                            }
+                            myLoadingOver();
+                        },
+                        error : function() {
+                            myLoadingOver();
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                });
+            }
+        }(mui, document));
+    </script>
+</html>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.coredb.admin.RoleAuthDao">
+	<resultMap id="BaseResultMap" type="RoleAuth" >
+	    <id column="id" property="id" jdbcType="INTEGER" />
+	    <result column="role_id" property="roleId" jdbcType="INTEGER" />
+	    <result column="auth_id" property="authId" jdbcType="INTEGER" />
+	    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+	    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    	<result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+	    <result column="version" property="version" jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="Base_Column_List" >
+	    id, role_id, auth_id, create_time, create_user_id, update_time, update_user_id, version
+	</sql>
+  	
+	<select id="getRoleAuthByRoleId" parameterType="int" resultMap="com.zjzmjr.core.service.mapper.dao.coredb.admin.AdminAuthDao.adminAuthResultMap" >
+		SELECT au.* FROM t_role_auth um INNER JOIN  t_auth au ON um.auth_id = au.id WHERE um.role_id=#{roleId}
+	</select>
+	
+	<insert id="insertRoleAuthList" parameterType="list">
+		INSERT INTO t_role_auth (role_id,auth_id,create_time,create_user_id) VALUES
+		<foreach collection="list" open="" close="" separator="," item="item">
+			(#{item.roleId},#{item.authId},#{item.createTime},#{item.createUserId})
+		</foreach>
+	</insert>
+	
+	<delete id="deleteRoleAuthByRoleId" parameterType="map">
+		DELETE FROM t_role_auth WHERE role_id =#{roleId} AND auth_id IN
+			<foreach collection="authIds" open="(" close=")" separator="," item="item">
+				#{item}
+			</foreach>
+	</delete>
+	
+	<select id="getAuthIdsByRoleId" resultType="Integer" parameterType="java.lang.Integer" >
+	    select auth_id from t_role_auth WHERE role_id = #{0}
+	</select> 
+</mapper>

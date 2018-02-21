@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.sms.NotifyDao">
+    <resultMap  id="notifyResultMap" type="Notify">
+    	<id property="id" column="id"/>
+    	<result property="userId" column="userid"/>
+    	<result property="receiveUserId" column="receive_user_id"/>
+    	<result property="userName" column="user_name"/>
+    	<result property="receiveName" column="receive_name"/>
+    	<result property="type" column="type"/>
+    	<result property="destination" column="destination"/>
+    	<result property="title" column="title"/>
+    	<result property="content" column="content"/>
+    	<result property="cause" column="cause"/>
+    	<result property="failCount" column="failcount"/>
+    	<result property="priority" column="priority"/>
+    	<result property="status" column="status"/>
+    	<result property="scheduleTime" column="schedule_time"/>
+    	<result property="sendTime" column="send_time"/>
+    	<result property="createTime" column="create_time"/>
+    	<result property="sourceType" column="sourcetype"/>
+    	<result property="sourceId" column="sourceid"/>
+    	<result property="version" column="version"/>
+    </resultMap>
+	<insert id="save" parameterType="Notify" useGeneratedKeys="true" keyProperty="id">
+		insert into t_notify
+		(
+			userid,
+			receive_user_id,
+			type,
+			destination,
+			title,
+			content,
+			cause,
+			failcount,
+			priority,
+			status,
+			schedule_time,
+			send_time,
+			create_time,
+			sourcetype,
+			sourceid
+		)
+		values
+		(
+			#{userId},
+			#{receiveUserId},
+			#{type},
+			#{destination},
+			#{title},
+			#{content},
+			#{cause},
+			#{failCount},
+			#{priority},
+			#{status},
+			#{scheduleTime},
+			#{sendTime},
+			#{createTime},
+			#{sourceType},
+			#{sourceId}
+		)
+	</insert>
+	
+	<select id="get" resultMap="notifyResultMap" parameterType="Integer" >
+		select * from t_notify where id=#{id}
+	</select>
+	
+	<select id="queryPage"  resultMap="notifyResultMap" parameterType="NotifyQuery">
+		select 
+		   notify.*, user.name user_name, ifnull(recevie.name,rm.name) receive_name
+		from 
+		    t_notify notify
+		left outer join t_admin user on notify.userid = user.id
+		left outer join t_admin recevie on notify.receive_user_id = recevie.id
+		left outer join t_admin rm on notify.destination = rm.mobile
+		    <include refid="NOTIFY_PAGE_WHERE"/>
+		    order by create_time desc
+		    limit #{pageBean.offset},#{pageBean.pageSize}
+	</select>
+	<!-- 查询还款提醒手机号匹配du -->
+	<select id="queryRepayPage"  resultMap="notifyResultMap" parameterType="NotifyQuery">
+		select 
+		   notify.*, user.user_code user_name
+		from 
+		    t_notify notify
+		left outer join t_user user on notify.userid = user.id
+		    <include refid="NOTIFY_PAGE_WHERE"/>
+		    order by create_time desc
+		    limit #{pageBean.offset},#{pageBean.pageSize}
+	</select>
+	<select id="queryPageCount" resultType="int" parameterType="NotifyQuery">
+		select 
+		    count(*)
+		from
+		    t_notify notify
+		left outer join t_admin user on notify.userid = user.id
+		left outer join t_admin recevie on notify.receive_user_id = recevie.id
+		left outer join t_admin rm on notify.destination = rm.mobile
+		    <include refid="NOTIFY_PAGE_WHERE"/>   
+	</select>
+	
+	<sql id="NOTIFY_PAGE_WHERE">
+		<where>
+		    1=1
+		    <if test="userName != null and userName != ''">
+		    	and (recevie.name like '%' #{userName} '%' or rm.name like '%' #{userName} '%' )
+		    </if>
+			<if test="userId!=null">
+				and notify.userid=#{userId}
+			</if>
+			<if test="type!=null">
+				and notify.type=#{type}
+			</if>
+			<if test="status!=null">
+				and notify.status=#{status}
+			</if>
+			<if test="priority!=null">
+				and notify.priority=#{priority}
+			</if>
+			<if test="destination!=null and destination!=''">
+				and notify.destination=#{destination}
+			</if>
+			<if test="content!=null and content !=''">
+				and notify.content like '%' #{content} '%'
+			</if>
+			<if test="cause!=null and cause !=''">
+				and notify.cause like '%' #{cause} '%'
+			</if>
+			<if test="sendTime !=null">
+			    and notify.send_time >= #{sendTime}
+			</if>
+			<if test="teList != null">
+					and notify.destination in
+					<foreach collection="teList" open="(" close=")"
+						separator="," item="item">
+						#{item}
+					</foreach>
+			</if>
+			<if test="createTime != null">
+			and DATEDIFF(notify.send_time, #{createTime,jdbcType=TIMESTAMP}) >= 0  
+		  </if>
+		  <if test="lastTime != null">
+		    <![CDATA[
+			and DATEDIFF(notify.send_time, #{lastTime,jdbcType=TIMESTAMP}) <= 0  
+			]]>
+		  </if>
+		</where>
+	</sql>
+	
+	<update id="update" parameterType="Notify">
+		update 
+		   t_notify 
+		set            
+		   failcount=#{failCount},
+		   status=#{status},
+		   send_time=#{sendTime},
+		   version=version+1
+		where
+		   id=#{id} and version=#{version}
+	</update>
+	
+	<select id="queryByStatus" resultMap="notifyResultMap" parameterType="Integer">
+		select * from t_notify where status=#{status}
+	</select>
+	
+	<select id="getNotifyByDestination" resultMap="notifyResultMap" parameterType="NotifyQuery">
+	    select * from t_notify where status=#{status} and destination=#{destination} and cause = #{cause}
+	    and date_format(send_time,'%Y/%m/%d')>=#{sendDate}	
+	    order by create_time desc  
+	    limit 0,1
+	</select>
+</mapper>

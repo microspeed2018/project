@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>审核项目修改</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+    </head>
+    <body>
+        <header class="header">
+            <img src="../../images/svg/left.svg" class="icon-40" id="goback"  />
+            <span class="tit">审核项目修改</span>
+            <i></i>
+        </header>
+        <div class='wrap'>
+            <table class='examine-table'>
+                <thead>
+                    <tr>
+                        <th>项目修改内容</th>
+                        <th>原数据</th>
+                        <th>现数据</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="introducerTr">
+                      <td align="center">项目介绍人</td>
+                      <td align="center"></td>
+                      <td align="center"></td>
+                   </tr>
+                   <tr id="designAreaTr">
+                      <td align="center">设计面积(㎡)</td>
+                      <td align="center"></td>
+                      <td align="center"></td>
+                   </tr>
+                   <tr id="investmentMountTr">
+                      <td align="center">投资额</td>
+                      <td align="center"></td>
+                      <td align="center"></td>
+                   </tr>
+                   <tr id="nameTr">
+                      <td align="center">项目名称</td>
+                      <td align="center"></td>
+                      <td align="center"></td>
+                   </tr>
+                   <tr id="natureTr">
+                      <td align="center">项目性质</td>
+                      <td align="center"></td>
+                      <td align="center"></td>
+                   </tr>
+                   <tr id="categoryTr">
+                      <td align="center">项目类别</td>
+                      <td align="center"></td>
+                      <td align="center"></td>
+                   </tr>
+                   <tr id="typeTr">
+                      <td align="center">项目类型</td>
+                      <td align="center"></td>
+                      <td align="center"></td>
+                   </tr>
+                   <tr id="managementDepartmentTr">
+                      <td align="center">经营部门</td>
+                      <td align="center"></td>
+                      <td align="center"></td>
+                   </tr>
+                   <tr id="cityTr">
+                      <td align="center">所在城市</td>
+                      <td align="center"></td>
+                      <td align="center"></td>
+                   </tr>
+                   <tr id="introductionTr">
+                      <td align="center">项目介绍</td>
+                      <td align="center"></td>
+                      <td align="center"></td>
+                   </tr>
+                   <tr id="needTechnicalTr">
+                      <td align="center">是否技术支持</td>
+                      <td align="center"></td>
+                      <td align="center"></td>
+                   </tr>
+                   <tr id="contractAwardCompanyTr">
+                      <td align="center">发包单位</td>
+                      <td align="center"></td>
+                      <td align="center"></td>
+                   </tr>
+                   <tr id="intentionaCooperationTr">
+                      <td align="center">意向合作方式</td>
+                      <td align="center"></td>
+                      <td align="center"></td>
+                   </tr>
+                   <tr id="preRequirementsTr">
+                      <td align="center">前期技术支持要求</td>
+                      <td align="center"></td>
+                      <td align="center"></td>
+                   </tr>
+                   <tr id="haveSchemeTr">
+                      <td align="center">是否有方案设计</td>
+                      <td align="center"></td>
+                      <td align="center"></td>
+                   </tr>
+                   <tr id="haveDevelopmentTr">
+                      <td align="center">是否有扩初方案设计</td>
+                      <td align="center"></td>
+                      <td align="center"></td>
+                   </tr>
+                   <tr id="haveDrawingTr">
+                      <td align="center">是否有施工图设计</td>
+                      <td align="center"></td>
+                      <td align="center"></td>
+                   </tr>
+                   <tr id="havePlanningTr">
+                      <td align="center">是否有规划设计</td>
+                      <td align="center"></td>
+                      <td align="center"></td>
+                   </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class='wrap'>
+            <input type="button" value='通过' class='btn btn-max btn-top' id="true" />
+        </div>
+        <div class='wrap'>
+            <input type="button" value='不通过' class='btn btn-max' id="false" />
+        </div>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/jquery.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script>
+        (function($, doc) {
+            $.init();
+
+            // 校验app或wap
+            myInit(indexFun);
+            function indexFun() {
+                // 历史url
+                var historyUrl = myGetLocalStorage("curr");
+                var obj = {};
+                // goback
+                doc.querySelector("#goback").addEventListener("click", function () {
+                    myOpenWindow("/tpl/examine/manageAudit.html", 'manageAudit');
+                });
+                var productId = myGetLocalStorage("productId");
+                if (productId) {
+                    getInfoFirst();
+                }
+                function getInfoFirst() {
+                    $.ajax(global.apiURL + '/project/user/getGardenProjectDetail.htm', {
+                        data : {
+                            id : productId
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                getInfoSecond(data.rows.memo, data.rows)
+                            } else {
+                                myToast(data.resultMsg);
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+                function getInfoSecond(id, firstData) {
+                    $.ajax(global.apiURL + '/project/user/getGardenProjectDetail.htm', {
+                        data : {
+                            id : id
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                console.log(firstData)
+                                console.log(data.rows)
+                                var secondData = data.rows;
+                                obj.step = secondData.step;
+                                obj.status = secondData.status;
+                                if (firstData.introducer != secondData.introducer) {
+                                    jQuery("#introducerTr").show();
+                                    jQuery("#introducerTr").find("td").eq(1).html(firstData.introducer);
+                                    jQuery("#introducerTr").find("td").eq(2).html(secondData.introducer);
+                                }
+                                if (firstData.designArea != secondData.designArea) {
+                                    jQuery("#designAreaTr").show();
+                                    jQuery("#designAreaTr").find("td").eq(1).html(firstData.designArea);
+                                    jQuery("#designAreaTr").find("td").eq(2).html(secondData.designArea);
+                                }
+                                if (firstData.investmentMount != secondData.investmentMount) {
+                                    jQuery("#investmentMountTr").show();
+                                    jQuery("#investmentMountTr").find("td").eq(1).html(firstData.investmentMount);
+                                    jQuery("#investmentMountTr").find("td").eq(2).html(secondData.investmentMount);
+                                }
+                                if (firstData.name != secondData.name) {
+                                    jQuery("#nameTr").show();
+                                    jQuery("#nameTr").find("td").eq(1).html(firstData.name);
+                                    jQuery("#nameTr").find("td").eq(2).html(secondData.name);
+                                }
+                                if (firstData.nature != secondData.nature) {
+                                    jQuery("#natureTr").show();
+                                    jQuery("#natureTr").find("td").eq(1).html(firstData.nature);
+                                    jQuery("#natureTr").find("td").eq(2).html(secondData.nature);
+                                }
+                                if (firstData.category != secondData.category) {
+                                    jQuery("#categoryTr").show();
+                                    jQuery("#categoryTr").find("td").eq(1).html(firstData.category);
+                                    jQuery("#categoryTr").find("td").eq(2).html(secondData.category);
+                                }
+                                if (firstData.type != secondData.type) {
+                                    jQuery("#typeTr").show();
+                                    jQuery("#typeTr").find("td").eq(1).html(firstData.type);
+                                    jQuery("#typeTr").find("td").eq(2).html(secondData.type);
+                                }
+                                if (firstData.managementDepartment != secondData.managementDepartment) {
+                                    jQuery("#managementDepartmentTr").show();
+                                    jQuery("#managementDepartmentTr").find("td").eq(1).html(firstData.managementDepartment);
+                                    jQuery("#managementDepartmentTr").find("td").eq(2).html(secondData.managementDepartment);
+                                }
+                                if (firstData.city != secondData.city) {
+                                    jQuery("#cityTr").show();
+                                    jQuery("#cityTr").find("td").eq(1).html(firstData.city);
+                                    jQuery("#cityTr").find("td").eq(2).html(secondData.city);
+                                }
+                                if (firstData.introduction != secondData.introduction) {
+                                    jQuery("#introductionTr").show();
+                                    jQuery("#introductionTr").find("td").eq(1).html(firstData.introduction);
+                                    jQuery("#introductionTr").find("td").eq(2).html(secondData.introduction);
+                                }
+                                if (firstData.needTechnical != secondData.needTechnical) {
+                                    jQuery("#needTechnicalTr").show();
+                                    jQuery("#needTechnicalTr").find("td").eq(1).html(firstData.needTechnical);
+                                    jQuery("#needTechnicalTr").find("td").eq(2).html(secondData.needTechnical);
+                                }
+                                if (firstData.contractAwardCompany != secondData.contractAwardCompany) {
+                                    jQuery("#contractAwardCompanyTr").show();
+                                    jQuery("#contractAwardCompanyTr").find("td").eq(1).html(firstData.contractAwardCompany);
+                                    jQuery("#contractAwardCompanyTr").find("td").eq(2).html(secondData.contractAwardCompany);
+                                }
+                                if (firstData.intentionaCooperation != secondData.intentionaCooperation) {
+                                    jQuery("#intentionaCooperationTr").show();
+                                    jQuery("#intentionaCooperationTr").find("td").eq(1).html(firstData.intentionaCooperation);
+                                    jQuery("#intentionaCooperationTr").find("td").eq(2).html(secondData.intentionaCooperation);
+                                }
+                                if (firstData.preRequirements != secondData.preRequirements) {
+                                    jQuery("#preRequirementsTr").show();
+                                    jQuery("#preRequirementsTr").find("td").eq(1).html(firstData.preRequirements);
+                                    jQuery("#preRequirementsTr").find("td").eq(2).html(secondData.preRequirements);
+                                }
+                                if (firstData.haveScheme != secondData.haveScheme) {
+                                    jQuery("#haveSchemeTr").show();
+                                    jQuery("#haveSchemeTr").find("td").eq(1).html(firstData.haveScheme);
+                                    jQuery("#haveSchemeTr").find("td").eq(2).html(secondData.haveScheme);
+                                }
+                                if (firstData.haveDevelopment != secondData.haveDevelopment) {
+                                    jQuery("#haveDevelopmentTr").show();
+                                    jQuery("#haveDevelopmentTr").find("td").eq(1).html(firstData.haveDevelopment);
+                                    jQuery("#haveDevelopmentTr").find("td").eq(2).html(secondData.haveDevelopment);
+                                }
+                                if (firstData.haveDrawing != secondData.haveDrawing) {
+                                    jQuery("#haveDrawingTr").show();
+                                    jQuery("#haveDrawingTr").find("td").eq(1).html(firstData.haveDrawing);
+                                    jQuery("#haveDrawingTr").find("td").eq(2).html(secondData.haveDrawing);
+                                }
+                                if (firstData.havePlanning != secondData.havePlanning) {
+                                    jQuery("#havePlanningTr").show();
+                                    jQuery("#havePlanningTr").find("td").eq(1).html(firstData.havePlanning);
+                                    jQuery("#havePlanningTr").find("td").eq(2).html(secondData.havePlanning);
+                                }
+                            } else {
+                                myToast(data.resultMsg);
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+
+                doc.querySelector("#true").addEventListener("tap", function () {
+                    myLoading();
+                    $.ajax(global.apiURL + '/manageAudit/user/updateManageAudit.htm', {
+                        data : {
+                            projectId : productId,
+                            step : obj.step,
+                            status: obj.status ,
+                            type: 50,
+                            memo: ""
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                myOpenWindow("manageAudit.html", "manageAudit");
+                            } else {
+                                //myToast(data.resultMsg);
+                            }
+                            myLoadingOver();
+                        },
+                        error : function() {
+                            myLoadingOver();
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                });
+                doc.querySelector("#false").addEventListener("tap", function () {
+                    var btnArray = ['返回', '提交'];
+                    mui.prompt('请输入不通过理由', '', '提示', btnArray, function(e) {
+                        if (e.index == 1) {
+                            obj.memo = e.value;
+                            myLoading();
+                            $.ajax(global.apiURL + '/manageAudit/user/updateManageAudit.htm', {
+                                data : {
+                                    projectId : productId,
+                                    step : obj.step,
+                                    status: obj.status ,
+                                    type: 50,
+                                    memo: obj.memo
+                                },
+                                dataType : 'json',
+                                type : 'post',
+                                success : function(data){
+                                    if (data.success) {
+                                        myOpenWindow("manageAudit.html", "manageAudit");
+                                    } else {
+                                        //myToast(data.resultMsg);
+                                    }
+                                    myLoadingOver();
+                                },
+                                error : function() {
+                                    myLoadingOver();
+                                    myToast("服务器正忙，请稍后重试！");
+                                }
+                            });
+                        }
+                    })
+                });
+            }
+        }(mui, document));
+    </script>
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>申请</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+    </head>
+    <body>
+        <header class="header">
+            <img src="../../images/svg/left.svg" class="icon-40" id="goback" />
+            <span class="tit">申请</span>
+            <i></i>
+        </header>
+        <div class='tab msg-tab' style="display: none;">
+            <span id="tt" class="active">开发票</span>
+            <span id="gg">项目支出</span>
+        </div>
+        <div class='tabs msg-tab' style="display: none;">
+            <span id="tt" class="active">开发票</span>
+            <span id="gg">保证金退款</span>
+        </div>
+        <div class='wrap'>
+            <ul class='product-list invoice-list' id="list"></ul>
+        </div>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/jquery.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script>
+        (function($, doc) {
+            $.init();
+
+            // 校验app或wap
+            myInit(indexFun);
+            function indexFun() {
+                // 历史url
+                var historyUrl = myGetLocalStorage("curr");
+                // goback
+                doc.querySelector("#goback").addEventListener("click", function () {
+                    myOpenWindow("/tpl/home/home.html", 'home');
+                });
+
+                // 当前角色
+                var user = JSON.parse(myGetLocalStorage("user"));
+                var role = user.jobId;
+                var personnelNature = user.personnelNature;
+                var billType = 28;
+
+                if (role == 5 || personnelNature == 44) {
+                    jQuery(".tab").show();
+                    jQuery(".invoice-list").css({ marginTop : "4rem" });
+                    // 选项卡
+                    jQuery(".tab span").on("click", function () {
+                        jQuery(this).addClass('active').siblings().removeClass("active");
+                        if (jQuery(this).attr("id") == "tt") {
+                            // 开发票
+                            billType = 28;
+                            getList();
+                        } else {
+                            // 项目支出
+                            billType = 29;
+                            getList1();
+                        }
+                    });
+                }
+                if (role == 4) {
+                    jQuery(".tabs").show();
+                    jQuery(".invoice-list").css({ marginTop : "4rem" });
+                    // 选项卡
+                    jQuery(".tabs span").on("click", function () {
+                        jQuery(this).addClass('active').siblings().removeClass("active");
+                        if (jQuery(this).attr("id") == "tt") {
+                            // 开发票
+                            billType = 28;
+                            getList();
+                        } else {
+                            // 退保证金
+                            billType = 86;
+                            getList2();
+                        }
+                    });
+                }
+
+                // 获取列表
+                function getList() {
+                    $.ajax(global.apiURL + '/contract/user/contractPayment.htm', {
+                        data : {},
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                creareList(data.data);
+                            } else {
+                                if (data.code == "405" && data.resultMsg == "请登录系统") {
+                                    againLogin(getList, []);
+                                } else if (data.code == "record_not_exsist") {
+                                    myToast("当前没有可申请开发票的项目");
+                                } else  {
+                                    myToast(data.resultMsg);
+                                }
+                                doc.querySelector("#list").innerHTML = "";
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+                getList();
+                // 获取列表
+                function getList1() {
+                    $.ajax(global.apiURL + '/contract/user/subpackagePayment.htm', {
+                        data : {},
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                creareList(data.data);
+                            } else {
+                                 if (data.code == "405" && data.resultMsg == "请登录系统") {
+                                    againLogin(getList, []);
+                                } else if (data.code == "record_not_exsist") {
+                                    myToast("当前没有可申请项目支出的项目");
+                                } else  {
+                                    myToast(data.resultMsg);
+                                }
+                                doc.querySelector("#list").innerHTML = "";
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+                function getList2() {
+                    $.ajax(global.apiURL + '/project/user/applyBackBillList.htm', {
+                        data : {},
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                creareList1(data.data);
+                            } else {
+                                 if (data.code == "405" && data.resultMsg == "请登录系统") {
+                                    againLogin(getList, []);
+                                } else if (data.code == "record_not_exsist") {
+                                    myToast("当前没有可申请保证金退款的项目");
+                                } else  {
+                                    myToast(data.resultMsg);
+                                }
+                                doc.querySelector("#list").innerHTML = "";
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+                function creareList(datas) {
+                    var box = doc.querySelector("#list"),
+                        dom = "";
+                    for (var i = 0; i < datas.length; i++) {
+                        var projectLeader = datas[i].leader.name;
+                        if (!projectLeader) {
+                            projectLeader = "(负责人未定)";
+                        }
+                        var price = datas[i].paymentAmount;
+                        if (datas[i].finance.length == 0) {
+                            price = datas[i].paymentAmount;
+                        } else {
+                            for (var j = 0; j < datas[i].finance.length; j++) {
+                                if (datas[i].finance[j].status != 2) {
+                                    price = price - datas[i].finance[j].amount;
+                                }
+                            }
+                        }
+                        var projectId = datas[i].project.id;
+                        var paymentMode = datas[i].basic.id;
+                        dom += "<li projectLeader='"+ projectLeader +"' name='"+ datas[i].project.name +"' status='"+ datas[i].basic.attributeName +"' price='"+ price +"' paymentMode='"+ paymentMode +"' projectId='"+ projectId +"'>"+
+                            "<h3>"+ datas[i].project.name + "</h3>"+
+                            "<p>"+
+                                "<span class='name'>"+ projectLeader +"</span>";
+                                if (billType == 28) {
+                                    dom += "<span class='time'>"+ zjzm.getDay(datas[i].createTime.time, 'yyyy/MM/dd') +"</span>";
+                                } else {
+                                    dom += "<span class='time'>分包支出</span>";
+                                }
+                                dom +="<span class='status'>"+ datas[i].basic.attributeName +"</span>"+
+                                "<span class='price'>未开票"+ formatCurrency1(price) +"万元</span>"+
+                           "</p>"+
+                        "</li>";
+                    }
+                    box.innerHTML = dom;
+                }
+                function creareList1(datas) {
+                    console.log(datas);
+                    var box = doc.querySelector("#list"),
+                        dom = "";
+                    for (var i = 0; i < datas.length; i++) {
+                        var projectLeader = datas[i].leader.name;
+                        if (!projectLeader) {
+                            projectLeader = "(负责人未定)";
+                        }
+                        var price = datas[i].nobackBail;
+                        // if (datas[i].finance.length == 0) {
+                        //     price = datas[i].paymentAmount;
+                        // } else {
+                        //     for (var j = 0; j < datas[i].finance.length; j++) {
+                        //         if (datas[i].finance[j].status != 2) {
+                        //             price = price - datas[i].finance[j].amount;
+                        //         }
+                        //     }
+                        // }
+                        var projectId = datas[i].id;
+                        var paymentMode = "保证金退款";
+                        dom += "<li projectLeader='"+ projectLeader +"' name='"+ datas[i].name +"'  price='"+ price +"' paymentMode='"+ paymentMode +"' projectId='"+ projectId +"'>"+
+                            "<h3>"+ datas[i].name + "</h3>"+
+                            "<p>"+
+                                "<span class='name'>"+ projectLeader +"</span>";
+                                dom += "<span class='time'>"+ zjzm.getDay(datas[i].createTime.time, 'yyyy/MM/dd') +"</span>";
+                                dom +="<span class='status'>保证金退款</span>"+
+                                "<span class='price'>未退款"+ formatCurrency1(price) +"万元</span>"+
+                           "</p>"+
+                        "</li>";
+                    }
+                    box.innerHTML = dom;
+                }
+                jQuery("#list").on("click", "li", function () {
+                    var invoice = {};
+                    invoice.name = jQuery(this).attr("name")
+                    invoice.status = jQuery(this).attr("status")
+                    invoice.price = jQuery(this).attr("price")
+                    invoice.paymentMode = jQuery(this).attr("paymentMode")
+                    invoice.projectId = jQuery(this).attr("projectId")
+                    invoice.projectLeader = jQuery(this).attr("projectLeader")
+                    invoice.billType = billType;
+                    mySetLocalStorage("invoice", invoice);
+                    if (role == 4) {
+                        myOpenWindow("/tpl/invoice/backBail.html", 'backBail');
+                    } else {
+                        myOpenWindow("/tpl/invoice/detail.html", 'detail');
+                    }
+                });
+            }
+        }(mui, document));
+    </script>
+</html>

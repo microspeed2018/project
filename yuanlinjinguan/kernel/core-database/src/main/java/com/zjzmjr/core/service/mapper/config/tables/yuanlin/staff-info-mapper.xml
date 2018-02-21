@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.user.StaffInfoMapper" >
+  <resultMap id="BaseResultMap" type="StaffInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />  
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="employee_no" property="employeeNo" jdbcType="INTEGER" />
+    <result column="job_status" property="jobStatus" jdbcType="INTEGER" />
+    <result column="virtual_cornet" property="virtualMobile" jdbcType="VARCHAR" />
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+    <result column="telephone_cornet" property="shortTelephone" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="identity_no" property="identityNo" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="birthday" property="birthday" jdbcType="VARCHAR" />
+    <result column="staff_type" property="staffType" jdbcType="INTEGER" />
+    <result column="entry_date" property="entryDate" jdbcType="VARCHAR" />
+    <result column="entrance_guard_card_number" property="entranceGuardCardNumber" jdbcType="VARCHAR" />
+    <result column="political_status" property="politicalStatus" jdbcType="INTEGER" />
+    <result column="title_quality" property="titleQuality" jdbcType="VARCHAR" />
+    <result column="graduate_institutions" property="graduateInstitutions" jdbcType="VARCHAR" />
+    <result column="study_major" property="studyMajor" jdbcType="VARCHAR" />
+    <result column="education" property="education" jdbcType="INTEGER" />
+    <result column="first_work_date" property="firstWorkDate" jdbcType="VARCHAR" />
+    <result column="registered_residence" property="registeredResidence" jdbcType="VARCHAR" />
+    <result column="present_address" property="presentAddress" jdbcType="VARCHAR" />
+    <result column="contract1" property="contract1" jdbcType="VARCHAR" />
+    <result column="contract2" property="contract2" jdbcType="VARCHAR" />
+    <result column="contract3" property="contract3" jdbcType="VARCHAR" />
+    <result column="contract_due_date" property="contractDueDate" jdbcType="VARCHAR" />
+    <result column="social_security_base" property="socialSecurityBase" jdbcType="DECIMAL" />
+    <result column="bank" property="bank" jdbcType="VARCHAR" />
+    <result column="bankcard_num" property="bankcardNum" jdbcType="VARCHAR" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap type="StaffBasicInfo" id="StaffInfoResultMap" extends="BaseResultMap">
+    <result column="talent_id" property="talentId" jdbcType="INTEGER" /> 
+	<result column="staff_type_attribute" property="staffTypeAttribute" jdbcType="VARCHAR" />
+	<result column="education_attribute" property="educationAttribute" jdbcType="VARCHAR" />
+	<result column="political_status_attribute" property="politicalStatusAttribute" jdbcType="VARCHAR" />
+	<result column="job_status_attribute" property="jobStatusAttribute" jdbcType="VARCHAR" />
+    <result column="depart_id" property="departId" jdbcType="INTEGER" />
+    <result column="job_name" property="jobName" jdbcType="VARCHAR" />
+    <result column="department_name" property="departmentName" jdbcType="VARCHAR" />
+    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    <association property="userInfo" column="user_id" javaType="Admin" resultMap="AdminResultMap"></association>
+  </resultMap>
+  <resultMap type="Admin" id="AdminResultMap"> 
+    <id property="id" column="admin_id" />
+    <result property="username" column="username" />
+	<result property="name" column="name" />
+	<result property="accStatus" column="acc_status" />
+	<result property="mobile" column="mobile" />
+	<result property="email" column="email" />
+	<result property="loginSucceed" column="login_succeed" />
+	<result property="clientId" column="client_id"  jdbcType="VARCHAR" />
+	<result property="department" column="department" />
+	<result property="jobId" column="job_id" />
+	<result property="roleName" column="role_name" />
+	<result property="companyId" column="company_id" />
+	<result column="image_address" property="imageAddress" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, employee_no, virtual_cornet, telephone, telephone_cornet, email, job_status, 
+    identity_no, sex, birthday, staff_type, entry_date, entrance_guard_card_number, political_status, 
+    title_quality, graduate_institutions, study_major, education, first_work_date, registered_residence, 
+    present_address, contract1, contract2, contract3, contract_due_date, social_security_base, 
+    bank, bankcard_num, memo, create_time, create_user_id, update_time, update_user_id, version
+  </sql>
+  <select id="getStaffInfoCount" parameterType="StaffInfoQuery" resultType="java.lang.Integer">
+    select count(zui.id)
+    from z_staff_info zui
+    INNER JOIN t_admin tu on tu.id = zui.user_id   
+    left outer join z_job zj on zj.id = tu.job_id
+    left outer join z_department zd on zd.id = zj.department_id    
+    left outer join z_company_info zci on zci.id = zj.company_id
+    left outer join t_basic tbs on tbs.id = zui.staff_type
+    left outer join t_basic tbp on tbp.id = zui.political_status
+    left outer join t_basic tbe on tbe.id = zui.education
+    left outer join t_basic tbj on tbj.id = zui.job_status
+    <include refid="where_clause"></include>
+  </select>
+  <select id="getStaffInfoByCondition" resultMap="StaffInfoResultMap" parameterType="StaffInfoQuery" >
+    select zui.*, tu.*,zj.name job_name,zd.name department_name,zd.id depart_id,zci.company_name,tu.id admin_id,
+    tbs.attribute_name staff_type_attribute,tbp.attribute_name political_status_attribute,tbe.attribute_name education_attribute,
+    tbj.attribute_name job_status_attribute,zt.id talent_id,tu.client_id,tu.acc_status
+    from z_staff_info zui
+    INNER JOIN t_admin tu on tu.id = zui.user_id
+    left outer join z_job zj on zj.id = tu.job_id
+    left outer join z_department zd on zd.id = zj.department_id    
+    left outer join z_company_info zci on zci.id = zj.company_id
+    left outer join t_basic tbs on tbs.id = zui.staff_type
+    left outer join t_basic tbp on tbp.id = zui.political_status
+    left outer join t_basic tbe on tbe.id = zui.education
+    left outer join t_basic tbj on tbj.id = zui.job_status
+    left outer join z_talent zt on zt.mobile = tu.mobile and zt.company_id = tu.company_id
+    
+    <include refid="where_clause"></include>
+    <choose>
+        <when test="orderBy==1">
+            order by convert(tu.name using gbk)
+        </when>
+        <otherwise>
+            order by tu.job_id,zui.employee_no
+        </otherwise>
+    </choose>
+    limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+
+	<sql id="where_clause">
+		<where>
+			<trim prefixOverrides="and">
+			        tu.username != "admin"
+				<if test="id != null">
+					and zui.id = #{id,jdbcType=INTEGER}
+				</if>
+				<if test="userId != null">
+					and zui.user_id = #{userId,jdbcType=INTEGER}
+				</if>
+				<if test="userName != null">
+					and tu.name = #{userName,jdbcType=VARCHAR}
+				</if>
+				<if test="name != null">
+					and tu.name  like CONCAT('%', #{name,jdbcType=VARCHAR} , '%') 
+				</if>
+				<if test="jobId != null">
+					and tu.job_id = #{jobId,jdbcType=INTEGER}
+				</if>
+                <if test="notJobId != null">
+                <![CDATA[
+                    and tu.job_id <> #{notJobId,jdbcType=INTEGER}
+                ]]>
+                </if>
+				<if test="jobStatus != null">
+					and zui.job_status = #{jobStatus,jdbcType=INTEGER}
+				</if>
+				<if test="notJobStatus != null">
+				<![CDATA[
+					and zui.job_status <> #{notJobStatus,jdbcType=INTEGER}
+				]]>
+				</if>
+				<if test="mobile != null">
+					and tu.mobile = #{mobile,jdbcType=VARCHAR}
+				</if>
+				<if test="employeeNo != null">
+					and zui.employee_no = #{employeeNo,jdbcType=INTEGER}
+				</if>
+				<if test="departmentId != null">
+					and zd.id = #{departmentId,jdbcType=INTEGER}
+				</if>
+				<if test="telephone != null">
+					and zui.telephone like CONCAT('%', #{telephone,jdbcType=VARCHAR} , '%') 
+				</if>
+				<if test="createTimeStart != null">
+                <![CDATA[
+					and DATE_FORMAT(zui.create_time,'%Y%m%d') >= #{createTimeStart,jdbcType=TIMESTAMP}
+                ]]>
+				</if>
+				<if test="createTimeEnd != null">
+                <![CDATA[
+                    and DATE_FORMAT(zui.create_time,'%Y%m%d') <= #{createTimeEnd,jdbcType=TIMESTAMP}
+                ]]>
+				</if>
+				<if test="companyId != null">
+                    and tu.company_id = #{companyId,jdbcType=INTEGER}
+				</if>
+				<if test="contractDueInform != null">
+					and DATEDIFF(NOW(),DATE_SUB(zui.contract_due_date,INTERVAL #{contractDueInform,jdbcType=INTEGER} MONTH)) = 0
+				</if>
+				<if test="birthdayInform != null">
+					and MONTH(zui.birthday) = #{birthdayInform,jdbcType=INTEGER}
+				</if>
+			</trim>
+		</where>
+	</sql>
+  
+  <delete id="deleteStaffInfoById" parameterType="java.lang.Integer" >
+    delete from z_staff_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertStaffInfo" parameterType="StaffInfo" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+    insert into z_staff_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="employeeNo != null" >
+        employee_no,
+      </if>
+      <if test="virtualMobile != null" >
+        virtual_cornet,
+      </if>
+      <if test="telephone != null" >
+        telephone,
+      </if>
+      <if test="shortTelephone != null" >
+        telephone_cornet,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="jobStatus != null" >
+        job_status,
+      </if>
+      <if test="identityNo != null" >
+        identity_no,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="birthday != null" >
+        birthday,
+      </if>
+      <if test="staffType != null" >
+        staff_type,
+      </if>
+      <if test="entryDate != null" >
+        entry_date,
+      </if>
+      <if test="entranceGuardCardNumber != null" >
+        entrance_guard_card_number,
+      </if>
+      <if test="politicalStatus != null" >
+        political_status,
+      </if>
+      <if test="titleQuality != null" >
+        title_quality,
+      </if>
+      <if test="graduateInstitutions != null" >
+        graduate_institutions,
+      </if>
+      <if test="studyMajor != null" >
+        study_major,
+      </if>
+      <if test="education != null" >
+        education,
+      </if>
+      <if test="firstWorkDate != null" >
+        first_work_date,
+      </if>
+      <if test="registeredResidence != null" >
+        registered_residence,
+      </if>
+      <if test="presentAddress != null" >
+        present_address,
+      </if>
+      <if test="contract1 != null" >
+        contract1,
+      </if>
+      <if test="contract2 != null" >
+        contract2,
+      </if>
+      <if test="contract3 != null" >
+        contract3,
+      </if>
+      <if test="contractDueDate != null" >
+        contract_due_date,
+      </if>
+      <if test="socialSecurityBase != null" >
+        social_security_base,
+      </if>
+      <if test="bank != null" >
+        bank,
+      </if>
+      <if test="bankcardNum != null" >
+        bankcard_num,
+      </if>
+      <if test="memo != null" >
+        memo,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="employeeNo != null" >
+        #{employeeNo,jdbcType=INTEGER},
+      </if>
+      <if test="virtualMobile != null" >
+        #{virtualMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null" >
+        #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="shortTelephone != null" >
+        #{shortTelephone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="jobStatus != null" >
+        #{jobStatus,jdbcType=INTEGER},
+      </if>
+      <if test="identityNo != null" >
+        #{identityNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="birthday != null" >
+        #{birthday,jdbcType=VARCHAR},
+      </if>
+      <if test="staffType != null" >
+        #{staffType,jdbcType=INTEGER},
+      </if>
+      <if test="entryDate != null" >
+        #{entryDate,jdbcType=VARCHAR},
+      </if>
+      <if test="entranceGuardCardNumber != null" >
+        #{entranceGuardCardNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="politicalStatus != null" >
+        #{politicalStatus,jdbcType=INTEGER},
+      </if>
+      <if test="titleQuality != null" >
+        #{titleQuality,jdbcType=VARCHAR},
+      </if>
+      <if test="graduateInstitutions != null" >
+        #{graduateInstitutions,jdbcType=VARCHAR},
+      </if>
+      <if test="studyMajor != null" >
+        #{studyMajor,jdbcType=VARCHAR},
+      </if>
+      <if test="education != null" >
+        #{education,jdbcType=INTEGER},
+      </if>
+      <if test="firstWorkDate != null" >
+        #{firstWorkDate,jdbcType=VARCHAR},
+      </if>
+      <if test="registeredResidence != null" >
+        #{registeredResidence,jdbcType=VARCHAR},
+      </if>
+      <if test="presentAddress != null" >
+        #{presentAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="contract1 != null" >
+        #{contract1,jdbcType=VARCHAR},
+      </if>
+      <if test="contract2 != null" >
+        #{contract2,jdbcType=VARCHAR},
+      </if>
+      <if test="contract3 != null" >
+        #{contract3,jdbcType=VARCHAR},
+      </if>
+      <if test="contractDueDate != null" >
+        #{contractDueDate,jdbcType=VARCHAR},
+      </if>
+      <if test="socialSecurityBase != null" >
+        #{socialSecurityBase,jdbcType=DECIMAL},
+      </if>
+      <if test="bank != null" >
+        #{bank,jdbcType=VARCHAR},
+      </if>
+      <if test="bankcardNum != null" >
+        #{bankcardNum,jdbcType=VARCHAR},
+      </if>
+      <if test="memo != null" >
+        #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateStaffInfoById" parameterType="StaffInfo" >
+    update z_staff_info
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="employeeNo != null" >
+        employee_no = #{employeeNo,jdbcType=INTEGER},
+      </if>
+      <if test="virtualMobile != null" >
+        virtual_cornet = #{virtualMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null" >
+        telephone = #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="shortTelephone != null" >
+        telephone_cornet = #{shortTelephone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="jobStatus != null" >
+        job_status = #{jobStatus,jdbcType=INTEGER},
+      </if>
+      <if test="identityNo != null" >
+        identity_no = #{identityNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="birthday != null" >
+        birthday = #{birthday,jdbcType=VARCHAR},
+      </if>
+      <if test="staffType != null" >
+        staff_type = #{staffType,jdbcType=INTEGER},
+      </if>
+      <if test="entryDate != null" >
+        entry_date = #{entryDate,jdbcType=VARCHAR},
+      </if>
+      <if test="entranceGuardCardNumber != null" >
+        entrance_guard_card_number = #{entranceGuardCardNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="politicalStatus != null" >
+        political_status = #{politicalStatus,jdbcType=INTEGER},
+      </if>
+      <if test="titleQuality != null" >
+        title_quality = #{titleQuality,jdbcType=VARCHAR},
+      </if>
+      <if test="graduateInstitutions != null" >
+        graduate_institutions = #{graduateInstitutions,jdbcType=VARCHAR},
+      </if>
+      <if test="studyMajor != null" >
+        study_major = #{studyMajor,jdbcType=VARCHAR},
+      </if>
+      <if test="education != null" >
+        education = #{education,jdbcType=INTEGER},
+      </if>
+      <if test="firstWorkDate != null" >
+        first_work_date = #{firstWorkDate,jdbcType=VARCHAR},
+      </if>
+      <if test="registeredResidence != null" >
+        registered_residence = #{registeredResidence,jdbcType=VARCHAR},
+      </if>
+      <if test="presentAddress != null" >
+        present_address = #{presentAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="contract1 != null" >
+        contract1 = #{contract1,jdbcType=VARCHAR},
+      </if>
+      <if test="contract2 != null" >
+        contract2 = #{contract2,jdbcType=VARCHAR},
+      </if>
+      <if test="contract3 != null" >
+        contract3 = #{contract3,jdbcType=VARCHAR},
+      </if>
+      <if test="contractDueDate != null" >
+        contract_due_date = #{contractDueDate,jdbcType=VARCHAR},
+      </if>
+      <if test="socialSecurityBase != null" >
+        social_security_base = #{socialSecurityBase,jdbcType=DECIMAL},
+      </if>
+      <if test="bank != null" >
+        bank = #{bank,jdbcType=VARCHAR},
+      </if>
+      <if test="bankcardNum != null" >
+        bankcard_num = #{bankcardNum,jdbcType=VARCHAR},
+      </if>
+      <if test="memo != null" >
+        memo = #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+        version = version + 1
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

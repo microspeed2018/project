@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.coredb.logo.LogoManageMapper" >
+  <resultMap id="BaseResultMap" type="LogoManage" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="logo_type_no" property="logoTypeNo" jdbcType="INTEGER" />
+    <result column="logo_no" property="logoNo" jdbcType="INTEGER" />
+    <result column="logo_comment" property="logoComment" jdbcType="VARCHAR" />
+    <result column="logo_address" property="logoAddress" jdbcType="VARCHAR" />
+    <result column="logo_link_address" property="logoLinkAddress" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id,logo_type_no,logo_no,logo_comment,logo_address,logo_link_address,create_time, 
+    create_user_id, update_time, update_user_id, version
+  </sql>
+  
+  <select id="getMaxLogoNo" resultType="java.lang.Integer"  parameterType="java.lang.Integer">
+    select max(logo_no)as logo_no from t_logo_manage
+    where logo_type_no = #{logoTypeNo,jdbcType=INTEGER}
+  </select>
+ 
+  <select id="getLogoManageCount" parameterType="LogoManageQuery" resultType="java.lang.Integer">
+   select count(t.id) from t_logo_manage t
+   <include refid="where_clause"></include>
+  </select>
+  <select id="getAllLogoManage" parameterType="LogoManageQuery" resultMap="BaseResultMap">
+   select t.*
+   from t_logo_manage t
+   <include refid="where_clause"></include>
+    <choose>
+	<when test="orderBy != null and orderBy!=''">
+		order by #{orderBy}
+	</when>
+	<otherwise>
+		order by t.logo_type_no , t.logo_no
+	</otherwise>
+  </choose>
+  </select>
+
+  
+  <delete id="deleteLogoManage" parameterType="java.lang.Integer" >
+    delete from t_logo_manage
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <select id="getLogoManage" parameterType="LogoManageQuery" resultMap="BaseResultMap">
+   select t.*
+   from t_logo_manage t
+   <include refid="where_clause"></include>
+   <choose>
+	<when test="orderBy != null and orderBy!=''">
+		order by #{orderBy}
+	</when>
+	<otherwise>
+		order by t.logo_type_no , t.logo_no
+	</otherwise>
+  </choose>
+   limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+  <sql id="where_clause">
+	<where>
+	 <trim prefix="" prefixOverrides="and">
+	  <if test="id!= null">
+		and id = #{id,jdbcType=INTEGER}
+	  </if>
+      <if test="logoNo != null">
+		and logo_no = #{logoNo,jdbcType=INTEGER}
+	  </if>
+	  <if test="createTime != null">
+		and create_time >= #{createTime} 
+      </if>
+      <if test="lastTime != null">
+    	<![CDATA[
+		and create_time <= #{lastTime}
+	  	]]>
+      </if>
+	  <if test="logoTypeNo != null">
+		and logo_type_no = #{logoTypeNo,jdbcType=INTEGER}
+	  </if>
+	  <if test="logoComment != null">
+		and logo_comment like '%' #{logoComment} '%'
+	  </if>
+	  <if test="logoAddress != null">
+		and logo_address = #{logoAddress,jdbcType=VARCHAR}
+	  </if>
+	 </trim>
+    </where>
+  </sql> 
+  
+  <insert id="insertLogoManage" parameterType="LogoManage" >
+    insert into t_logo_manage
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="logoTypeNo != null" >
+        logo_type_no,
+      </if>
+      <if test="logoNo != null" >
+        logo_no,
+      </if>
+      <if test="logoComment != null" >
+        logo_comment,
+      </if>
+      <if test="logoAddress != null" >
+        logo_address,
+      </if>
+      <if test="logoLinkAddress != null" >
+        logo_link_address,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="logoTypeNo != null" >
+        #{logoTypeNo,jdbcType=INTEGER}, 
+      </if>
+      <if test="logoNo != null" >
+        #{logoNo,jdbcType=INTEGER}, 
+      </if>
+      <if test="logoComment != null" >
+        #{logoComment,jdbcType=VARCHAR},
+      </if>
+      <if test="logoAddress != null" >
+        #{logoAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="logoLinkAddress != null" >
+        #{logoLinkAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateLogoManage" parameterType="LogoManage" >
+    update t_logo_manage
+    <set >
+      <if test="logoTypeNo != null" >
+        logo_type_no = #{logoTypeNo,jdbcType=INTEGER},
+      </if>
+      <if test="logoNo != null" >
+        logo_no = #{logoNo,jdbcType=INTEGER},
+      </if>
+      <if test="logoComment != null" >
+        logo_comment = #{logoComment,jdbcType=VARCHAR},
+      </if>
+      <if test="logoAddress != null" >
+        logo_address = #{logoAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="logoLinkAddress != null" >
+        logo_link_address = #{logoLinkAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if> 
+        version = version+1,   
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

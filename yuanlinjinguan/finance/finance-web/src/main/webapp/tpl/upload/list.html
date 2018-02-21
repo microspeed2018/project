@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>资料上传</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+    </head>
+    <body>
+        <header class="header">
+            <img src="../../images/svg/left.svg" class="icon-40" id="goback" />
+            <span class="tit">资料上传</span>
+            <i></i>
+        </header>
+        <div class='wrap'>
+            <ul class='wrap-list' id="upload">
+                <li>
+                    <span>AZ01</span>
+                    <span>五河县玉带河景观带</span>
+                    <span>张三</span>
+                    <time>2017/06/15</time>
+                    <img src="../../images/svg/list-right.svg" class="icon-30" />
+                </li>
+                <li>
+                    <span>AZ01</span>
+                    <span>五河县玉带河景观带</span>
+                    <span>张三</span>
+                    <time>2017/06/15</time>
+                    <img src="../../images/svg/list-right.svg" class="icon-30" />
+                </li>
+            </ul>
+        </div>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script>
+        (function($, doc) {
+            $.init();
+
+            // 校验app或wap
+            myInit(indexFun);
+            function indexFun() {
+                // 历史url
+                var historyUrl = myGetLocalStorage("curr");
+                // goback
+                doc.querySelector("#goback").addEventListener("click", function () {
+                    myOpenWindow(historyUrl, '');
+                    zjzm.historyUrl("/tpl/upload/list.html");
+                });
+
+                $("#upload").on("tap", "li", function () {
+                    myOpenWindow("/tpl/upload/detail.html", 'upload');
+                });
+            }
+        }(mui, document));
+    </script>
+</html>

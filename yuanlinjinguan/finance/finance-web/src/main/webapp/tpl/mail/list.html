@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>通讯录</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+    </head>
+    <body>
+        <header class='header'>
+            <img src="../../images/svg/left.svg" class="icon-40" id="goback"  />
+            <span class='tit'>通讯录</span>
+            <i></i>
+        </header>
+        <div class='mail-filter'>
+            <h2>浙江诚邦园林规划设计院有限公司(<i id='num'></i>)</h2>
+            <ul>
+            </ul>
+        </div>
+        <div>
+            <ul class='mail-list' id="mail">
+            </ul>
+        </div>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/jquery.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script>
+        (function($, doc) {
+            $.init();
+
+            // 校验app或wap
+            myInit(indexFun);
+            function indexFun() {
+                // goback
+                doc.querySelector("#goback").addEventListener("click", function () {
+                    myOpenWindow("/tpl/home/home.html", 'home');
+                    myRemoveLocalStorage("mailFilter");
+                });
+                var mailFilter = myGetLocalStorage("mailFilter");
+                if (mailFilter) {
+                    getMailList(mailFilter);
+                } else {
+                    getMailList("");
+                }
+
+                // 获取公司结构
+                function getCompany() {
+                    $.ajax(global.apiURL + '/user/getStaffDepartmentAndCount.htm', {
+                        data : {
+                            rows: 1000
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        timeout : 10000,
+                        success : function(data){
+                            if (data.success) {
+                                createCompany(data.data);
+                            } else {
+                                myToast(data.resultMsg);
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+                getCompany();
+                function createCompany(datas) {
+                    var dom = "";
+                    var box = jQuery(".mail-filter ul");
+                    var flag = 0;
+                    for (var i = 0; i < datas.length; i++) {
+                        flag = flag + Number(datas[i].staffCount);
+                        if (mailFilter && mailFilter == datas[i].id) {
+                            dom += "<li id='"+ datas[i].id +"' class='active'>-"+ datas[i].name +"("+ datas[i].staffCount +")</li>";
+                        } else {
+                            dom += "<li id='"+ datas[i].id +"'>-"+ datas[i].name +"("+ datas[i].staffCount +")</li>";
+                        }
+                    }
+                    jQuery("#num").html(flag);
+                    box.append(dom);
+                }
+
+                jQuery(".mail-filter h2").on("click", function () {
+                    //jQuery(this).siblings().toggle();
+                    getMailList("");
+                    jQuery(".mail-filter li").removeClass("active");
+                    //jQuery(this).siblings().find("li").removeClass('active');
+                });
+                jQuery(".mail-filter ul").on("click", "li", function () {
+                    jQuery(this).addClass("active").siblings().removeClass('active');
+                    var id = jQuery(this).attr("id");
+                    mySetLocalStorage("mailFilter", id);
+                    getMailList(id);
+                });
+
+                // mail list
+                function getMailList(id) {
+                    myLoading();
+                    $.ajax(global.apiURL + '/user/staffList.htm', {
+                        data : {
+                            rows: 1000,
+                            departmentId: id
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        timeout : 10000,
+                        success : function(data){
+                            if (data.success) {
+                                createMessageList(data.data);
+                            } else {
+                                if (data.code == "405" && data.resultMsg == "请登录系统") {
+                                    againLogin(getMailList, []);
+                                } else if (data.code == "record_not_exsist") {
+                                    //createNullList();
+                                    myToast("该部门当前没有职员");
+                                } else {
+                                    myToast(data.resultMsg);
+                                }
+                            }
+                            myLoadingOver();
+                        },
+                        error : function() {
+                            myLoadingOver();
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+
+                function createMessageList(datas) {
+                    var dom = "",
+                        box = doc.querySelector("#mail");
+
+                    for (var i = 0; i < datas.length; i++) {
+                        var bg = Math.floor(Math.random()*10);//生成0-9的随机数
+                        var userName = datas[i].userInfo.name;
+                        if (userName.length >= 3) {
+                            userName = userName.substr(userName.length - 2);
+                        }
+                        var imageAddress = datas[i].userInfo.imageAddress;
+                        dom += "<li id='"+ datas[i].id +"'>"+
+                            "<div class='tit'>";
+                            if (imageAddress) {
+                                dom += "<span class='bg-"+ bg + "'><img src='"+  imageAddress+"' /></span>";
+                            } else {
+                                dom += "<span class='bg-"+ bg + "'>"+ userName +"</span>";
+                            }
+                            dom += "</div>"+
+                            "<div class='con'>"+
+                                "<p>"+
+                                    "<span class='name'>"+ datas[i].userInfo.name +"</span>"+
+                                    "<span class='mobile'>"+ datas[i].userInfo.mobile +"</span>"+
+                                "</p>"+
+                                "<p>"+
+                                    //"<span>"+ datas[i].departmentName +"["+ datas[i].jobName +"]</span>"+
+                                    "<span>"+ datas[i].jobName +"</span>"+
+                                "</p>";
+                                if (datas[i].viewEnable) {
+                                    dom += "<em class='work' userId='"+ datas[i].userId +"'>查看汇报</em>";
+                                }
+                            "</div>"+
+                        "</li>";
+                    }
+                    box.innerHTML = dom;
+                }
+
+                jQuery("#mail").on("click", "li", function () {
+                    var id = jQuery(this).attr("id");
+                    mySetLocalStorage("mail", {"id" : id});
+                    myOpenWindow("/tpl/mail/detail.html", "mail");
+                    zjzm.historyUrl("/tpl/mail/list.html");
+                });
+                jQuery("#mail").on("click", ".work", function (event) {
+                    event.stopPropagation();
+                    var userId = jQuery(this).attr("userId");
+                    myLoading();
+                    $.ajax(global.apiURL + '/company/user/'+ userId +'/workReport.htm', {
+                        data : {
+                            rows: 1,
+                            page: 1
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        timeout : 10000,
+                        success : function(data){
+                            if (data.success) {
+                                mySetLocalStorage("work", {"userId" : userId});
+                                myOpenWindow("/tpl/work/detail.html", "work");
+                                zjzm.historyUrl("/tpl/mail/list.html");
+                            } else {
+                                myToast("该员工至今未有任何工作汇报");
+                            }
+                            myLoadingOver();
+                        },
+                        error : function() {
+                            myLoadingOver();
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                });
+            }
+        }(mui, document));
+    </script>
+</html>

@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.company.CompanyDepartmentMapper" >
+  <resultMap id="BaseResultMap" type="CompanyDepartment" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="department_leader" property="departmentLeader" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="staff_count" property="staffCount" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="CompanyDepartmentStaffResultMap" type="CompanyDepartmentStaff" extends="BaseResultMap">       
+    <association property="staffInfo" column="department_leader" javaType="StaffInfo" resultMap="StaffInfoResultMap"/>    
+    <association property="admin" column="user_id" javaType="Admin" resultMap="adminResultMap"/>
+  </resultMap>
+  <resultMap id="adminResultMap" type="Admin" >
+    <id column="admin_id" property="id" jdbcType="INTEGER" />
+    <result property="username" column="username" jdbcType="VARCHAR"/>
+	<result property="name" column="admin_name" jdbcType="VARCHAR"/>
+  </resultMap>
+  <resultMap id="StaffInfoResultMap" type="staffInfo" >
+    <id column="staff_info_id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, company_id, name, department_leader, status, create_time, create_user_id, update_time, 
+    update_user_id, version
+  </sql>
+  <select id="getDepartmentStaffCount" resultType="java.lang.Integer" parameterType="CompanyDepartmentQuery">
+     select count(zd.id)
+     from z_department zd
+     left outer join t_admin ta on ta.id = zd.department_leader
+     <include refid="where_clause"></include>
+  </select>
+  <select id="getDepartmentStaff" resultMap="CompanyDepartmentStaffResultMap" parameterType="CompanyDepartmentQuery">
+    select zd.*,ta.username,ta.name admin_name,ta.id admin_id
+    from z_department zd
+    left outer join t_admin ta on ta.id = zd.department_leader
+    <include refid="where_clause"></include>
+    <choose>
+        <when test="orderBy != null and orderBy!=''">
+            order by #{orderBy}
+        </when>
+        <otherwise>
+            order by zd.id 
+        </otherwise>
+    </choose>
+    limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+  <select id="getCompanyDepartmentByCondition" resultMap="BaseResultMap" parameterType="CompanyDepartmentQuery">
+    select zd.id,zd.company_id,zd.name,zd.department_leader,zd.status,zd.create_time,zd.create_user_id,zd.update_time,zd.update_user_id,zd.version
+    from z_department zd
+    <include refid="where_clause"></include>
+  </select>
+  
+  <!-- 获取部门名称和部门员工人数 -->
+  <select id="getStaffDepartmentAndCount" resultMap="BaseResultMap" parameterType="CompanyDepartmentQuery">
+  	select zp.name, count(zp.name) staff_count,zp.id from z_staff_info zsi
+	LEFT OUTER JOIN t_admin ta on ta.id = zsi.user_id
+	LEFT OUTER JOIN z_department zp on zp.id = ta.department
+	<where>
+		<trim prefixOverrides="and">
+			ta.username != "admin"
+			<if test="jobStatus != null">
+				and zsi.job_status = #{jobStatus,jdbcType=INTEGER}
+			</if>
+			<if test="notJobStatus != null">
+			<![CDATA[
+				and zsi.job_status <> #{notJobStatus,jdbcType=INTEGER}
+			]]>
+			</if>
+		</trim>
+	</where>
+	GROUP BY zp.name
+	order by zp.id
+  </select>
+  
+  <sql id="where_clause">
+   <where>
+        <trim prefixOverrides="and">
+            <if test="id != null">
+                zd.id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="companyId != null">
+                and zd.company_id = #{companyId,jdbcType=INTEGER}
+            </if>
+            <if test="name != null">
+                and zd.name like CONCAT('%', #{name,jdbcType=VARCHAR} , '%') 
+            </if>
+            <if test="departmentLeader != null">
+                and zd.department_leader = #{departmentLeader,jdbcType=INTEGER}
+            </if>
+            <if test="status != null">
+                and zd.status = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="createTimeStart != null">
+                and DATE_FORMAT(zd.create_time,'%Y%m%d') >= #{createTimeStart,jdbcType=TIMESTAMP}
+            </if>
+            <if test="createTimeEnd != null">
+                <![CDATA[
+                    and DATE_FORMAT(zd.create_time,'%Y%m%d') <= #{createTimeEnd,jdbcType=TIMESTAMP}
+                ]]>
+            </if>
+        </trim>
+    </where>
+  </sql>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from z_department
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insertCompanyDepartment" parameterType="CompanyDepartment" >
+    insert into z_department
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="departmentLeader != null" >
+        department_leader,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentLeader != null" >
+        #{departmentLeader,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateCompanyDepartmentById" parameterType="CompanyDepartment" >
+    update z_department
+    <set >
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentLeader != null" >
+        department_leader = #{departmentLeader,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+        version = version + 1
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

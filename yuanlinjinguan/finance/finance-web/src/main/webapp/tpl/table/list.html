@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>报表统计</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/mui.picker.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+        <style type="text/css">
+            html {
+                height: 100%;
+            }
+            .simulation-select {
+                width: 7.4rem;
+            }
+        </style>
+    </head>
+    <body style="overflow: hidden;">
+        <header class='header'>
+            <img src="../../images/svg/left.svg" class="icon-40" id="goback"  />
+            <span class='tit'>报表统计</span>
+            <b></b>
+            <!-- <b id="submit">查看</b> -->
+        </header>
+        <div class="wrap">
+            <h4>
+                <span>条件选择</span>
+                <p><a href="javasctipt:void(0);" class="toggle"><img src='../../images/svg/up.svg' class="icon-30" /></a></p>
+            </h4>
+            <ul class='wrap-list'>
+                <li>
+                    <div class='tit'>
+                        录入时间
+                    </div>
+                    <div class='con'>
+                        <button id='timeStart' data-options='{"type":"date"}' class="simulation-select one half">开始时间</button>
+                        <span style="    display: inline-block;width: .4rem; height: 1.2rem;line-height: 1.2rem;text-align: center;">~</span>
+                        <button id='timeEnd' data-options='{"type":"date"}' class="simulation-select one half">结束时间</button>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        技术负责人
+                    </div>
+                    <div class='con'>
+                        <span class="simulation-select one" id="projectLeader">不限</span>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        经营专员
+                    </div>
+                    <div class='con'>
+                        <span class="simulation-select one" id="managePerson">不限</span>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        项目阶段
+                    </div>
+                    <div class='con'>
+                        <span class="simulation-select one" id="step">不限</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div>
+
+    </div>
+    <div class="wrap">
+        <h4>
+            <span>字段选择</span>
+            <p><a href="javasctipt:void(0);" class="toggle"><img src='../../images/svg/up.svg' class="icon-30" /></a></p>
+        </h4>
+        <ul class="wrap-list table-list" id="list">
+            <li>
+            </li>
+        </ul>
+    </div>
+    <div class='share-add-btn' style="z-index: 9999; right: 2.4rem;" id="submit">查看</div>
+    <!-- <div class='wrap' style="background: #fff; width: 100%; height: 50px; position: fixed; bottom: 0; z-index: 2;">
+        <input type="button" value='查看' class='btn btn-max' id="submit" />
+    </div> -->
+    <div class='select-dialog'>
+        <div class='select-mask'></div>
+        <div class='select-content'>
+            <div class="select-title">
+                <span id="cancel">取消</span>
+                <span id="true">确定</span>
+            </div>
+            <ul></ul>
+        </div>
+    </div>
+    </body>
+    <script src="../../js/jquery.js"></script>
+    <script src="../../js/Sortable.js"></script>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/mui.picker.min.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script>
+        (function($, doc) {
+            $.init();
+
+            // 校验app或wap
+            myInit(indexFun);
+            function indexFun() {
+                // goback
+                doc.querySelector("#goback").addEventListener("click", function () {
+                    myOpenWindow("/tpl/home/home.html", 'home');
+                });
+
+                var user = JSON.parse(myGetLocalStorage("user"));
+                var role;
+                var personnelNature;
+                var obj = {};
+                if (user) {
+                    role = user.jobId;
+                    personnelNature = user.personnelNature;
+                    if (role == 5 || personnelNature == 44) {
+                        $.ajax(global.apiURL + '/user/staffPersons.htm', {
+                            data : {
+                                jobId: 5
+                            },
+                            dataType : 'json',
+                            type : 'post',
+                            success : function(data){
+                                if (data.success) {
+                                    var datas = data.data;
+                                    for (var i = 0; i < datas.length; i++) {
+                                        if (datas[i].userId == user.userId) {
+                                            jQuery("#projectLeader").attr("disabled", true).html(datas[i].userInfo.name);
+                                            obj.projectLeader = datas[i].userId;
+                                        }
+                                    }
+                                } else {
+                                    myToast(data.resultMsg);
+                                }
+                            },
+                            error : function() {
+                                myToast("服务器正忙，请稍后重试！");
+                            }
+                        });
+                    }
+                }
+
+                // 日期选择
+                document.querySelector('#timeStart').addEventListener('tap', function() {
+                    var that = this;
+                    dataPicker(that, "timeStart")
+                }, false);
+                document.querySelector('#timeEnd').addEventListener('tap', function() {
+                    var that = this;
+                    dataPicker(that, "timeEnd")
+                }, false);
+                function dataPicker(that, box) {
+                    var optionsJson = that.getAttribute('data-options') || '{}';
+                    var options = JSON.parse(optionsJson);
+                    var picker = new mui.DtPicker(options);
+                    picker.show(function(rs) {
+                        obj[box] = rs.y.value + rs.m.value + rs.d.value
+                        document.querySelector("#" + box).innerHTML = rs.y.value + "/" + rs.m.value + "/" +rs.d.value;
+                        picker.dispose();
+                    });
+                }
+
+                // 切换显示区域
+                jQuery("h4").on("click", function () {
+                    jQuery(this).siblings("ul").toggle();
+                    if (jQuery(this).find("img").attr("src") == "../../images/svg/up.svg") {
+                        jQuery(this).find("img").attr("src", "../../images/svg/down.svg");
+                    } else {
+                        jQuery(this).find("img").attr("src", "../../images/svg/up.svg");
+                    }
+                    setBox();
+                });
+                setBox();
+                function setBox() {
+                    var headerH = jQuery(".header").height();
+                    var wrap1 = jQuery(".wrap").eq(0).height();
+                    var wrap3 = jQuery('.wrap').eq(2).height();
+                    var wrap2H4 = jQuery(".wrap").eq(1).find("h4").height();
+                    jQuery(".wrap").eq(1).find("ul").css({ height: global.viewHeight - headerH - wrap1 - wrap3 - wrap2H4 - 30});
+                }
+
+                // 获取技术负责人
+                jQuery("#projectLeader").on("click", function () {
+                    var disabled = jQuery(this).attr("disabled");
+                    if (!disabled) {
+                        getLeader();
+                    }
+                });
+                function createLeader(list) {
+                    var box = doc.querySelector(".select-dialog ul");
+                    var dom = "<li id='-1'>不限</li>";
+                    for (var i = 0; i < list.length; i++) {
+                        dom += "<li id='"+ list[i].userId +"'>"+ list[i].userInfo.name +"</li>";
+                    }
+                    box.innerHTML = dom;
+                    if (obj.projectLeader) {
+                        var projectLeaderArr = obj.projectLeader.split(",");
+                        jQuery(".select-dialog li").each(function () {
+                            var that = jQuery(this);
+                            for (var i = 0; i < projectLeaderArr.length; i++) {
+                                if (that.attr("id") == projectLeaderArr[i]) {
+                                    that.addClass('active');
+                                }
+                            }
+                        });
+                    }
+                    doc.querySelector(".select-dialog").style.display = "block";
+                    doc.querySelector(".select-dialog").setAttribute("id", "projectLeaders");
+                    doc.querySelector(".select-dialog").setAttribute("multi", "true");
+                }
+                // 获取经营专员
+                jQuery("#managePerson").on("click", function () {
+                    var disabled = jQuery(this).attr("disabled");
+                    if (!disabled) {
+                        managePerson();
+                    }
+                });
+                function createManagePerson(list) {
+                    var box = doc.querySelector(".select-dialog ul");
+                    var dom = "<li id='-1'>不限</li>";
+                    for (var i = 0; i < list.length; i++) {
+                        dom += "<li id='"+ list[i].userId +"'>"+ list[i].userInfo.name +"</li>";
+                    }
+                    box.innerHTML = dom;
+                    if (obj.managePerson) {
+                        var managePersonArr = obj.managePerson.split(",");
+                        jQuery(".select-dialog li").each(function () {
+                            var that = jQuery(this);
+                            for (var i = 0; i < managePersonArr.length; i++) {
+                                if (that.attr("id") == managePersonArr[i]) {
+                                    that.addClass('active');
+                                }
+                            }
+                        });
+                    }
+                    doc.querySelector(".select-dialog").style.display = "block";
+                    doc.querySelector(".select-dialog").setAttribute("id", "managePersons");
+                    doc.querySelector(".select-dialog").setAttribute("multi", "true");
+                }
+                // 获取流程
+                jQuery("#step").on("click", function () {
+                    getStep();
+                });
+                function createstep(list) {
+                    var box = doc.querySelector(".select-dialog ul");
+                    var dom = "<li id='-1'>不限</li>";
+                    for (var i = 0; i < list.length; i++) {
+                        dom += "<li id='"+ list[i].key +"'>"+ list[i].value +"</li>";
+                    }
+                    box.innerHTML = dom;
+                    if (obj.projectStep) {
+                        var stepArr = obj.projectStep.split(",");
+                        jQuery(".select-dialog li").each(function () {
+                            var that = jQuery(this);
+                            for (var i = 0; i < stepArr.length; i++) {
+                                if (that.attr("id") == stepArr[i]) {
+                                    that.addClass('active');
+                                }
+                            }
+                        });
+                    }
+                    doc.querySelector(".select-dialog").style.display = "block";
+                    doc.querySelector(".select-dialog").setAttribute("id", "steps");
+                    doc.querySelector(".select-dialog").setAttribute("multi", "true");
+                }
+
+                jQuery(".select-dialog").on("click", "li", function () {
+                    var text = this.innerHTML;
+                    var id = this.getAttribute("id");
+                    var boxID = this.parentNode.parentNode.parentNode.getAttribute("id");
+                    if (id == -1) {
+                        jQuery(this).siblings('').removeClass("active");
+                    } else {
+                        if (!jQuery(".select-dialog li").eq(0).hasClass("active")) {
+                        } else {
+                            jQuery(".select-dialog li").eq(0).removeClass("active");
+                        }
+                    }
+                    jQuery(this).toggleClass("active");
+                });
+                jQuery("#cancel").on("click", function () {
+                    doc.querySelector(".select-dialog").style.display = "none";
+                    doc.querySelector(".select-dialog").setAttribute("id", "");
+                    doc.querySelector(".select-dialog").setAttribute("multi", "");
+                });
+                jQuery("#true").on("click", function () {
+                    var boxID = jQuery(".select-dialog").attr("id");
+                    var arr = [];
+                    var textArr = [];
+                    var text = "";
+                    if (boxID == "steps") {
+                        jQuery(".select-dialog li").each(function () {
+                            if (jQuery(this).hasClass("active")) {
+                                arr.push(jQuery(this).attr("id"));
+                                textArr.push(jQuery(this).html());
+                            }
+                        });
+                        for (var i = 0; i < arr.length; i++) {
+                            obj.projectStep = arr.join(",");
+                            text = textArr.join(",");
+                        }
+                        doc.querySelector("#step").innerHTML = text;
+                    } else if (boxID == 'projectLeaders') {
+                        jQuery(".select-dialog li").each(function () {
+                            if (jQuery(this).hasClass("active")) {
+                                arr.push(jQuery(this).attr("id"));
+                                textArr.push(jQuery(this).html());
+                            }
+                        });
+                        for (var i = 0; i < arr.length; i++) {
+                            obj.projectLeader = arr.join(",");
+                            text = textArr.join(",");
+                        }
+                        doc.querySelector("#projectLeader").innerHTML = text;
+                    } else if (boxID == "managePersons") {
+                        jQuery(".select-dialog li").each(function () {
+                            if (jQuery(this).hasClass("active")) {
+                                arr.push(jQuery(this).attr("id"));
+                                textArr.push(jQuery(this).html());
+                            }
+                        });
+                        for (var i = 0; i < arr.length; i++) {
+                            obj.managePerson = arr.join(",");
+                            text = textArr.join(",");
+                        }
+                        doc.querySelector("#managePerson").innerHTML = text;
+                    }
+                    doc.querySelector(".select-dialog").style.display = "none";
+                    doc.querySelector(".select-dialog").setAttribute("id", "");
+                    doc.querySelector(".select-dialog").setAttribute("multi", "");
+                });
+                // 空白隐藏
+                document.querySelector(".select-mask").addEventListener("tap", function (event) {
+                    document.querySelector(".select-dialog").style.display = "none";
+                    document.querySelector(".select-dialog ul").innerHTML = '';
+                    event.preventDefault();
+                });
+
+                function getLeader() {
+                    $.ajax(global.apiURL + '/user/staffPersons.htm', {
+                        data : {
+                            jobId: 5
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                createLeader(data.data);
+                            } else {
+                                myToast(data.resultMsg);
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+                function managePerson() {
+                    $.ajax(global.apiURL + '/user/companyStaffs.htm', {
+                        data : {
+                            jobId : 4
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                createManagePerson(data.data);
+                            } else {
+                                myToast(data.resultMsg);
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+                function getStep() {
+                    $.ajax(global.apiURL + '/company/user/projectStep.htm', {
+                        data : {},
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                createstep(data.step);
+                            } else {
+                                myToast(data.resultMsg);
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+
+                // 统计报表的条件查询信息
+                function getHandleCondition() {
+                    $.ajax(global.apiURL + '/report/user/reportCondition.htm', {
+                        data : {},
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                createHandleCondition(data.fields);
+                                if (data.data) initPage(data.data, data.fields)
+                            } else {
+                                if (data.code != 405) {
+                                    createHandleCondition(data.fields);
+                                } else {
+                                    againLogin(getHandleCondition, []);
+                                }
+                                //myToast(data.resultMsg);
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+                getHandleCondition();
+                // 创建字段选择
+                function createHandleCondition(datas) {
+                    var box = jQuery("#list");
+                    var dom = "";
+                    for (var i = 0; i < datas.length; i++) {
+                        dom += "<li name='"+ datas[i].a +"'>"+
+                            "<div class='tit'>"+ datas[i].b +"</div>"+
+                            "<div class='con'>"+
+                                "<div class='mui-switch mui-switch-blue mui-switch-mini mui-active'>"+
+                                    "<div class='mui-switch-handle'></div>"+
+                                "</div>"+
+                            "</div>"+
+                        "</li>";
+                    }
+                    box.html(dom);
+                    mui('.mui-switch')['switch']();//手动初始化
+                    //drag();
+                }
+
+                function initPage(datas, fields) {
+                    obj.timeStart = datas.timeStart
+                    jQuery("#timeStart").html(zjzm.formatDate(datas.timeStart, "/"));
+                    obj.timeEnd = datas.timeEnd
+                    jQuery("#timeEnd").html(zjzm.formatDate(datas.timeEnd, "/"));
+                    if (!datas.projectLeader) {
+                        obj.projectLeader = "";
+                    } else {
+                        obj.projectLeader = datas.projectLeader;
+
+                        var arr = datas.projectLeader.split(",")
+                        var text = [];
+                        $.ajax(global.apiURL + '/user/staffPersons.htm', {
+                            data : {
+                                jobId: 5
+                            },
+                            dataType : 'json',
+                            type : 'post',
+                            success : function(data){
+                                if (data.success) {
+                                    for (var i = 0; i < arr.length; i++) {
+                                        for (var j = 0; j < data.data.length; j++) {
+                                            if (arr[i] == data.data[j].userId) {
+                                                text.push(data.data[j].userInfo.name);
+                                            }
+                                        }
+                                    }
+                                    jQuery("#projectLeader").html(text.join(","))
+                                } else {
+                                    myToast(data.resultMsg);
+                                }
+                            },
+                            error : function() {
+                                myToast("服务器正忙，请稍后重试！");
+                            }
+                        });
+
+                    }
+                    if (!datas.managePerson) {
+                        obj.managePerson = "";
+                    } else {
+                        obj.managePerson = datas.managePerson;
+
+                        var arr1 = datas.managePerson.split(",")
+                        var text1 = [];
+                        $.ajax(global.apiURL + '/user/companyStaffs.htm', {
+                            data : {
+                                jobId: 4
+                            },
+                            dataType : 'json',
+                            type : 'post',
+                            success : function(data){
+                                if (data.success) {
+                                    for (var i = 0; i < arr1.length; i++) {
+                                        for (var j = 0; j < data.data.length; j++) {
+                                            if (arr1[i] == data.data[j].userId) {
+                                                text1.push(data.data[j].userInfo.name);
+                                            }
+                                        }
+                                    }
+                                    jQuery("#managePerson").html(text1.join(","))
+                                } else {
+                                    myToast(data.resultMsg);
+                                }
+                            },
+                            error : function() {
+                                myToast("服务器正忙，请稍后重试！");
+                            }
+                        });
+
+                    }
+                    if (!datas.projectStep) {
+                        obj.projectStep = "";
+                    } else {
+                        obj.projectStep = datas.projectStep;
+
+                        var arr2 = datas.projectStep.split(",")
+                        var text2 = [];
+                        $.ajax(global.apiURL + '/company/user/projectStep.htm', {
+                            data : {},
+                            dataType : 'json',
+                            type : 'post',
+                            success : function(data){
+                                if (data.success) {
+                                    for (var i = 0; i < arr2.length; i++) {
+                                        for (var j = 0; j < data.step.length; j++) {
+                                            if (arr2[i] == data.step[j].key) {
+                                                text2.push(data.step[j].value);
+                                            }
+                                        }
+                                    }
+                                    jQuery("#step").html(text2.join(","))
+                                } else {
+                                    myToast(data.resultMsg);
+                                }
+                            },
+                            error : function() {
+                                myToast("服务器正忙，请稍后重试！");
+                            }
+                        });
+
+                    }
+                    if (!datas.dispField) {
+                        obj.dispField = "";
+                    } else {
+                        obj.dispField = datas.dispField;
+                        var arr3 = datas.dispField.split(",")
+                        var temp = []; //临时数组1
+                        var temparray = [];//临时数组2
+                        for (var i = 0; i < arr3.length; i++) {
+                            temp[arr3[i]] = true;//巧妙地方：把数组B的值当成临时数组1的键并赋值为真
+                        };
+                        for (var i = 0; i < fields.length; i++) {
+                            if (!temp[fields[i].a]) {
+                                temparray.push(fields[i]);//巧妙地方：同时把数组A的值当成临时数组1的键并判断是否为真，如果不为真说明没重复，就合并到一个新数组里，这样就可以得到一个全新并无重复的数组
+                            };
+                        };
+                        for (var i = 0; i < temparray.length; i++) {
+                            jQuery("#list li").each(function () {
+                                if (jQuery(this).attr("name") == temparray[i].a) {
+                                    jQuery(this).find(".mui-switch").removeClass("mui-active");
+                                }
+                            });
+                        }
+                    }
+                    if (!datas.status) {
+                        obj.status = "";
+                    } else {
+                        obj.status = datas.status;
+                    }
+                }
+
+                // 拖动模块插件
+                function drag(){
+                    Sortable.create(list, {
+                        group: "words",
+                        animation: 150,
+                        store: {
+                            get: function (sortable) {
+                                var order = localStorage.getItem(sortable.options.group);
+                                return order ? order.split('|') : [];
+                            },
+                            set: function (sortable) {
+                                var order = sortable.toArray();
+                                localStorage.setItem(sortable.options.group, order.join('|'));
+                            }
+                        }
+                    });
+                }
+
+                document.querySelector("#submit").addEventListener("tap", function () {
+                    if (!obj.timeStart) {
+                        obj.timeStart = "";
+                    }
+                    if (!obj.timeEnd) {
+                        obj.timeEnd = "";
+                    }
+                    if (!obj.projectLeader || obj.projectLeader == "-1") {
+                        obj.projectLeader = "";
+                    }
+                    if (!obj.managePerson || obj.managePerson == "-1") {
+                        obj.managePerson = "";
+                    }
+                    if (!obj.projectStep || obj.projectStep == "-1") {
+                        obj.projectStep = "";
+                    }
+                    if (!obj.status || obj.status == "-1") {
+                        obj.status = "";
+                    }
+                    var arr = [];
+                    // jQuery("#list .mui-switch").each(function () {
+                    //     if (jQuery(this).hasClass('mui-active')) {
+                    //         arr.push(jQuery(this).closest('li').attr("name"));
+                    //     }
+                    // });
+                    jQuery("#list .mui-active").each(function () {
+                        arr.push(jQuery(this).closest('li').attr("name"));
+                    });
+                    obj.dispField = arr;
+                    if (obj.dispField.length) {
+                        obj.dispField = arr.join(",");
+                        submit();
+                    } else {
+                        myToast("请选择要查看的字段")
+                    }
+                });
+                function submit() {
+                    $.ajax(global.apiURL + '/report/user/handleCondition.htm', {
+                        data : {
+                            timeStart: obj.timeStart,
+                            timeEnd: obj.timeEnd,
+                            projectLeader: obj.projectLeader,
+                            managePerson: obj.managePerson,
+                            projectStep: obj.projectStep,
+                            status: obj.status,
+                            dispField: obj.dispField
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                myOpenWindow(data.fileAccessUrl, '');
+                            } else {
+                                myToast(data.resultMsg);
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+
+            }
+        }(mui, document));
+    </script>
+</html>

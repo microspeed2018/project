@@ -1,0 +1,2165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <title>我的简历</title>
+    <link href="../../css/mui.min.css" rel="stylesheet" />
+    <link href="../../css/mui.picker.min.css" rel="stylesheet" />
+    <link href="../../css/base.css" rel="stylesheet" />
+</head>
+<body>
+    <div id="resume" v-cloak>
+        <header class="header">
+            <img src="../../images/svg/left.svg" class="icon-40" @click='goBack' />
+            <span class="tit">我的简历</span> <i></i>
+        </header>
+        <div class='resume'>
+            <div class='wrap'>
+                <h4>
+                    <span>
+                        必填信息
+                    </span>
+                </h4>
+                <ul class='wrap-list'>
+                    <li>
+                        <div class='tit'><i class='tips'>*</i>姓名</div>
+                        <div class='con'>
+                            <input type="text" class='input' placeholder="请输入姓名" v-model='mustInfo.name' />
+                        </div>
+                    </li>
+                    <li>
+                        <div class='tit'><i class='tips'>*</i>手机号码</div>
+                        <div class='con'>
+                            <input type="text" class='input' placeholder="请输入手机号码" maxlength="11" v-model='mustInfo.mobile' :readonly='mustInfo.defaultMobile' />
+                        </div>
+                    </li>
+                    <li>
+                        <div class='tit'><i class='tips'>*</i>身份证号</div>
+                        <div class='con'>
+                            <input type="text" class='input' placeholder="请输入身份证号" maxlength="18" v-model='mustInfo.identityNo' />
+                        </div>
+                    </li>
+                    <li>
+                        <div class='tit'><i class='tips'>*</i>应聘职位</div>
+                        <div class='con'>
+                            <span class="simulation-select one" @click='recruitment' :disabled='mustInfo.recruitmentFlag'>{{ mustInfo.recruitmentName }}</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class='tit'><i class='tips'>*</i>可到岗日期</div>
+                        <div class='con'>
+                            <button id='comeDate' data-options='{"type":"date"}' class="simulation-select one"  @click='comeDate'>{{ mustInfo.comeDate }}</button>
+                        </div>
+                    </li>
+                    <li>
+                        <div class='tit'><i class='tips'>*</i>期望税前年收入</div>
+                        <div class='con'>
+                            <input type="text" class='input' placeholder="请输入期望税前年收入" v-model='mustInfo.expectedIncome' />
+                        </div>
+                    </li>
+                    <li>
+                        <div class='tit'><i class='tips'>*</i>身高(cm)</div>
+                        <div class='con'>
+                            <input type="text" class='input' placeholder="请输入身高" v-model='baseInfo.emergencyPerson' />
+                        </div>
+                    </li>
+                    <li>
+                        <div class='tit'><i class='tips'>*</i>体重(kg)</div>
+                        <div class='con'>
+                            <input type="tel" class='input' maxlength="11" placeholder="请输入体重" v-model='baseInfo.emergencyMobile' />
+                        </div>
+                    </li>
+                    <li>
+                        <div class='tit'><i class='tips'>*</i>婚姻状况</div>
+                        <div class='con'>
+                            <span class="simulation-select one"  @click='maritalStatus' id="maritalStatus">{{ baseInfo.maritalStatusName }}</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class='tit'><i class='tips'>*</i>生育状况</div>
+                        <div class='con'>
+                            <span class="simulation-select one" @click='fertilityStatus' id="fertilityStatus">{{ baseInfo.fertilityStatusName }}</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class='wrap'>
+                <h4>
+                    <span>基本信息</span>
+                </h4>
+                <ul class='wrap-list'>
+                    <li>
+                        <div class='tit'>民族</div>
+                        <div class='con'>
+                            <input type="text" class='input' placeholder="请输入民族" v-model='baseInfo.nation' />
+                        </div>
+                    </li>
+                    <li>
+                        <div class='tit'>籍贯</div>
+                        <div class='con'>
+                            <input type="text" class='input' placeholder="请输入籍贯" v-model='baseInfo.origin' />
+                        </div>
+                    </li>
+                    <li>
+                        <div class='tit'>驾照类型</div>
+                        <div class='con'>
+                            <input type="text" class='input' placeholder="请输入驾照类型" v-model='baseInfo.drivingLicenseType' />
+                        </div>
+                    </li>
+                    <li>
+                        <div class='tit'>政治面貌</div>
+                        <div class='con'>
+                            <span class="simulation-select one" @click='politicalStatus' id="politicalStatus">{{ baseInfo.politicalStatusName }}</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class='tit'>专业资格/职称</div>
+                        <div class='con'>
+                            <input type="text" class='input' placeholder="请输入专业资格/职称" v-model='baseInfo.qualification' />
+                        </div>
+                    </li>
+                    <li>
+                        <div class='tit'>现住址</div>
+                        <div class='con'>
+                            <input type="text" class='input' placeholder="请输入现住址" v-model='baseInfo.address' />
+                        </div>
+                    </li>
+                    <li>
+                        <div class='tit'>电子信箱</div>
+                        <div class='con'>
+                            <input type="text" class='input' placeholder="请输入电子信箱" v-model='baseInfo.mail' />
+                        </div>
+                    </li>
+
+                </ul>
+            </div>
+            <div class='wrap'>
+                <h4>
+                    <span><i class='tips'>*</i>教育背景</span>
+                    <p>
+                        <a @click='addStudyInfo'>追加</a>
+                    </p>
+                </h4>
+                <div class='layout-1'>
+                    <ul>
+                        <li v-for='item in talentEducationRows' @click='editTalentEducation(item)' :disabled='interviewFlag'>
+                            <span>
+                                {{ item.startDate | formatDate }}~{{ item.endDate | formatDate }}
+                            </span>
+                            <span>{{ item.schoolName }}</span>
+                            <span>{{ item.professional }}</span>
+                            <i></i>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class='wrap'>
+                <h4>
+                    <span>工作背景</span>
+                    <p>
+                        <a @click='addWorkInfo'>追加</a>
+                    </p>
+                </h4>
+                <div class='layout-1'>
+                    <ul>
+                        <li v-for='item in talentJobRows' @click='editTalentJob(item)' :disabled='interviewFlag'>
+                            <span>
+                                {{ item.startDate | formatDate }}~{{ item.endDate | formatDate }}
+                            </span>
+                            <span>{{ item.companyName }}</span>
+                            <span>{{ item.post }}</span>
+                            <i></i>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class='wrap'>
+                <h4>
+                    <span>家庭成员</span>
+                    <p>
+                        <a @click='addFamilyInfo'>追加</a>
+                    </p>
+                </h4>
+                <div class='layout-1'>
+                    <ul>
+                        <li v-for='item in talentFamilyRows' @click='editTalentFamily(item)' :disabled='interviewFlag'>
+                            <span>{{ item.relation }}</span>
+                            <span>{{ item.name }}</span>
+                            <!-- <span>{{ item.company }}</span>
+                        -->
+                        <span>{{ item.telephone }}</span>
+                        <i></i>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class='wrap'>
+            <h4>
+                <span>备注信息</span>
+            </h4>
+            <ul class='wrap-list'>
+                <li>
+                    <div class='tit'>是否有在本公司熟悉的人</div>
+                    <div class='con'>
+                        <div class="mui-input-row mui-radio mui-left" @click='noAcquaintance'>
+                            <label>否</label>
+                            <input type="radio" name="haveAcquaintance" value="0" :checked='acquaintance.haveAcquaintance == 0' />
+                        </div>
+                        <div class="mui-input-row mui-radio mui-left" @click='isAcquaintance'>
+                            <label>是</label>
+                            <input type="radio" name="haveAcquaintance" :checked='acquaintance.haveAcquaintance == 1' />
+                        </div>
+                    </div>
+                </li>
+                <li v-if='acquaintance.flag'>
+                    <div class='tit'>姓名</div>
+                    <div class='con'>
+                        <input type="text" class='input' placeholder="请输入姓名" v-model='acquaintance.acquaintanceName' />
+                    </div>
+                </li>
+                <li v-if='acquaintance.flag'>
+                    <div class='tit'>部门</div>
+                    <div class='con'>
+                        <input type="text" class='input' placeholder="请输入部门" v-model='acquaintance.acquaintanceDepartment' />
+                    </div>
+                </li>
+                <li v-if='acquaintance.flag'>
+                    <div class='tit'>关系</div>
+                    <div class='con'>
+                        <input type="text" class='input' placeholder="请输入关系" v-model='acquaintance.acquaintanceRelation' />
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>是否有犯罪记录</div>
+                    <div class='con'>
+                        <div class="mui-input-row mui-radio mui-left">
+                            <label>否</label>
+                            <input type="radio" name="haveCriminal" :checked='acquaintance.haveCriminal == 0' @click='nohaveCriminal' />
+                        </div>
+                        <div class="mui-input-row mui-radio mui-left" >
+                            <label>是</label>
+                            <input type="radio" name="haveCriminal" :checked='acquaintance.haveCriminal == 1' @click='ishaveCriminal' />
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>曾被解雇过吗</div>
+                    <div class='con'>
+                        <div class="mui-input-row mui-radio mui-left" >
+                            <label>否</label>
+                            <input type="radio" name="haveFired" :checked='acquaintance.haveFired == 0' @click='nohaveFired' />
+                        </div>
+                        <div class="mui-input-row mui-radio mui-left" >
+                            <label>是</label>
+                            <input type="radio" name="haveFired" :checked='acquaintance.haveFired == 1' @click='ishaveFired' />
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>是否患有先天性重大疾病或传染性疾病或身体残疾</div>
+                    <div class='con'>
+                        <div class="mui-input-row mui-radio mui-left">
+                            <label>否</label>
+                            <input type="radio" name="haveDiseases" :checked='acquaintance.haveDiseases == 0' @click='nohaveDiseases' />
+                        </div>
+                        <div class="mui-input-row mui-radio mui-left">
+                            <label>是</label>
+                            <input type="radio" name="haveDiseases" :checked='acquaintance.haveDiseases == 1' @click='ishaveDiseases' />
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>是否签署目前仍有效的“竞业禁止”协议或相关劳动条款?</div>
+                    <div class='con'>
+                        <div class="mui-input-row mui-radio mui-left" >
+                            <label>否</label>
+                            <input type="radio" name="haveCompetition" :checked='acquaintance.haveCompetition == 0' @click='nohaveCompetition' />
+                        </div>
+                        <div class="mui-input-row mui-radio mui-left" >
+                            <label>是</label>
+                            <input type="radio" name="haveCompetition" :checked='acquaintance.haveCompetition == 1' @click='ishaveCompetition' />
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class='wrap'>
+            <h4>
+                <span>附件</span>
+                <p>
+                    <a @click='addResumeInfo'>追加</a>
+                </p>
+            </h4>
+            <div class='layout-1'>
+                <ul>
+                    <li v-for='(item, index) in talentDocumentRows' @click='editTalentDocument(item)' :disabled='interviewFlag'>
+                        <span>{{ index + 1 }}</span>
+                        <span>{{ item.documentName }}</span>
+                        <i></i>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class='wrap'>
+            <label class='tip'>
+                <input type="checkbox" checked />
+                本人兹声明在本表格内所填写各项资料均属正确无讹。本人明白如提供资料及相关证明文件或证书不属实或有误导，本人的申请将被取消，又或本人已受聘，本人亦将被公司无条件解雇。
+            </label>
+        </div>
+    </div>
+    <div class='wrap' style="position: fixed; bottom: 0; left: 0;">
+        <!-- <input type="button" value='返回' class='btn btn-max btn-top' @click='goBack' v-if='interviewFlag' /> -->
+        <input type="button" value='提交' class='btn btn-max btn-top' @click='validate' v-if='!interviewFlag' />
+    </div>
+    <div class='select-dialog'>
+        <div class='select-mask' @click='hideLayout'></div>
+        <div class='select-content'>
+            <div class="select-title">
+                <span id="cancel" @click='hideLayout'>取消</span>
+                <span id="true">确定</span>
+            </div>
+            <ul>
+                <li v-for='item in staticData.selects' :id='item.id' @click='bindSelect'>{{ item.name }}</li>
+            </ul>
+        </div>
+    </div>
+    <!-- 教育 -->
+    <div class="add-box" v-if='talentEducation.flag'>
+        <div class='talentEducation'>
+            <div class='header'>
+                <img src="../../images/svg/left.svg" class="icon-40" @click='closeAddBox' />
+                <span class='tit'>教育背景</span>
+                <i></i>
+            </div>
+            <ul class='wrap-list'>
+    <!--             <li> <b>教育背景</b>
+                    <i @click='closeAddBox'>关闭</i>
+                </li> -->
+                <li>
+                    <div class='tit'>入学年月</div>
+                    <div class='con'>
+                        <button data-options='{"type":"month", "beginYear": 1980}' class="simulation-select one"  @click='talentEducationStartDate'>{{ talentEducation.startDate }}</button>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>毕业年月</div>
+                    <div class='con'>
+                        <button data-options='{"type":"month", "beginYear": 1980}' class="simulation-select one"  @click='talentEducationEndDate'>{{ talentEducation.endDate }}</button>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>学校名称</div>
+                    <div class='con'>
+                        <input type="text" class='input' placeholder="请输入学校名称" v-model='talentEducation.schoolName' />
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>专业名称</div>
+                    <div class='con'>
+                        <input type="text" class='input' placeholder="请输入专业名称" v-model='talentEducation.professional' />
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>学历/证书</div>
+                    <div class='con'>
+                        <input type="text" class='input' placeholder="请输入学历/证书编号" v-model='talentEducation.certificate' />
+                    </div>
+                </li>
+                <!-- <li>
+                    <p>
+                        <button @click='addTalentEducation' v-if='talentEducation.add'>添加</button>
+                        <button @click='modifyTalentEducation' v-if='talentEducation.edit'>修改</button>
+                        <button @click='removeTalentEducation' v-if='talentEducation.edit'>删除</button>
+                    </p>
+                </li> -->
+            </ul>
+            <input type="button" value='添加' v-if='talentEducation.add' class='btn btn-max btn-top'  @click='addTalentEducation' />
+            <input type="button" value='修改' v-if='talentEducation.edit' class='btn btn-max btn-top'  @click='modifyTalentEducation' />
+            <input type="button" value='删除' v-if='talentEducation.edit' class='btn btn-max btn-top'  @click='removeTalentEducation' />
+        </div>
+    </div>
+    <!-- 工作 -->
+    <div class="add-box" v-if='talentJob.flag'>
+        <div class='talentJob'>
+            <div class='header'>
+                <img src="../../images/svg/left.svg" class="icon-40" @click='closeAddBox' />
+                <span class='tit'>添加工作信息</span>
+                <i></i>
+            </div>
+            <ul class='wrap-list'>
+                <!-- <li> <b>添加工作信息</b>
+                    <i @click='closeAddBox'>关闭</i>
+                </li> -->
+                <li>
+                    <div class='tit'><span class='tips'>*</span>入职年月</div>
+                    <div class='con'>
+                        <button data-options='{"type":"month", "beginYear": 1980}' class="simulation-select one"  @click='talentJobStartDate'>{{ talentJob.startDate }}</button>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'><span class='tips'>*</span>离职年月</div>
+                    <div class='con'>
+                        <button data-options='{"type":"month", "beginYear": 1980}' class="simulation-select one"  @click='talentJobEndDate'>{{ talentJob.endDate }}</button>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'><span class='tips'>*</span>公司名称</div>
+                    <div class='con'>
+                        <input type="text" class='input' placeholder="请输入公司名称" v-model='talentJob.companyName' />
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'><span class='tips'>*</span>职务</div>
+                    <div class='con'>
+                        <input type="text" class='input' placeholder="请输入职务名称" v-model='talentJob.jobPost' />
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>原因</div>
+                    <div class='con'>
+                        <textarea placeholder="请输入离职原因" v-model='talentJob.leavingReason'></textarea>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>证明人</div>
+                    <div class='con'>
+                        <input type="text" class='input' placeholder="请输入证明人姓名" v-model='talentJob.reterence' />
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>证明人电话</div>
+                    <div class='con'>
+                        <input type="tel" class='input' maxlength="11" placeholder="请输入证明人电话" v-model='talentJob.reterenceTel' />
+                    </div>
+                </li>
+                <!-- <li>
+                    <p>
+                        <button @click='addTalentJob' v-if='talentJob.add'>添加</button>
+                        <button @click='modifyTalentJob' v-if='talentJob.edit'>修改</button>
+                        <button @click='removeTalentJob' v-if='talentJob.edit'>删除</button>
+                    </p>
+                </li> -->
+            </ul>
+            <input type="button" value='添加' v-if='talentJob.add' class='btn btn-max btn-top'  @click='addTalentJob' />
+            <input type="button" value='修改' v-if='talentJob.edit' class='btn btn-max btn-top'  @click='modifyTalentJob' />
+            <input type="button" value='删除' v-if='talentJob.edit' class='btn btn-max btn-top'  @click='removeTalentJob' />
+        </div>
+    </div>
+    <!-- 家庭 -->
+    <div class="add-box" v-if='talentFamily.flag'>
+        <div class='talentFamily'>
+            <div class='header'>
+                <img src="../../images/svg/left.svg" class="icon-40" @click='closeAddBox' />
+                <span class='tit'>添加家庭信息</span>
+                <i></i>
+            </div>
+            <ul class='wrap-list'>
+                <!-- <li>
+                    <b>添加家庭信息</b>
+                    <i @click='closeAddBox'>关闭</i>
+                </li> -->
+                <li>
+                    <div class='tit'><span class='tips'>*</span>姓名</div>
+                    <div class='con'>
+                        <input type="text" class='input' placeholder="请输入姓名" v-model='talentFamily.familyName' />
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'><span class='tips'>*</span>关系</div>
+                    <div class='con'>
+                        <input type="text" class='input' placeholder="请输入关系名称" v-model='talentFamily.relation' />
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>工作单位或地址</div>
+                    <div class='con'>
+                        <textarea placeholder="请输入工作单位或地址" style="min-width: 6rem;" v-model='talentFamily.company'></textarea>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>职务</div>
+                    <div class='con'>
+                        <input type="text" class='input' placeholder="请输入职务" v-model='talentFamily.familyPost' />
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'><span class='tips'>*</span>电话</div>
+                    <div class='con'>
+                        <input type="tel" class='input' maxlength="11" placeholder="请输入电话" v-model='talentFamily.telephone' />
+                    </div>
+                </li>
+                <!-- <li>
+                    <p>
+                        <button @click='addTalentFamily' v-if='talentFamily.add'>添加</button>
+                        <button @click='modifyTalentFamily' v-if='talentFamily.edit'>修改</button>
+                        <button @click='removeTalentFamily' v-if='talentFamily.edit'>删除</button>
+                    </p>
+                </li> -->
+            </ul>
+            <input type="button" value='添加' v-if='talentFamily.add' class='btn btn-max btn-top'  @click='addTalentFamily' />
+            <input type="button" value='修改' v-if='talentFamily.edit' class='btn btn-max btn-top'  @click='modifyTalentFamily' />
+            <input type="button" value='删除' v-if='talentFamily.edit' class='btn btn-max btn-top'  @click='removeTalentFamily' />
+        </div>
+    </div>
+    <!-- 简历 -->
+    <div class="add-box" v-if='talentDocument.flag'>
+        <div class='talentDocument'>
+            <div class='header'>
+                <img src="../../images/svg/left.svg" class="icon-40" @click='closeAddBox' />
+                <span class='tit'>添加简历信息</span>
+                <i></i>
+            </div>
+            <ul class='wrap-list'>
+                <!-- <li>
+                    <b>添加简历信息</b>
+                    <i @click='closeAddBox'>关闭</i>
+                </li> -->
+                <li>
+                    <div class='tit'><span class='tips'>*</span>名称</div>
+                    <div class='con'>
+                        <input type="text" class='input' placeholder="请输入附件名称" v-model='talentDocument.documentName' />
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>说明</div>
+                    <div class='con'>
+                        <textarea placeholder="请输入附件说明" v-model='talentDocument.documentExplain'></textarea>
+                    </div>
+                </li>
+                <!-- <li>
+                    <div class='tit'><span class='tips'>*</span>附件选择</div>
+                    <div class='con' style="flex-direction: column;">
+                        <input type="file" name="" multiple="multiple" class='input' style="width: 100px; height: 1.3rem !important;" @change='fileUplaod' />
+                        <p style="word-break: break-all; word-wrap: break-word; max-width: 6rem;" v-if='talentDocument.saveName'>{{ talentDocument.saveName }}</p>
+                    </div>
+                </li> -->
+                <li>
+                    <div class='tit'><i class='tips'>*</i>文件</div>
+                    <div class='con' style="flex-direction: column;">
+                        <div class='fileUplaodBox'>
+                            <input type="file" name="" multiple="multiple" class='input' @change='fileUplaod' />
+                            <span class="simulation-select one">{{ talentDocument.saveName }}</span>
+                        </div>
+                    </div>
+                </li>
+                <!-- <dl v-if='uploadObj.tempUrl.length != 0' class='minImg'>
+                    <dd v-for='imgUrl in uploadObj.tempUrl'>
+                        <img v-bind:src="isImg(imgUrl, 2)" />
+                    </dd>
+                </dl> -->
+                <!-- <li>
+                    <p>
+                        <button @click='addTalentDocument' v-if='talentDocument.add'>添加</button>
+                        <button @click='modifyTalentDocument' v-if='talentDocument.edit'>修改</button>
+                        <button @click='removeTalentDocument' v-if='talentDocument.edit'>删除</button>
+                    </p>
+                </li> -->
+            </ul>
+            <input type="button" value='添加' v-if='talentDocument.add' class='btn btn-max btn-top'  @click='addTalentDocument' />
+            <input type="button" value='修改' v-if='talentDocument.edit' class='btn btn-max btn-top'  @click='modifyTalentDocument' />
+            <input type="button" value='删除' v-if='talentDocument.edit' class='btn btn-max btn-top'  @click='removeTalentDocument' />
+        </div>
+    </div>
+    <div class='draw-box'>
+        <div class='tit'>请签名</div>
+        <div class='draw' data-width="375" data-height="580" data-border="0px solid #ddd" data-line-color="#000000" data-line-width="5" data-auto-fit="true"></div>
+        <div class='draw-btn'>
+            <button id="clearBtn">清除</button>
+            <button id="saveBtn">保存</button>
+        </div>
+    </div>
+</div>
+</body>
+<script src="../../js/mui.min.js"></script>
+<script src="../../js/vue.js"></script>
+<script src="../../js/axios.min.js"></script>
+<script src="../../js/mui.picker.js"></script>
+<script src="../../js/mui.poppicker.js"></script>
+<script src="../../js/mui.picker.min.js"></script>
+<script src="../../js/jquery.js"></script>
+<script src="../../js/jq-signature.min.js"></script>
+<script src="../../js/common.min.js?v.7"></script>
+<script>
+        // 校验app或wap
+        myInit(indexFun);
+        function indexFun() {
+            var resume = new Vue({
+                el: "#resume",
+                data : {
+                    interviewFlag: "",
+                    user: JSON.parse(myGetLocalStorage("user")),
+                    obj : {},
+                    mustInfo: {
+                        name : "",
+                        identityNo : "",
+                        mobile : "",
+                        recruitmentId : "",
+                        comeDate : "请选择",
+                        expectedIncome : "",
+                        defaultMobile: false,
+                        recruitmentName : "请选择",
+                        recruitmentFlag: false
+                    },
+                    baseInfo: {
+                        nation : "",
+                        origin : "",
+                        maritalStatus : "",
+                        maritalStatusName : "请选择",
+                        fertilityStatusName : "请选择",
+                        politicalStatusName : "请选择",
+                        fertilityStatus : "",
+                        drivingLicenseType : "",
+                        politicalStatus : "",
+                        qualification : "",
+                        address : "",
+                        mail : "",
+                        emergencyPerson : "",
+                        emergencyMobile : ""
+                    },
+                    acquaintance: {
+                        flag: false,
+                        haveAcquaintance : 0,
+                        haveCriminal : 0,
+                        haveFired : 0,
+                        haveDiseases : 0,
+                        haveCompetition : 0,
+                        acquaintanceName : "",
+                        acquaintanceDepartment : "",
+                        acquaintanceRelation : ""
+                    },
+                    // 添加教育信息
+                    talentEducation: {
+                        flag: false,
+                        startDate : "请选择",
+                        endDate : "请选择",
+                        schoolName : "",
+                        professional : "",
+                        certificate : "",
+                        edit: false,
+                        add: true
+                    },
+                    // 添加工作信息
+                    talentJob: {
+                        flag: false,
+                        edit: false,
+                        add: true,
+                        startDate : "请选择",
+                        endDate : "请选择",
+                        companyName : "",
+                        jobPost : "",
+                        leavingReason : "",
+                        reterence : "",
+                        reterenceTel : ""
+                    },
+                    // 添加家庭信息
+                    talentFamily: {
+                        flag: false,
+                        edit: false,
+                        add: true,
+                        familyName : "",
+                        relation : "",
+                        company : "",
+                        familyPost : "",
+                        telephone : ""
+                    },
+                    // 添加家庭信息
+                    talentDocument: {
+                        flag: false,
+                        edit: false,
+                        add: true,
+                        documentName: "",
+                        documentExplain: "",
+                        saveName: "选择文件",
+                        saveAddress: ""
+                    },
+                    signature: "",
+                    staticData: {
+                        selects : []
+                    },
+                    talentEducationRows: [],
+                    talentJobRows: [],
+                    talentFamilyRows: [],
+                    talentDocumentRows: [],
+                    systemTime: Date.parse(new Date()),
+                    urlMobile: "",
+                    urlRecruitmentId: "",
+                    urlRecruitmentName: "",
+                    localMobile : "",
+                    id: '',
+                    applyJobs: '',
+                    talentId: ''
+                },
+                methods: {
+                    // 先区url上的应聘职位信息，如果有传入localstorage，没有再去取local信息
+                    getApplyJobs: function () {
+                        var that = this
+                        that.urlRecruitmentId = zjzm.getQueryString("recruitmentId")
+                        if (that.urlRecruitmentId) {
+                            mySetLocalStorage("applyJobs", {
+                                recruitmentId: that.urlRecruitmentId,
+                                positionName: that.urlPositionName
+                            })
+                        }
+                        that.applyJobs = JSON.parse(myGetLocalStorage("applyJobs"))
+                        if (that.applyJobs) {
+                            that.mustInfo.recruitmentId = that.applyJobs.recruitmentId
+                            that.mustInfo.recruitmentFlag = true
+                            myLoading();
+                            axios({
+                                method: 'post',
+                                url: global.apiURL + '/recruitment/getRecruitmentByCondition.htm',
+                                params: {
+                                    isValid: 1,
+                                    systemTime: that.systemTime,
+                                    mobile: that.mustInfo.mobile
+                                }
+                            }).then(function (response) {
+                                var datas = response.data;
+                                if (datas.success) {
+                                    for (var i = 0; i < datas.data.length; i++) {
+                                        if (datas.data[i].id == that.mustInfo.recruitmentId) {
+                                            that.mustInfo.recruitmentName = datas.data[i].positionName
+                                        }
+                                    }
+                                } else {
+                                    myToast(datas.resultMsg);
+                                }
+                                myLoadingOver();
+                            }).catch(function (error) {
+                                myLoadingOver();
+                                //myToast(error);
+                            })
+                        }
+                    },
+                    // 获取简历信息
+                    getBaseInfo: function () {
+                        var that = this
+                        myLoading();
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + '/talent/getTalentByCondition.htm',
+                            params: {
+                                systemTime: that.systemTime,
+                                mobile: that.mustInfo.mobile
+                            }
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                setBaseInfo(datas.data[0])
+                                function setBaseInfo(datas) {
+                                    that.id = datas.id
+                                    that.talentId = datas.id
+                                    // 必填
+                                    that.mustInfo.name = datas.name
+                                    that.mustInfo.identityNo = datas.identityNo
+                                    that.mustInfo.mobile = datas.mobile
+                                    that.mustInfo.recruitmentId = datas.recruitmentId
+                                    that.mustInfo.recruitmentName = datas.recruitment.positionName
+                                    that.mustInfo.comeDate = zjzm.formatDate(datas.comeDate, "/")
+                                    that.mustInfo.expectedIncome = datas.expectedIncome
+                                    // 基本
+                                    that.baseInfo.nation = datas.nation
+                                    that.baseInfo.origin = datas.origin
+                                    that.baseInfo.maritalStatus = datas.maritalStatus
+                                    const arr1 = [
+                                        {id : "90", name: "未婚"},
+                                        {id : "91", name: "已婚"},
+                                        {id : "92", name: "离异"},
+                                        {id : "93", name: "丧偶"}
+                                    ]
+                                    for (var i = 0; i < arr1.length; i++) {
+                                        if (that.baseInfo.maritalStatus == arr1[i].id) {
+                                            that.baseInfo.maritalStatusName = arr1[i].name
+                                        }
+                                    }
+                                    that.baseInfo.fertilityStatus = datas.fertilityStatus
+                                    const arr2 = [
+                                        {id : "94", name: "未育"},
+                                        {id : "95", name: "一子"},
+                                        {id : "96", name: "二子及以上"}
+                                    ]
+                                    for (var i = 0; i < arr2.length; i++) {
+                                        if (that.baseInfo.fertilityStatus == arr2[i].id) {
+                                            that.baseInfo.fertilityStatusName = arr2[i].name
+                                        }
+                                    }
+                                    that.baseInfo.drivingLicenseType = datas.drivingLicenseType
+                                    that.baseInfo.politicalStatus = datas.politicalStatus
+                                    const arr3 = [
+                                        {id : "97", name: "党员"},
+                                        {id : "98", name: "预备党员"},
+                                        {id : "99", name: "民主党派"},
+                                        {id : "100", name: "群众"}
+                                    ]
+                                    for (var i = 0; i < arr3.length; i++) {
+                                        if (that.baseInfo.politicalStatus == arr3[i].id) {
+                                            that.baseInfo.politicalStatusName = arr3[i].name
+                                        }
+                                    }
+                                    that.baseInfo.qualification = datas.qualification
+                                    that.baseInfo.address = datas.address
+                                    that.baseInfo.mail = datas.mail
+                                    that.baseInfo.emergencyPerson = datas.emergencyPerson
+                                    that.baseInfo.emergencyMobile = datas.emergencyMobile
+                                    // 备注信息
+                                    that.acquaintance.haveAcquaintance = datas.haveAcquaintance
+                                    if (that.acquaintance.haveAcquaintance) {
+                                        that.acquaintance.flag = true
+                                    }
+                                    that.acquaintance.haveCriminal = datas.haveCriminal
+                                    that.acquaintance.haveFired = datas.haveFired
+                                    that.acquaintance.haveDiseases = datas.haveDiseases
+                                    that.acquaintance.haveCompetition = datas.haveCompetition
+                                    that.acquaintance.acquaintanceName = datas.acquaintanceName
+                                    that.acquaintance.acquaintanceDepartment = datas.acquaintanceDepartment
+                                    that.acquaintance.acquaintanceRelation = datas.acquaintanceRelation
+                                    that.signature = datas.signature
+
+                                    that.getApplyJobs()
+                                    that.getStudyList()
+                                    that.getJobList()
+                                    that.getFamilyList()
+                                    that.getDocumentList()
+                                }
+
+                            } else {
+                                //myToast(datas.resultMsg);
+                                that.getApplyJobs()
+                                that.getStudyList()
+                                that.getJobList()
+                                that.getFamilyList()
+                                that.getDocumentList()
+                            }
+                            myLoadingOver();
+                        }).catch(function (error) {
+                            myLoadingOver();
+                            //myToast(error);
+                        })
+
+                        // 判断是否是面试设定页面进来的
+                        that.interviewFlag = myGetLocalStorage("interviewFlag")
+                        if (that.interviewFlag) {
+                            jQuery("input[type='text']").each(function(index, el) {
+                                jQuery(this).attr("readonly", true);
+                            });
+                            jQuery(".simulation-select").each(function(index, el) {
+                                jQuery(this).attr("disabled", true);
+                            });
+                            jQuery("input[type='radio']").each(function(index, el) {
+                                jQuery(this).attr("disabled", true);
+                            });
+                            jQuery("h4 a").each(function(index, el) {
+                                jQuery(this).attr("disabled", true);
+                            });
+                        }
+                    },
+                    // 设置基本信息
+                    setBaseInfoOld: function (datas) {
+                        this.id = datas.id
+                        this.talentId = datas.id
+                        // 必填
+                        this.mustInfo.name = datas.name
+                        this.mustInfo.identityNo = datas.identityNo
+                        this.mustInfo.mobile = datas.mobile
+                        this.mustInfo.recruitmentId = datas.recruitmentId
+                        this.mustInfo.recruitmentName = datas.recruitment.positionName
+                        this.mustInfo.comeDate = zjzm.formatDate(datas.comeDate, "/")
+                        this.mustInfo.expectedIncome = datas.expectedIncome
+                        // 基本
+                        this.baseInfo.nation = datas.nation
+                        this.baseInfo.origin = datas.origin
+                        this.baseInfo.maritalStatus = datas.maritalStatus
+                        const arr1 = [
+                            {id : "90", name: "未婚"},
+                            {id : "91", name: "已婚"},
+                            {id : "92", name: "离异"},
+                            {id : "93", name: "丧偶"}
+                        ]
+                        for (var i = 0; i < arr1.length; i++) {
+                            if (this.baseInfo.maritalStatus == arr1[i].id) {
+                                this.baseInfo.maritalStatusName = arr1[i].name
+                            }
+                        }
+                        this.baseInfo.fertilityStatus = datas.fertilityStatus
+                        const arr2 = [
+                            {id : "94", name: "未育"},
+                            {id : "95", name: "一子"},
+                            {id : "96", name: "二子及以上"}
+                        ]
+                        for (var i = 0; i < arr2.length; i++) {
+                            if (this.baseInfo.fertilityStatus == arr2[i].id) {
+                                this.baseInfo.fertilityStatusName = arr2[i].name
+                            }
+                        }
+                        this.baseInfo.drivingLicenseType = datas.drivingLicenseType
+                        this.baseInfo.politicalStatus = datas.politicalStatus
+                        const arr3 = [
+                            {id : "97", name: "党员"},
+                            {id : "98", name: "预备党员"},
+                            {id : "99", name: "民主党派"},
+                            {id : "100", name: "群众"}
+                        ]
+                        for (var i = 0; i < arr3.length; i++) {
+                            if (this.baseInfo.politicalStatus == arr3[i].id) {
+                                this.baseInfo.politicalStatusName = arr3[i].name
+                            }
+                        }
+                        this.baseInfo.qualification = datas.qualification
+                        this.baseInfo.address = datas.address
+                        this.baseInfo.mail = datas.mail
+                        this.baseInfo.emergencyPerson = datas.emergencyPerson
+                        this.baseInfo.emergencyMobile = datas.emergencyMobile
+                        // 备注信息
+                        this.acquaintance.haveAcquaintance = datas.haveAcquaintance
+                        if (this.acquaintance.haveAcquaintance) {
+                            this.acquaintance.flag = true
+                        }
+                        this.acquaintance.haveCriminal = datas.haveCriminal
+                        this.acquaintance.haveFired = datas.haveFired
+                        this.acquaintance.haveDiseases = datas.haveDiseases
+                        this.acquaintance.haveCompetition = datas.haveCompetition
+                        this.acquaintance.acquaintanceName = datas.acquaintanceName
+                        this.acquaintance.acquaintanceDepartment = datas.acquaintanceDepartment
+                        this.acquaintance.acquaintanceRelation = datas.acquaintanceRelation
+                        this.signature = datas.signature
+
+
+                        this.getApplyJobs()
+                    },
+                    // 时间戳
+                    stamp: function () {
+                        if (myGetLocalStorage("systemTime")) {
+                            this.systemTime = myGetLocalStorage("systemTime")
+                        } else {
+                            mySetLocalStorage("systemTime", this.systemTime)
+                        }
+                    },
+                    // 获取的手机号
+                    getMobile: function () {
+                        this.urlMobile = zjzm.getQueryString("mobile")
+                        this.localMobile = myGetLocalStorage("localMobile")
+
+                        // 先取本地再取url最后去localstorge
+                        if (this.urlMobile) {
+                            this.mustInfo.mobile = this.urlMobile
+                            this.mustInfo.defaultMobile = true
+                        } else if (this.user) {
+                            this.mustInfo.mobile = this.user.mobile
+                            this.mustInfo.defaultMobile = true
+                        }else if(this.localMobile) {
+                            this.mustInfo.mobile = this.localMobile
+                            this.mustInfo.defaultMobile = true
+                        }
+                    },
+                    goBack: function () {
+                        // 历史url
+                        var historyUrl = myGetLocalStorage("curr")
+                        if (historyUrl) {
+                            myOpenWindow(historyUrl, "")
+                            myRemoveLocalStorage("interviewFlag")
+                            myRemoveLocalStorage("applyJobs")
+                        } else {
+                            zjzm.historyUrl("/tpl/home/home.html", 'home')
+                        }
+                    },
+                    // 加载应聘职位
+                    recruitment: function (e) {
+                        if (!e.target.attributes.disabled) {
+                            var box = document.querySelector(".select-dialog ul");
+                            document.querySelector(".select-dialog").style.display = "block";
+                            document.querySelector(".select-dialog").setAttribute("id", "recruitment");
+                            // 获取应聘职位
+                            var that = this
+                            myLoading();
+                            axios({
+                                method: 'post',
+                                url: global.apiURL + '/recruitment/getRecruitmentByCondition.htm',
+                                params: {
+                                    isValid: 1,
+                                    systemTime: that.systemTime,
+                                    mobile: that.mustInfo.mobile
+                                }
+                            }).then(function (response) {
+                                var datas = response.data;
+                                if (datas.success) {
+                                    //that.selects = []
+                                    var tempArr = []
+                                    for (var i = 0; i < datas.data.length; i++) {
+                                        var objTemp = {}
+                                        objTemp.id = datas.data[i].id
+                                        objTemp.name = datas.data[i].positionName
+                                        tempArr.push(objTemp)
+                                    }
+                                    that.$set(that.staticData, "selects", tempArr)
+                                } else {
+                                    myToast(datas.resultMsg);
+                                }
+                                myLoadingOver();
+                            }).catch(function (error) {
+                                myLoadingOver();
+                                //myToast(error);
+                            })
+                        }
+                    },
+                    maritalStatus: function (e) {
+                        if (!e.target.attributes.disabled) {
+                            var box = document.querySelector(".select-dialog ul");
+                            document.querySelector(".select-dialog").style.display = "block";
+                            document.querySelector(".select-dialog").setAttribute("id", "maritalStatus");
+                            this.staticData.selects = [
+                                {id : "90", name: "未婚"},
+                                {id : "91", name: "已婚"},
+                                {id : "92", name: "离异"},
+                                {id : "93", name: "丧偶"}
+                            ]
+                        }
+                    },
+                    fertilityStatus: function (e) {
+                        if (!e.target.attributes.disabled) {
+                            var box = document.querySelector(".select-dialog ul");
+                            document.querySelector(".select-dialog").style.display = "block";
+                            document.querySelector(".select-dialog").setAttribute("id", "fertilityStatus");
+                            this.staticData.selects = [
+                                {id : "94", name: "未育"},
+                                {id : "95", name: "一子"},
+                                {id : "96", name: "二子及以上"}
+                            ]
+                        }
+                    },
+                    politicalStatus: function (e) {
+                        if (!e.target.attributes.disabled) {
+                            var box = document.querySelector(".select-dialog ul");
+                            document.querySelector(".select-dialog").style.display = "block";
+                            document.querySelector(".select-dialog").setAttribute("id", "politicalStatus");
+                            this.staticData.selects = [
+                                {id : "97", name: "党员"},
+                                {id : "98", name: "预备党员"},
+                                {id : "99", name: "民主党派"},
+                                {id : "100", name: "群众"}
+                            ]
+                        }
+                    },
+                    // 到岗日期
+                    comeDate: function (e) {
+                        var that = e.target;
+                        this.dataPicker(that, "comeDate")
+                    },
+                    // 教育开始日期
+                    talentEducationStartDate: function (e) {
+                        var that = e.target;
+                        this.dataPicker(that, "talentEducationStartDate")
+                    },
+                    // 教育结束日期
+                    talentEducationEndDate: function (e) {
+                        var that = e.target;
+                        this.dataPicker(that, "talentEducationEndDate")
+                    },
+                    // 获取教育列表
+                    getStudyList: function () {
+                        var that = this
+                        myLoading();
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + '/talent/getTalentEducationByCondition.htm',
+                            params: {
+                                talentId: that.talentId,
+                                systemTime: that.systemTime,
+                                mobile: that.mustInfo.mobile
+                            }
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                that.talentEducationRows = datas.data
+                            } else {
+                                that.talentEducationRows = []
+                                //myToast(datas.resultMsg);
+                            }
+                            myLoadingOver();
+                        }).catch(function (error) {
+                            myLoadingOver();
+                            //myToast(error);
+                        })
+                    },
+                    // 编辑教育信息
+                    editTalentEducation: function (item) {
+                        if (!this.interviewFlag) {
+                            this.talentEducation.flag = true
+                            this.talentEducation.no= item.no
+                            this.talentEducation.startDate = zjzm.formatDate(item.startDate, "/")
+                            this.talentEducation.endDate = zjzm.formatDate(item.endDate, "/")
+                            this.talentEducation.schoolName = item.schoolName
+                            this.talentEducation.professional = item.professional
+                            this.talentEducation.certificate = item.certificate
+                            this.talentEducation.id = item.id
+                            if(item.talentId){
+                                this.talentEducation.talentId = item.talentId
+                            }else{
+                                this.talentEducation.talentId = ""
+                            }
+                            this.talentEducation.edit = true
+                            this.talentEducation.add = false
+                        }
+                    },
+                    // 添加教育信息
+                    addStudyInfo: function (e) {
+                        if (!e.target.attributes.disabled) {
+                            this.talentEducation.flag = true
+                            this.talentEducation.startDate = "请选择"
+                            this.talentEducation.endDate = "请选择"
+                            this.talentEducation.schoolName = ""
+                            this.talentEducation.professional = ""
+                            this.talentEducation.certificate = ""
+                            this.talentEducation.edit = false
+                            this.talentEducation.add = true
+                        }
+                    },
+                    addTalentEducation: function () {
+                        var that = this
+                        if (that.talentEducation.startDate == "请选择") {
+                            myToast("请选择入学年份");
+                        } else if (that.talentEducation.endDate == "请选择") {
+                            myToast("请选择毕业年份");
+                        } else if (!that.talentEducation.schoolName) {
+                            myToast("请输入学校名称");
+                        } else if (!that.talentEducation.professional) {
+                            myToast("请输入专业名称");
+                        } else if (!that.talentEducation.certificate) {
+                            myToast("请输入学历/证书编号");
+                        } else {
+                            that.talentEducation.startDate = resume.$data.talentEducation.startDate.replace("/", '')
+                            that.talentEducation.endDate = resume.$data.talentEducation.endDate.replace("/", '')
+                            myLoading();
+                            axios({
+                                method: 'post',
+                                url: global.apiURL + '/talent/insertTalentEducation.htm',
+                                params: {
+                                    no: that.talentEducation.no,
+                                    talentId: that.talentId,
+                                    companyId: 1,
+                                    educationStartDate : that.talentEducation.startDate,
+                                    educationEndDate : that.talentEducation.endDate,
+                                    schoolName : that.talentEducation.schoolName,
+                                    professional : that.talentEducation.professional,
+                                    certificate : that.talentEducation.certificate,
+                                    systemTime: that.systemTime,
+                                    mobile: that.mustInfo.mobile
+                                }
+                            }).then(function (response) {
+                                var datas = response.data;
+                                if (datas.success) {
+                                    myToast("添加成功");
+                                    that.talentEducation.flag = false
+                                    that.getStudyList();
+                                } else {
+                                    myToast(datas.resultMsg);
+                                }
+                                myLoadingOver();
+                            }).catch(function (error) {
+                                myLoadingOver();
+                                //myToast(error);
+                            })
+                        }
+                    },
+                    modifyTalentEducation: function () {
+                        var that = this
+                        if (that.talentEducation.startDate == "请选择") {
+                            myToast("请选择入学年份");
+                        } else if (that.talentEducation.endDate == "请选择") {
+                            myToast("请选择毕业年份");
+                        } else if (!that.talentEducation.schoolName) {
+                            myToast("请输入学校名称");
+                        } else if (!that.talentEducation.professional) {
+                            myToast("请输入专业名称");
+                        } else if (!that.talentEducation.certificate) {
+                            myToast("请输入学历/证书编号");
+                        } else {
+                            that.talentEducation.startDate = resume.$data.talentEducation.startDate.replace("/", '')
+                            that.talentEducation.endDate = resume.$data.talentEducation.endDate.replace("/", '')
+                            myLoading();
+                            axios({
+                                method: 'post',
+                                url: global.apiURL + '/talent/updateTalentEducation.htm',
+                                params: {
+                                    companyId:1,
+                                    no: that.talentEducation.no,
+                                    talentId: that.talentId,
+                                    id: that.talentEducation.id,
+                                    talentId: that.talentEducation.talentId,
+                                    educationStartDate : that.talentEducation.startDate,
+                                    educationEndDate : that.talentEducation.endDate,
+                                    schoolName : that.talentEducation.schoolName,
+                                    professional : that.talentEducation.professional,
+                                    certificate : that.talentEducation.certificate,
+                                    systemTime: that.systemTime,
+                                    mobile: that.mustInfo.mobile
+                                }
+                            }).then(function (response) {
+                                var datas = response.data;
+                                if (datas.success) {
+                                    myToast("修改成功");
+                                    that.talentEducation.flag = false
+                                    that.getStudyList();
+                                } else {
+                                    myToast(datas.resultMsg);
+                                }
+                                myLoadingOver();
+                            }).catch(function (error) {
+                                myLoadingOver();
+                                //myToast(error);
+                            })
+                        }
+                    },
+                    removeTalentEducation: function () {
+                        var that = this
+                        myLoading();
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + '/talent/deleteTalentEducation.htm',
+                            params: {
+                                no: that.talentEducation.no,
+                                id: that.talentEducation.id,
+                                talentId: that.talentId,
+                                systemTime: that.systemTime,
+                                mobile: that.mustInfo.mobile
+                            }
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                myToast("删除成功");
+                                that.talentEducation.flag = false
+                                that.getStudyList();
+                            } else {
+                                myToast(datas.resultMsg);
+                            }
+                            myLoadingOver();
+                        }).catch(function (error) {
+                            myLoadingOver();
+                            //myToast(error);
+                        })
+                    },
+                    // 工作开始日期
+                    talentJobStartDate: function (e) {
+                        var that = e.target;
+                        this.dataPicker(that, "talentJobStartDate")
+                    },
+                    // 工作结束日期
+                    talentJobEndDate: function (e) {
+                        var that = e.target;
+                        this.dataPicker(that, "talentJobEndDate")
+                    },
+                    // 获取工作列表
+                    getJobList: function () {
+                        var that = this
+                        myLoading();
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + '/talent/getTalentJobByCondition.htm',
+                            params: {
+                                talentId: that.talentId,
+                                systemTime: that.systemTime,
+                                mobile: that.mustInfo.mobile
+                            }
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                that.talentJobRows = datas.data
+                            } else {
+                                that.talentJobRows = []
+                                //myToast(datas.resultMsg);
+                            }
+                            myLoadingOver();
+                        }).catch(function (error) {
+                            myLoadingOver();
+                            //myToast(error);
+                        })
+                    },
+                    // 编辑工作信息
+                    editTalentJob: function (item) {
+                        if (!this.interviewFlag) {
+                            this.talentJob.flag = true
+                            this.talentJob.startDate = zjzm.formatDate(item.startDate, "/")
+                            this.talentJob.endDate = zjzm.formatDate(item.endDate, "/")
+                            this.talentJob.companyName = item.companyName
+                            this.talentJob.jobPost = item.post
+                            this.talentJob.leavingReason = item.leavingReason
+                            this.talentJob.reterence = item.reterence
+                            this.talentJob.reterenceTel = item.reterenceTel
+
+                            this.talentJob.id = item.id
+                            this.talentJob.no = item.no
+                            if(item.talentId){
+                                this.talentJob.talentId = item.talentId
+                            }else{
+                                this.talentJob.talentId = ""
+                            }
+                            this.talentJob.edit = true
+                            this.talentJob.add = false
+                        }
+                    },
+                    // 添加工作信息
+                    addWorkInfo: function (e) {
+                        if (!e.target.attributes.disabled) {
+                            this.talentJob.flag = true
+                            this.talentJob.startDate = "请选择"
+                            this.talentJob.endDate = "请选择"
+                            this.talentJob.companyName = ""
+                            this.talentJob.jobPost = ""
+                            this.talentJob.leavingReason = ""
+                            this.talentJob.reterence = ""
+                            this.talentJob.reterenceTel = ""
+                            this.talentJob.edit = false
+                            this.talentJob.add = true
+                        }
+                    },
+                    addTalentJob: function () {
+                        var that = this
+                        if (that.talentJob.startDate == "请选择") {
+                            myToast("请选择入职年月");
+                        } else if (that.talentJob.endDate == "请选择") {
+                            myToast("请选择离职年月");
+                        } else if (!that.talentJob.companyName) {
+                            myToast("请输入公司名称");
+                        } else if (!that.talentJob.jobPost) {
+                            myToast("请输入职务名称");
+                        }
+                        // else if (!that.talentJob.leavingReason) {
+                        //     myToast("请输入离职原因");
+                        // } else if (!that.talentJob.reterence) {
+                        //     myToast("请输入证明人姓名");
+                        // } else if (!zjzm.mobileValidate(that.talentJob.reterenceTel)) {
+                        //     myToast("请输入正确的证明人电话");
+                        // }
+                        else {
+                            that.talentJob.startDate = resume.$data.talentJob.startDate.replace("/", '')
+                            that.talentJob.endDate = resume.$data.talentJob.endDate.replace("/", '')
+                            myLoading();
+                            axios({
+                                method: 'post',
+                                url: global.apiURL + '/talent/insertTalentJob.htm',
+                                params: {
+                                    companyId: 1,
+                                    no : that.talentJob.no,
+                                    talentId: that.talentId,
+                                    jobStartDate : that.talentJob.startDate,
+                                    jobEndDate : that.talentJob.endDate,
+                                    companyName : that.talentJob.companyName,
+                                    jobPost : that.talentJob.jobPost,
+                                    leavingReason : that.talentJob.leavingReason,
+                                    reterence : that.talentJob.reterence,
+                                    reterenceTel : that.talentJob.reterenceTel,
+                                    systemTime: that.systemTime,
+                                    mobile: that.mustInfo.mobile
+                                }
+                            }).then(function (response) {
+                                var datas = response.data;
+                                if (datas.success) {
+                                    myToast("添加成功");
+                                    that.talentJob.flag = false
+                                    that.getJobList();
+                                } else {
+                                    myToast(datas.resultMsg);
+                                }
+                                myLoadingOver();
+                            }).catch(function (error) {
+                                myLoadingOver();
+                                //myToast(error);
+                            })
+                        }
+                    },
+                    modifyTalentJob: function () {
+                        var that = this
+                        if (that.talentJob.startDate == "请选择") {
+                            myToast("请选择入职年月");
+                        } else if (that.talentJob.endDate == "请选择") {
+                            myToast("请选择离职年月");
+                        } else if (!that.talentJob.companyName) {
+                            myToast("请输入公司名称");
+                        } else if (!that.talentJob.jobPost) {
+                            myToast("请输入职务名称");
+                        } else if (!that.talentJob.leavingReason) {
+                            myToast("请输入离职原因");
+                        } else if (!that.talentJob.reterence) {
+                            myToast("请输入证明人姓名");
+                        } else if (!zjzm.mobileValidate(that.talentJob.reterenceTel)) {
+                            myToast("请输入正确的证明人电话");
+                        } else {
+                            that.talentJob.startDate = resume.$data.talentJob.startDate.replace("/", '')
+                            that.talentJob.endDate = resume.$data.talentJob.endDate.replace("/", '')
+                            myLoading();
+                            axios({
+                                method: 'post',
+                                url: global.apiURL + '/talent/updateTalentJob.htm',
+                                params: {
+                                    companyId:1,
+                                    no: that.talentJob.no,
+                                    talentId: that.talentId,
+                                    id: that.talentJob.id,
+                                    talentId: that.talentJob.talentId,
+                                    jobStartDate : that.talentJob.startDate,
+                                    jobEndDate : that.talentJob.endDate,
+                                    companyName : that.talentJob.companyName,
+                                    jobPost : that.talentJob.jobPost,
+                                    leavingReason : that.talentJob.leavingReason,
+                                    reterence : that.talentJob.reterence,
+                                    reterenceTel : that.talentJob.reterenceTel,
+                                    systemTime: that.systemTime,
+                                    mobile: that.mustInfo.mobile
+                                }
+                            }).then(function (response) {
+                                var datas = response.data
+                                if (datas.success) {
+                                    myToast("修改成功")
+                                    that.talentJob.flag = false
+                                    that.getJobList()
+                                } else {
+                                    myToast(datas.resultMsg);
+                                }
+                                myLoadingOver();
+                            }).catch(function (error) {
+                                myLoadingOver();
+                                //myToast(error);
+                            })
+                        }
+                    },
+                    removeTalentJob: function () {
+                        var that = this
+                        myLoading();
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + '/talent/deleteTalentJob.htm',
+                            params: {
+                                no: that.talentJob.no,
+                                talentId: that.talentId,
+                                id: that.talentJob.id,
+                                systemTime: that.systemTime,
+                                mobile: that.mustInfo.mobile
+                            }
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                myToast("删除成功");
+                                that.talentJob.flag = false
+                                that.getJobList()
+                            } else {
+                                myToast(datas.resultMsg);
+                            }
+                            myLoadingOver();
+                        }).catch(function (error) {
+                            myLoadingOver();
+                            //myToast(error);
+                        })
+                    },
+                    // 获取家庭列表
+                    getFamilyList: function () {
+                        var that = this
+                        myLoading();
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + '/talent/getTalentFamilyByCondition.htm',
+                            params: {
+                                talentId: that.talentId,
+                                systemTime: that.systemTime,
+                                mobile: that.mustInfo.mobile
+                            }
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                that.talentFamilyRows = datas.data
+                            } else {
+                                that.talentFamilyRows = []
+                                //myToast(datas.resultMsg);
+                            }
+                            myLoadingOver();
+                        }).catch(function (error) {
+                            myLoadingOver();
+                            //myToast(error);
+                        })
+                    },
+                    // 编辑家庭信息
+                    editTalentFamily: function (item) {
+                        if (!this.interviewFlag) {
+                            this.talentFamily.flag = true
+                            this.talentFamily.no= item.no
+                            this.talentFamily.familyName = item.name
+                            this.talentFamily.relation = item.relation
+                            this.talentFamily.company = item.company
+                            this.talentFamily.familyPost = item.post
+                            this.talentFamily.telephone = item.telephone
+
+                            this.talentFamily.id = item.id
+                            if(item.talentId){
+                                this.talentFamily.talentId = item.talentId
+                            }else{
+                                this.talentFamily.talentId = ""
+                            }
+                            this.talentFamily.edit = true
+                            this.talentFamily.add = false
+                        }
+                    },
+                    // 添加家庭信息
+                    addFamilyInfo: function (e) {
+                        if (!e.target.attributes.disabled) {
+                            this.talentFamily.flag = true
+                            this.talentFamily.familyName = ""
+                            this.talentFamily.relation = ""
+                            this.talentFamily.company = ""
+                            this.talentFamily.familyPost = ""
+                            this.talentFamily.telephone = ""
+                            this.talentFamily.edit = false
+                            this.talentFamily.add = true
+                        }
+                    },
+                    addTalentFamily: function () {
+                        var that = this
+                        if (!that.talentFamily.familyName) {
+                            myToast("请输入姓名");
+                        } else if (!that.talentFamily.relation) {
+                            myToast("请输入关系");
+                        }
+                        // else if (!that.talentFamily.company) {
+                        //     myToast("请输入工作单位或地址");
+                        // } else if (!that.talentFamily.familyPost) {
+                        //     myToast("请输入职务");
+                        // }
+                        else if (!zjzm.mobileValidate(that.talentFamily.telephone)) {
+                            myToast("请输入正确电话号码");
+                        } else {
+                            myLoading();
+                            axios({
+                                method: 'post',
+                                url: global.apiURL + '/talent/insertTalentFamily.htm',
+                                params: {
+                                    companyId:1,
+                                    no: that.talentFamily.no,
+                                    talentId: that.talentId,
+                                    //intCompany : that.talentFamily.intCompany,
+                                    familyName : that.talentFamily.familyName,
+                                    relation : that.talentFamily.relation,
+                                    company : that.talentFamily.company,
+                                    familyPost : that.talentFamily.familyPost,
+                                    telephone : that.talentFamily.telephone,
+                                    systemTime: that.systemTime,
+                                    mobile: that.mustInfo.mobile
+                                }
+                            }).then(function (response) {
+                                var datas = response.data;
+                                if (datas.success) {
+                                    myToast("添加成功")
+                                    that.talentFamily.flag = false
+                                    that.getFamilyList()
+                                } else {
+                                    myToast(datas.resultMsg);
+                                }
+                                myLoadingOver();
+                            }).catch(function (error) {
+                                myLoadingOver();
+                                //myToast(error);
+                            })
+                        }
+                    },
+                    modifyTalentFamily: function () {
+                        var that = this
+                        if (!that.talentFamily.familyName) {
+                            myToast("请输入姓名");
+                        } else if (!that.talentFamily.relation) {
+                            myToast("请输入关系");
+                        } else if (!that.talentFamily.company) {
+                            myToast("请输入工作单位或地址");
+                        } else if (!that.talentFamily.familyPost) {
+                            myToast("请输入职务");
+                        } else if (!zjzm.mobileValidate(that.talentFamily.telephone)) {
+                            myToast("请输入正确电话号码");
+                        } else {
+                            myLoading();
+                            axios({
+                                method: 'post',
+                                url: global.apiURL + '/talent/updateTalentFamily.htm',
+                                params: {
+                                    id: that.talentFamily.id,
+                                    talentId: that.talentId,
+                                    talentId: that.talentFamily.talentId,
+                                    companyId:1,
+                                    no: that.talentFamily.no,
+                                    familyName : that.talentFamily.familyName,
+                                    relation : that.talentFamily.relation,
+                                    company : that.talentFamily.company,
+                                    familyPost : that.talentFamily.familyPost,
+                                    telephone : that.talentFamily.telephone,
+                                    systemTime: that.systemTime,
+                                    mobile: that.mustInfo.mobile
+                                }
+                            }).then(function (response) {
+                                var datas = response.data;
+                                if (datas.success) {
+                                    myToast("修改成功")
+                                    that.talentFamily.flag = false
+                                    that.getFamilyList()
+                                } else {
+                                    myToast(datas.resultMsg);
+                                }
+                                myLoadingOver();
+                            }).catch(function (error) {
+                                myLoadingOver();
+                                //myToast(error);
+                            })
+                        }
+                    },
+                    removeTalentFamily: function () {
+                        var that = this
+                        myLoading();
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + '/talent/deleteTalentFamily.htm',
+                            params: {
+                                no: that.talentFamily.no,
+                                talentId: that.talentId,
+                                id: that.talentFamily.id,
+                                systemTime: that.systemTime,
+                                mobile: that.mustInfo.mobile
+                            }
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                myToast("删除成功")
+                                that.talentFamily.flag = false
+                                that.getFamilyList()
+                            } else {
+                                myToast(datas.resultMsg);
+                            }
+                            myLoadingOver();
+                        }).catch(function (error) {
+                            myLoadingOver();
+                            //myToast(error);
+                        })
+                    },
+                    // 获取简历列表
+                    getDocumentList: function () {
+                        var that = this
+                        myLoading();
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + '/talent/getTalentDocumentByCondition.htm',
+                            params: {
+                                talentId: that.talentId,
+                                systemTime: that.systemTime,
+                                mobile: that.mustInfo.mobile
+                            }
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                that.talentDocumentRows = datas.data
+                            } else {
+                                that.talentDocumentRows = []
+                                //myToast(datas.resultMsg);
+                            }
+                            myLoadingOver();
+                        }).catch(function (error) {
+                            myLoadingOver();
+                            //myToast(error);
+                        })
+                    },
+                    // 编辑简历信息
+                    editTalentDocument: function (item) {
+                        if (!this.interviewFlag) {
+                            this.talentDocument.flag = true
+                            this.talentDocument.no= item.no
+                            this.talentDocument.documentName = item.documentName
+                            this.talentDocument.documentExplain = item.documentExplain
+                            this.talentDocument.saveName = item.saveName
+                            this.talentDocument.saveAddress = item.saveAddress
+
+                            this.talentDocument.id = item.id
+                            if(item.talentId){
+                                this.talentEducation.talentId = item.talentId
+                            } else{
+                                this.talentEducation.talentId = ""
+                            }
+                            this.talentDocument.edit = true
+                            this.talentDocument.add = false
+                        }
+                    },
+                    // 添加简历信息
+                    addResumeInfo: function (e) {
+                        if (!e.target.attributes.disabled) {
+                            this.talentDocument.flag = true
+                            this.talentDocument.documentName = ""
+                            this.talentDocument.documentExplain = ""
+                            this.talentDocument.saveName = "选择文件"
+                            this.talentDocument.saveAddress = ""
+                            this.talentDocument.edit = false
+                            this.talentDocument.add = true
+                        }
+                    },
+                    addTalentDocument: function () {
+                        var that = this
+                        if (!that.talentDocument.documentName) {
+                            myToast("请输入附件名称");
+                        }
+                        // else if (!that.talentDocument.documentExplain) {
+                        //     myToast("请输入附件说明");
+                        // }
+                        else if (!that.talentDocument.saveName || !that.talentDocument.saveAddress) {
+                            myToast("请选择附件");
+                        } else {
+                            myLoading();
+                            axios({
+                                method: 'post',
+                                url: global.apiURL + '/talent/insertTalentDocument.htm',
+                                params: {
+                                    documentName : that.talentDocument.documentName,
+                                    talentId: that.talentId,
+                                    companyId: 1,
+                                    documentExplain : that.talentDocument.documentExplain,
+                                    saveName : that.talentDocument.saveName,
+                                    saveAddress : that.talentDocument.saveAddress,
+                                    systemTime: that.systemTime,
+                                    mobile: that.mustInfo.mobile
+                                }
+                            }).then(function (response) {
+                                var datas = response.data;
+                                if (datas.success) {
+                                    myToast("添加成功")
+                                    that.talentDocument.flag = false
+                                    that.getDocumentList()
+                                } else {
+                                    myToast(datas.resultMsg);
+                                }
+                                myLoadingOver();
+                            }).catch(function (error) {
+                                myLoadingOver();
+                                //myToast(error);
+                            })
+                        }
+                    },
+                    modifyTalentDocument: function () {
+                        var that = this
+                        if (!that.talentDocument.documentName) {
+                            myToast("请输入附件名称");
+                        } else if (!that.talentDocument.documentExplain) {
+                            myToast("请输入附件说明");
+                        } else if (!that.talentDocument.saveName || !that.talentDocument.saveAddress) {
+                            myToast("请选择附件");
+                        } else {
+                            myLoading();
+                            axios({
+                                method: 'post',
+                                url: global.apiURL + '/talent/updateTalentDocument.htm',
+                                params: {
+                                    id: that.talentDocument.id,
+                                    talentId: that.talentId,
+                                    no: that.talentDocument.no,
+                                    companyId: 1,
+                                    talentId: that.talentDocument.talentId,
+                                    documentName : that.talentDocument.documentName,
+                                    documentExplain : that.talentDocument.documentExplain,
+                                    saveName : that.talentDocument.saveName,
+                                    saveAddress : that.talentDocument.saveAddress,
+                                    systemTime: that.systemTime,
+                                    mobile: that.mustInfo.mobile
+                                }
+                            }).then(function (response) {
+                                var datas = response.data;
+                                if (datas.success) {
+                                    myToast("修改成功")
+                                    that.talentDocument.flag = false
+                                    that.getDocumentList()
+                                } else {
+                                    myToast(datas.resultMsg);
+                                }
+                                myLoadingOver();
+                            }).catch(function (error) {
+                                myLoadingOver();
+                                //myToast(error);
+                            })
+                        }
+                    },
+                    removeTalentDocument: function () {
+                        var that = this
+                        myLoading();
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + '/talent/deleteTalentDocument.htm',
+                            params: {
+                                id: that.talentDocument.id,
+                                companyId: 1,
+                                talentId: that.talentId,
+                                no: that.talentDocument.no,
+                                systemTime: that.systemTime,
+                                mobile: that.mustInfo.mobile
+                            }
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                myToast("删除成功")
+                                that.talentDocument.flag = false
+                                that.getDocumentList()
+                            } else {
+                                myToast(datas.resultMsg);
+                            }
+                            myLoadingOver();
+                        }).catch(function (error) {
+                            //myToast(error);
+                            myLoadingOver();
+                        })
+                    },
+                    // 是否有在本公司熟悉的人
+                    isAcquaintance :function () {
+                        this.acquaintance.flag = true
+                        this.acquaintance.haveAcquaintance = 1
+                    },
+                    noAcquaintance :function () {
+                        this.acquaintance.flag = false
+                        this.acquaintance.haveAcquaintance = 0
+                    },
+                    // 是否有犯罪记录
+                    ishaveCriminal :function () {
+                        this.acquaintance.haveCriminal = 1
+                    },
+                    nohaveCriminal :function () {
+                        this.acquaintance.haveCriminal = 0
+                    },
+                    // 曾被解雇过吗
+                    ishaveFired :function () {
+                        this.acquaintance.haveFired = 1
+                    },
+                    nohaveFired :function () {
+                        this.acquaintance.haveFired = 0
+                    },
+                    // 是否患有先天性重大疾病或传染性疾病或身体残疾
+                    ishaveDiseases :function () {
+                        this.acquaintance.haveDiseases = 1
+                    },
+                    nohaveDiseases :function () {
+                        this.acquaintance.haveDiseases = 0
+                    },
+                    // 是否签署目前仍有效的“竞业禁止”协议或相关劳动条款?
+                    ishaveCompetition :function () {
+                        this.acquaintance.haveCompetition = 1
+                    },
+                    nohaveCompetition :function () {
+                        this.acquaintance.haveCompetition = 0
+                    },
+                    // 弹出层空白隐藏
+                    hideLayout: function (e) {
+                        document.querySelector(".select-dialog").style.display = "none";
+                        this.staticData.selects = []
+                        e.preventDefault();
+                    },
+                    // 弹出菜单选择
+                    bindSelect: function (e) {
+                        var boxId = document.querySelector(".select-dialog").getAttribute("id")
+                        var id = e.target.id
+                        var name = e.target.innerHTML
+                        if (boxId == "recruitment") {
+                            this.mustInfo.recruitmentId = id
+                            this.mustInfo.recruitmentName = name
+                        } else if (boxId == "maritalStatus") {
+                            this.baseInfo.maritalStatus = id
+                            this.baseInfo.maritalStatusName = name
+                        } else if (boxId == "fertilityStatus") {
+                            this.baseInfo.fertilityStatus = id
+                            this.baseInfo.fertilityStatusName = name
+                        } else if (boxId == "politicalStatus") {
+                            this.baseInfo.politicalStatus = id
+                            this.baseInfo.politicalStatusName = name
+                        }
+                        document.querySelector(".select-dialog").style.display = "none";
+                        this.staticData.selects = []
+                        //document.querySelector(".select-dialog ul").innerHTML = "";
+                    },
+                    // 日期选择
+                    dataPicker: function(that, box) {
+                        var optionsJson = that.getAttribute('data-options') || '{}';
+                        var options = JSON.parse(optionsJson);
+                        var picker = new mui.DtPicker(options);
+                        picker.show(function(rs) {
+                            //resume.$data.obj[box] = rs.y.value + rs.m.value + rs.d.value
+                            //document.querySelector("#" + box).innerHTML = rs.y.value + "/" + rs.m.value + "/" +rs.d.value;
+                            if (box == "comeDate") {
+                                resume.$data.mustInfo.comeDate = rs.y.value + "/" + rs.m.value + "/" + rs.d.value
+                            } else if (box == 'talentEducationStartDate') {
+                                resume.$data.talentEducation.startDate = rs.y.value + "/" + rs.m.value
+                            } else if (box == 'talentEducationEndDate') {
+                                resume.$data.talentEducation.endDate = rs.y.value + "/" + rs.m.value
+                            } else if (box == 'talentJobStartDate') {
+                                resume.$data.talentJob.startDate = rs.y.value + "/" + rs.m.value
+                            } else if (box == 'talentJobEndDate') {
+                                resume.$data.talentJob.endDate = rs.y.value + "/" + rs.m.value
+                            }
+                            picker.dispose();
+                        });
+                    },
+                    // 文件上传
+                    fileUplaod: function (event) {
+                        const _this = this
+                        const URL = window.URL || window.webkitURL
+                        var fileName = []
+                        const fileSize = event.srcElement.files[0].size
+                        const fileType = event.srcElement.files[0].type
+
+                        var that = jQuery(this);
+                        var formData = new FormData();
+
+                        for (var i = 0; i < event.srcElement.files.length; i++) {
+                            var file = event.srcElement.files[i];
+                            formData.append('fileAddress', file);
+                            fileName.push(event.srcElement.files[i].name)
+                        }
+                        myLoading();
+                        mui.ajax({
+                            url: global.apiURL + '/fileUpLoad/fileUpLoad.htm',
+                            type: 'POST',
+                            cache: false,
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success : function (data) {
+                                data = JSON.parse(data);
+                                if (data.success) {
+                                    _this.talentDocument.saveName = "继续上传"
+                                    _this.talentDocument.saveAddress = data.data.join(",")
+                                }
+                                myLoadingOver();
+                            }
+                        });
+                    },
+                    // 关闭添加信息的弹窗
+                    closeAddBox: function () {
+                        this.talentEducation.flag = false
+                        this.talentJob.flag = false
+                        this.talentFamily.flag = false
+                        this.talentDocument.flag = false
+                    },
+                    // 验证
+
+
+                    validate: function () {
+                        var that = this
+                        if (!that.mustInfo.name) {
+                            myToast("请输入姓名");
+                        } else if (!zjzm.mobileValidate(that.mustInfo.mobile)) {
+                            myToast("请输入正确的手机号码");
+                        } else if (!zjzm.identification(that.mustInfo.identityNo)) {
+                            myToast("请输入正确的身份证");
+                        } else if (!that.mustInfo.recruitmentId) {
+                            myToast("请选择应聘职位");
+                        } else if (!that.mustInfo.comeDate) {
+                            myToast("请选择到岗日期");
+                        } else if (!that.mustInfo.expectedIncome) {
+                            myToast("请输入期望税前年收入");
+                        } else if (!that.baseInfo.emergencyPerson) {
+                            myToast("请输入身高");
+                        } else if (!that.baseInfo.emergencyMobile) {
+                            myToast("请输入体重");
+                        } else if (!that.baseInfo.maritalStatus) {
+                            myToast("请选择婚姻状况");
+                        } else if (!that.baseInfo.fertilityStatus) {
+                            myToast("请选择生育状况");
+                        } else if (!that.talentEducationRows.length) {
+                            myToast("请输入教育背景");
+                        } else if (!that.talentJobRows.length) {
+                            var btnArray = ['返回', '继续'];
+                            mui.confirm('非应届生必须输入工作背景，如果应届生请继续', "提示", btnArray, function(e) {
+                                if (e.index == 1) {
+                                    if (!that.signature) {
+                                        that.draw()
+                                    }  else {
+                                        var btnArray = ['重签', '保留'];
+                                        mui.confirm('是否继续使用原来的签名？', "提示", btnArray, function(e) {
+                                            if (e.index == 1) {
+                                                that.submit()
+                                            } else {
+                                                that.draw()
+                                            }
+                                        })
+                                    }
+                                }
+                            })
+                        } else if (!that.signature) {
+                            that.draw()
+                        }  else {
+                            var btnArray = ['重签', '保留'];
+                            mui.confirm('是否继续使用原来的签名？', "提示", btnArray, function(e) {
+                                if (e.index == 1) {
+                                    that.submit()
+                                } else {
+                                    that.draw()
+                                }
+                            })
+                        }
+                    },
+                    // 签名
+                    draw: function () {
+                        var that = this
+                        jQuery(function () {
+                            jQuery(".draw-box").show();
+                            jQuery('.draw').jqSignature();
+                            // 清除
+                            document.querySelector("#clearBtn").addEventListener("tap", function () {
+                                jQuery('.draw').jqSignature('clearCanvas');
+                            });
+                            // 保存
+                            document.querySelector("#saveBtn").addEventListener("tap", function () {
+                                var dataUrl = jQuery('.draw').jqSignature('getDataURL');
+                                upload(dataUrl);
+                                // 上传签名
+
+                                function upload(basestr) {
+                                    var text = window.atob(basestr.split(",")[1]);
+                                    var buffer = new Uint8Array(text.length);
+                                    var pecent = 0,
+                                        loop = null;
+                                    for (var i = 0; i < text.length; i++) {
+                                        buffer[i] = text.charCodeAt(i);
+                                    }
+
+                                    mui.ajax(global.apiURL + '/file/images.htm', {
+                                        data : {
+                                            images : basestr,
+                                            srcFile : "a.png"
+                                        },
+                                        dataType : 'json',
+                                        type     : 'post',
+                                        timeout  : 10000,
+                                        success  : function(data){
+                                            if (data.success) {
+                                                that.signature = data.data
+                                                that.submit()
+                                            } else {
+                                                myToast(data.resultMsg);
+                                            }
+                                        },
+                                        error : function(xhr, errorThrown) {
+                                            myToast("服务器正忙，请稍后重试！");
+                                        }
+                                    });
+                                }
+                                jQuery(".draw-box").hide();
+                            });
+                        });
+                    },
+                    // 提交
+                    submit: function () {
+                        var that = this
+                        that.mustInfo.comeDate = that.mustInfo.comeDate.replace(/\//g, '')
+
+                        if (that.id) {
+                            myLoading();
+                            axios({
+                                method: 'post',
+                                url: global.apiURL + '/talent/updateTalent.htm',
+                                params: {
+                                    id: that.id,
+                                    mobile : that.mustInfo.mobile,
+                                    companyId : 1,
+                                    name : that.mustInfo.name,
+                                    identityNo : that.mustInfo.identityNo,
+                                    recruitmentId : that.mustInfo.recruitmentId,
+                                    comeDate : that.mustInfo.comeDate,
+                                    expectedIncome : that.mustInfo.expectedIncome,
+                                    nation : that.baseInfo.nation,
+                                    origin : that.baseInfo.origin,
+                                    maritalStatus : that.baseInfo.maritalStatus,
+                                    fertilityStatus : that.baseInfo.fertilityStatus,
+                                    drivingLicenseType : that.baseInfo.drivingLicenseType,
+                                    politicalStatus : that.baseInfo.politicalStatus,
+                                    qualification : that.baseInfo.qualification,
+                                    address : that.baseInfo.address,
+                                    mail : that.baseInfo.mail,
+                                    emergencyPerson : that.baseInfo.emergencyPerson,
+                                    emergencyMobile : that.baseInfo.emergencyMobile,
+                                    haveAcquaintance : that.acquaintance.haveAcquaintance,
+                                    acquaintanceName : that.acquaintance.acquaintanceName,
+                                    acquaintanceDepartment : that.acquaintance.acquaintanceDepartment,
+                                    acquaintanceRelation : that.acquaintance.acquaintanceRelation,
+                                    haveCriminal : that.acquaintance.haveCriminal,
+                                    haveFired : that.acquaintance.haveFired,
+                                    haveDiseases : that.acquaintance.haveDiseases,
+                                    haveCompetition : that.acquaintance.haveCompetition,
+                                    signature : that.signature,
+                                    systemTime: that.systemTime
+                                }
+                            }).then(function (response) {
+                                var datas = response.data;
+                                if (datas.success) {
+                                    that.goBack();
+                                    mySetLocalStorage("localMobile", that.mustInfo.mobile)
+                                } else {
+                                    myToast(datas.resultMsg);
+                                }
+                                myLoadingOver();
+                            }).catch(function (error) {
+                                myLoadingOver();
+                                //myToast(error);
+                            })
+                        } else {
+                            myLoading();
+                            axios({
+                                method: 'post',
+                                url: global.apiURL + '/talent/insertTalent.htm',
+                                params: {
+                                    mobile : that.mustInfo.mobile,
+                                    companyId : 1,
+                                    name : that.mustInfo.name,
+                                    identityNo : that.mustInfo.identityNo,
+                                    recruitmentId : that.mustInfo.recruitmentId,
+                                    comeDate : that.mustInfo.comeDate,
+                                    expectedIncome : that.mustInfo.expectedIncome,
+                                    nation : that.baseInfo.nation,
+                                    origin : that.baseInfo.origin,
+                                    maritalStatus : that.baseInfo.maritalStatus,
+                                    fertilityStatus : that.baseInfo.fertilityStatus,
+                                    drivingLicenseType : that.baseInfo.drivingLicenseType,
+                                    politicalStatus : that.baseInfo.politicalStatus,
+                                    qualification : that.baseInfo.qualification,
+                                    address : that.baseInfo.address,
+                                    mail : that.baseInfo.mail,
+                                    emergencyPerson : that.baseInfo.emergencyPerson,
+                                    emergencyMobile : that.baseInfo.emergencyMobile,
+                                    haveAcquaintance : that.acquaintance.haveAcquaintance,
+                                    acquaintanceName : that.acquaintance.acquaintanceName,
+                                    acquaintanceDepartment : that.acquaintance.acquaintanceDepartment,
+                                    acquaintanceRelation : that.acquaintance.acquaintanceRelation,
+                                    haveCriminal : that.acquaintance.haveCriminal,
+                                    haveFired : that.acquaintance.haveFired,
+                                    haveDiseases : that.acquaintance.haveDiseases,
+                                    haveCompetition : that.acquaintance.haveCompetition,
+                                    signature : that.signature,
+                                    systemTime: that.systemTime
+                                }
+                            }).then(function (response) {
+                                var datas = response.data;
+                                if (datas.success) {
+                                    that.goBack();
+                                    mySetLocalStorage("localMobile", that.mustInfo.mobile)
+                                } else {
+                                    myToast(datas.resultMsg);
+                                }
+                                myLoadingOver();
+                            }).catch(function (error) {
+                                myLoadingOver();
+                                //myToast(error);
+                            })
+                        }
+                    }
+                },
+                mounted: function () {
+                    this.$nextTick(function () {
+                        mui.init()
+                        this.stamp()
+                        this.getMobile()
+                        this.getBaseInfo()
+                    })
+                },
+                filters: {
+                    formatDate: function(date) {
+                        if (date) return zjzm.formatDate(date, "/")
+                    }
+                }
+            });
+        }
+    </script></html>

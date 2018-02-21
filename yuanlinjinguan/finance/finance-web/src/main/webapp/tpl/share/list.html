@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>云端共享</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+        <style type="text/css">
+            .mui-preview-image.mui-fullscreen {
+                position: fixed;
+                z-index: 20;
+                background-color: #000;
+            }
+            .mui-preview-header,
+            .mui-preview-footer {
+                position: absolute;
+                width: 100%;
+                left: 0;
+                z-index: 10;
+            }
+            .mui-preview-header {
+                height: 44px;
+                top: 0;
+            }
+            .mui-preview-footer {
+                height: 50px;
+                bottom: 0px;
+            }
+            .mui-preview-header .mui-preview-indicator {
+                display: block;
+                line-height: 25px;
+                color: #fff;
+                text-align: center;
+                margin: 15px auto 4;
+                width: 70px;
+                background-color: rgba(0, 0, 0, 0.4);
+                border-radius: 12px;
+                font-size: 16px;
+            }
+            .mui-preview-image {
+                display: none;
+                -webkit-animation-duration: 0.5s;
+                animation-duration: 0.5s;
+                -webkit-animation-fill-mode: both;
+                animation-fill-mode: both;
+            }
+            .mui-preview-image.mui-preview-in {
+                -webkit-animation-name: fadeIn;
+                animation-name: fadeIn;
+            }
+            .mui-preview-image.mui-preview-out {
+                background: none;
+                -webkit-animation-name: fadeOut;
+                animation-name: fadeOut;
+            }
+            .mui-preview-image.mui-preview-out .mui-preview-header,
+            .mui-preview-image.mui-preview-out .mui-preview-footer {
+                display: none;
+            }
+            .mui-zoom-scroller {
+                position: absolute;
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: flex;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                align-items: center;
+                -webkit-box-pack: center;
+                -webkit-justify-content: center;
+                justify-content: center;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                -webkit-backface-visibility: hidden;
+            }
+            .mui-zoom {
+                -webkit-transform-style: preserve-3d;
+                transform-style: preserve-3d;
+            }
+            .mui-slider .mui-slider-group .mui-slider-item img {
+                width: auto;
+                height: auto;
+                max-width: 100%;
+                max-height: 100%;
+            }
+            .mui-android-4-1 .mui-slider .mui-slider-group .mui-slider-item img {
+                width: 100%;
+            }
+            .mui-android-4-1 .mui-slider.mui-preview-image .mui-slider-group .mui-slider-item {
+                display: inline-table;
+            }
+            .mui-android-4-1 .mui-slider.mui-preview-image .mui-zoom-scroller img {
+                display: table-cell;
+                vertical-align: middle;
+            }
+            .mui-preview-loading {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                display: none;
+            }
+            .mui-preview-loading.mui-active {
+                display: block;
+            }
+            .mui-preview-loading .mui-spinner-white {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                margin-left: -25px;
+                margin-top: -25px;
+                height: 50px;
+                width: 50px;
+            }
+            .mui-preview-image img.mui-transitioning {
+                -webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease;
+                transition: transform 0.5s ease, opacity 0.5s ease;
+            }
+            @-webkit-keyframes fadeIn {
+                0% {
+                    opacity: 0;
+                }
+                100% {
+                    opacity: 1;
+                }
+            }
+            @keyframes fadeIn {
+                0% {
+                    opacity: 0;
+                }
+                100% {
+                    opacity: 1;
+                }
+            }
+            @-webkit-keyframes fadeOut {
+                0% {
+                    opacity: 1;
+                }
+                100% {
+                    opacity: 0;
+                }
+            }
+            @keyframes fadeOut {
+                0% {
+                    opacity: 1;
+                }
+                100% {
+                    opacity: 0;
+                }
+            }
+            p img {
+                max-width: 100%;
+                height: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="share" v-cloak>
+            <header class='header'>
+                <img src="../../images/svg/left.svg" class="icon-40" id="goback" @click='back' />
+                <span class='tit'>{{ title }}</span>
+                <i></i>
+            </header>
+            <div class='wrap'>
+                <ul class='share'>
+                    <li v-for='(item, index) in fileArr' @click='downLoad(item.saveAddress)'>
+                        <div class='lists'>
+                            <span class='name' v-if='isImg(item.imgArr[0], 1).length < 10'>{{ isImg(item.imgArr[0], 1) }}</span>
+                            <b v-else>
+                                <img v-if='item.imgArr.length == 1' v-bind:src="isImg(item.imgArr[0], 1)" />
+                                <img v-else v-for='(img, indexs) in item.imgArr' :class='indexs == 0 ? "" : "active"' v-bind:src="isImg(img, 1)" data-preview-src="" :data-preview-group="index" />
+                            </b>
+                            <div>
+                                <p>
+                                    <span>{{ item.fileName }}</span>
+                                    <span style="color: #999;">{{ item.createTime.time | formatDate }}</span>
+                                </p>
+                                <p>
+                                    <span>{{ item.admin.name }}</span>
+                                    <span style="color: #999;">{{ item.fileExplain }}</span>
+                                </p>
+                            </div>
+                            <!-- <p @click.stop='setTop(item)'>置顶</p> -->
+                            <i v-if='item.isTop == 1'></i>
+                            <em v-else></em>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="add-box" v-if='uploadObj.flag'>
+                <div class='uploadObj'>
+                    <div class='header'>
+                        <img src="../../images/svg/left.svg" class="icon-40" @click='closeAddBox' />
+                        <span class='tit'>添加共享资料信息</span>
+                        <i></i>
+                    </div>
+                    <ul class='wrap-list'>
+                        <li>
+                            <div class='tit'><i class='tips'>*</i>文件名</div>
+                            <div class='con'>
+                                <input type="text" class='input' placeholder="不超过10个字" maxlength="10" v-model='uploadObj.fileName' />
+                            </div>
+                        </li>
+                        <li>
+                            <div class='tit'>说明</div>
+                            <div class='con'>
+                                <input type="text" class='input' placeholder="不超过15个字" maxlength="15" v-model='uploadObj.fileExplain' />
+                            </div>
+                        </li>
+                        <li>
+                            <div class='tit'>提醒</div>
+                            <div class='con'>
+                                <div class="mui-input-row mui-checkbox mui-left">
+                                    <label>站内消息</label>
+                                    <input type="checkbox" name="isMessage"  @click='changeMessage' />
+                                </div>
+                                <div class="mui-input-row mui-checkbox mui-left" >
+                                    <label>短信</label>
+                                    <input type="checkbox" name="isSms" @click='changeSms' />
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class='tit'>置顶</div>
+                            <div class='con'>
+                                <div class="mui-input-row mui-radio mui-left">
+                                    <label>否</label>
+                                    <input type="radio" name="isTop" value="0" checked @click='isTopTrue' />
+                                </div>
+                                <div class="mui-input-row mui-radio mui-left" >
+                                    <label>是</label>
+                                    <input type="radio" name="isTop" value="1" @click='isTopFlase' />
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class='tit'><i class='tips'>*</i>文件</div>
+                            <div class='con' style="flex-direction: column;">
+                                <div class='fileUplaodBox'>
+                                    <input type="file" name="" multiple="multiple" class='input' @change='fileUplaod' />
+                                    <span class="simulation-select one">{{ uploadObj.saveName }}</span>
+                                </div>
+                            </div>
+                        </li>
+                        <dl v-if='uploadObj.tempUrl.length != 0' class='minImg'>
+                            <dd v-for='imgUrl in uploadObj.tempUrl'>
+                                <img v-bind:src="isImg(imgUrl, 2)" />
+                            </dd>
+                        </dl>
+                    </ul>
+                    <input type="button" value='提交' class='btn btn-max btn-top'  @click='submit' />
+                </div>
+            </div>
+            <div class='share-add-btn' @click='uploadEvent'>上传</div>
+            <!-- <div class='wrap' style="position: fixed; bottom: 0; left: 0;">
+                <input type="button" value='我要上传' class='btn btn-max btn-top' @click='uploadEvent' />
+            </div> -->
+        </div>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/mui.zoom.js"></script>
+    <script src="../../js/mui.previewimage.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../js/axios.min.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script type="text/javascript">
+        // 校验app或wap
+        myInit(indexFun);
+        function indexFun() {
+            mui.previewImage();
+            var share = new Vue({
+                el: "#share",
+                data: {
+                    title: "云端共享",
+                    fileArr: [],
+                    uploadObj: {
+                        fileName: "",
+                        fileExplain: "",
+                        saveAddress: "",
+                        isTop: 0,
+                        isMessage: 0,
+                        isSms: 0,
+                        saveName: "选择文件",
+                        flag: false,
+                        tempUrl: []
+                    },
+                    fileEven: "",
+                    formData: new FormData(),
+                    imgs: []
+                },
+                methods: {
+                    back: function () {
+                        myOpenWindow("/tpl/home/home.html", 'home');
+                    },
+                    isImg: function (url, type) {
+                        var imgType = url.substring(url.lastIndexOf(".") + 1, url.length)
+                        if (imgType == "png" || imgType == "jpeg" || imgType == "bmp" || imgType == "jpg" || imgType == "PNG" || imgType == "JPEG" || imgType == "BMP" || imgType == "JPG") {
+                            return url;
+                        } else if (imgType == "PDF" || imgType == "pdf") {
+                            return '../../images/share/pdf.svg'
+                        } else if (imgType == "WORD" || imgType == "word") {
+                            return '../../images/share/word.svg'
+                        } else if (imgType == "PPT" || imgType == "ppt") {
+                            return '../../images/share/ppt.svg'
+                        } else if (imgType == "ZIP" || imgType == "zip") {
+                            return '../../images/share/zip.svg'
+                        } else if (imgType == "EXCEL" || imgType == "excel") {
+                            return '../../images/share/excel.svg'
+                        } else if (imgType == "mp3" || imgType == "wmv" || imgType == "rmvb" || imgType == "avi" || imgType == "ts") {
+                            return '../../images/share/video.svg'
+                        } else {
+                            if (type == 1) {
+                                if (imgType.length > 3) {
+                                    imgType = imgType.substring(imgType.length - 3, name.imgType)
+                                }
+                                return imgType
+                            } else {
+                                return '../../images/share/other.svg'
+                            }
+                        }
+                    },
+                    getList: function (e) {
+                        var that = this
+                        myLoading();
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + '/sharedFile/user/getSharedFile.htm',
+                            params: {
+                                rows: 1000,
+                                page: 1
+                            }
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                var rows = datas.rows
+                                for (var i = 0; i < rows.length; i++) {
+                                    if (rows[i].saveAddress.split(",").length >= 1) {
+                                        rows[i].isImgs = true
+                                        rows[i].imgArr = rows[i].saveAddress.split(",")
+                                    }
+                                }
+                                that.fileArr = rows
+                            } else {
+                                if (datas.code == 405) {
+                                    againLogin(that.getList, []);
+                                } else {
+                                    myToast(datas.resultMsg);
+                                }
+                            }
+                            myLoadingOver();
+                        }).catch(function (error) {
+                            //myToast(error);
+                            myLoadingOver();
+                        })
+                    },
+                    uploadEvent: function () {
+                        this.uploadObj.flag = true
+                    },
+                    // 关闭添加信息的弹窗
+                    closeAddBox: function () {
+                        this.uploadObj.flag = false
+                        this.uploadObj.fileName = ''
+                        this.uploadObj.fileExplain = ''
+                        this.uploadObj.saveAddress = ''
+                        this.uploadObj.isTop = 0
+                        this.uploadObj.isMessage = 0
+                        this.uploadObj.isSms = 0
+                        this.uploadObj.saveName = '选择文件'
+                        this.uploadObj.tempUrl = []
+                        this.formData = new FormData()
+                    },
+                    changeMessage: function () {
+                        if (this.uploadObj.isMessage == 1) {
+                            this.uploadObj.isMessage = 0
+                        } else {
+                            this.uploadObj.isMessage = 1
+                        }
+                    },
+                    changeSms: function () {
+                        if (this.uploadObj.isSms == 1) {
+                            this.uploadObj.isSms = 0
+                        } else {
+                            this.uploadObj.isSms = 1
+                        }
+                    },
+                    isTopTrue: function () {
+                        this.uploadObj.isTop = 0
+                    },
+                    isTopFlase: function () {
+                        this.uploadObj.isTop = 1
+                    },
+                    downLoad: function (url) {
+                        var urls = url.split(",")
+                        if (urls.length == 1) {
+                            myOpenWindow(url);
+                        }
+                    },
+                    setTop: function (item) {
+                        var that = this
+                        if (item.isTop) {
+                            item.isTop = 0
+                        } else {
+                            item.isTop = 1
+                        }
+                        myLoading();
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + '/sharedFile/user/fileTop.htm',
+                            params: {
+                                id: item.id,
+                                version: item.version,
+                                isTop: item.isTop
+                            }
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                this.getList()
+                            } else {
+                                myToast(datas.resultMsg);
+                            }
+                            myLoadingOver();
+                        }).catch(function (error) {
+                            myLoadingOver();
+                            //myToast(error);
+                        })
+                    },
+                    // 文件上传
+                    fileUplaod: function (event) {
+                        var that = this
+                        var URL = window.URL || window.webkitURL
+                        var fileName = []
+                        var fileSize = event.srcElement.files[0].size
+                        var fileType = event.srcElement.files[0].type
+
+                        var uploadFromData = new FormData();
+                        for (var i = 0; i < event.srcElement.files.length; i++) {
+                            var file = event.srcElement.files[i];
+                            uploadFromData.append('fileAddress', file);
+                            that.formData.append('saveAddress', file);
+                            fileName.push(event.srcElement.files[i].name)
+                        }
+                        that.uploadObj.saveName = "上传中..."
+
+                        myLoading();
+                        mui.ajax({
+                            url: global.apiURL +  '/fileUpLoad/user/fileUpLoad.htm',
+                            type: 'POST',
+                            cache: false,
+                            data: uploadFromData,
+                            processData: false,
+                            contentType: false,
+                            success : function (data) {
+                                data = JSON.parse(data);
+                                if (data.success) {
+                                    that.uploadObj.saveName = "重新上传"
+                                    that.uploadObj.saveAddress = data.data.join(",")
+                                    that.uploadObj.tempUrl = data.data
+                                }
+                                myLoadingOver();
+                            }
+                        });
+                    },
+                    submit: function () {
+                        var that = this
+                        //that.formData.delete("fileAddress");
+                        that.formData.append('saveAddress', that.fileEven);
+                        that.formData.append('fileName', that.uploadObj.fileName)
+                        that.formData.append('fileExplain', that.uploadObj.fileExplain)
+                        that.formData.append('isTop', that.uploadObj.isTop)
+                        that.formData.append('isMessage', that.uploadObj.isMessage)
+                        that.formData.append('isSms', that.uploadObj.isSms)
+                        if (!that.uploadObj.fileName) {
+                            myToast("请输入文件名")
+                        } else if (!that.uploadObj.saveAddress) {
+                            myToast("请上传图片")
+                        } else {
+                            myLoading();
+                            mui.ajax({
+                                url: global.apiURL + '/sharedFile/user/fileUpLoad.htm',
+                                type: 'POST',
+                                cache: false,
+                                data: that.formData,
+                                processData: false,
+                                contentType: false,
+                                success : function (data) {
+                                    data = JSON.parse(data);
+                                    if (data.success) {
+                                        myToast("上传成功")
+                                        that.uploadObj.flag = false
+                                        that.uploadObj.fileName = ''
+                                        that.uploadObj.fileExplain = ''
+                                        that.uploadObj.saveAddress = ''
+                                        that.uploadObj.isTop = 0
+                                        that.uploadObj.isMessage = 0
+                                        that.uploadObj.isSms = 0
+                                        that.uploadObj.saveName = '选择文件'
+                                        that.uploadObj.tempUrl = []
+                                        that.formData = new FormData()
+                                        that.getList()
+                                    } else {
+                                        myToast(data.resultMsg)
+                                    }
+                                }
+                            });
+                            myLoadingOver();
+                        }
+                    }
+                },
+                mounted: function () {
+                    this.$nextTick(function () {
+                        mui.init();
+                        this.getList()
+                    });
+                },
+                filters: {
+                    formatDate: function(date) {
+                        if (date) return zjzm.getDay(date, 'yyyy-MM-dd hh:mm')
+                    },
+                    onlyOne: function (name) {
+                        if (name) return name.substring(name.length - 1, name.length)
+                    }
+                }
+            });
+        }
+    </script>
+</html>

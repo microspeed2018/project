@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>分包团队及金额</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+    </head>
+    <body>
+        <header class="header">
+            <img src="../../images/svg/left.svg" class="icon-40" id="goback" />
+            <span class="tit">分包团队及金额</span>
+            <i></i>
+        </header>
+        <div class='wrap'>
+            <ul class='wrap-list'>
+                <li>
+                    <div class='tit'>
+                        分包负责人
+                    </div>
+                    <div class='con'>
+                        <span class="simulation-select one" id="subpackageLeader">请选择分包负责人</span>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        分包金额(万元)
+                    </div>
+                    <div class='con'>
+                        <input type="text" name="result" placeholder="请输入分包金额" class='input' id="subpackageCapital" />
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        分包内容
+                    </div>
+                    <div class='con'>
+                        <textarea placeholder="请输入分包内容" id="subpackageContent"></textarea>
+                    </div>
+                </li>
+                <!-- <li>
+                    <div class='tit'>
+                        支付方式
+                    </div>
+                    <div class='con'>
+                        <textarea placeholder="请输入支付方式" id="paymentMemo"></textarea>
+                    </div>
+                </li> -->
+                <li>
+                    <div class='tit'>
+                        分包付款
+                    </div>
+                    <div class='con'>
+                        <div class="flex-12">
+                            <div>
+                                <span style="width: 3.5rem; text-align: center; line-height: 30px;">方式</span>
+                                <span style="width: 3.5rem; text-align: center; line-height: 30px;">金额(万元)</span>
+                                <span class='btns' id="add">+</span>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        备注
+                    </div>
+                    <div class='con'>
+                        <textarea placeholder="请输入备注" id="subpackageMemo"></textarea>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class='wrap'>
+            <input type="button" value='提交' class='btn btn-max' id="submit" style="display: none;" />
+        </div>
+        <div class='wrap'>
+            <input type="button" value='删除' class='btn btn-max' id="delete" style="display: none;" />
+        </div>
+        <div class='select-dialog'>
+            <div class='select-mask'></div>
+            <div class='select-content'>
+                <ul></ul>
+            </div>
+        </div>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/jquery.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script>
+        (function($, doc) {
+            $.init();
+
+            // 校验app或wap
+            myInit(indexFun);
+            function indexFun() {
+                // goback
+                doc.querySelector("#goback").addEventListener("click", function () {
+                    myOpenWindow("/tpl/product/step-tab.html", 'step-tab');
+                    myRemoveLocalStorage("pack");
+                });
+
+                var obj = {};
+                var payMentArr = [];
+                var projectLeader = myGetLocalStorage("projectLeader");
+                var pack = myGetLocalStorage("pack");
+                obj.step = myGetLocalStorage("step");
+                obj.productId = myGetLocalStorage("productId");
+                obj.id = "";
+                // 当前角色
+                var user = JSON.parse(myGetLocalStorage("user"));
+                var role;
+                var personnelNature;
+                if (user) {
+                    role = user.jobId;
+                    personnelNature = user.personnelNature;
+                }
+                if (role == 5 || personnelNature == 44) {
+                    doc.querySelector("#submit").style.display = "block";
+                    doc.querySelector("#delete").style.display = "block";
+                }
+
+                var contractPayment = JSON.parse(myGetLocalStorage("contractPayment"));
+                if (contractPayment) {
+                    for (var i = 0; i < contractPayment.length; i++) {
+                        var temp = {
+                            "key" : "",
+                            "value" : ""
+                        };
+                        temp.key = contractPayment[i].paymentMode;
+                        temp.value = contractPayment[i].paymentPaymentModeName;
+                        payMentArr.push(temp);
+                    }
+                }
+                if (pack) {
+                    packDetail(pack)
+                } else {
+
+                    jQuery("#delete").hide();
+                }
+
+                // 获取分包负责人
+                jQuery("#subpackageLeader").on("click", function () {
+                    getSubpackageLeader();
+                });
+                function createtPackLeader(list) {
+                    var box = doc.querySelector(".select-dialog ul");
+                    var dom = "";
+                    for (var i = 0; i < list.length; i++) {
+                        if (projectLeader) {
+                            if (projectLeader != list[i].userId) {
+                                dom += "<li id='"+ list[i].userId +"'>"+ list[i].userInfo.name +"</li>";
+                            }
+                        }
+                    }
+                    box.innerHTML = dom;
+                    doc.querySelector(".select-dialog").style.display = "block";
+                    doc.querySelector(".select-dialog").setAttribute("id", "subpackageLeaders");
+                }
+                // 获取付款方式
+                jQuery(".flex-12").on("click", ".simulation-select", function () {
+                    var id = jQuery(this).attr("id");
+                    cteatePayMent(id);
+                });
+                function cteatePayMent(boxId) {
+                    var box = doc.querySelector(".select-dialog ul");
+                    var dom = "";
+                    for (var i = 0; i < payMentArr.length; i++) {
+                        dom += "<li id='"+ payMentArr[i].key +"'>"+ payMentArr[i].value +"</li>";
+                    }
+                    box.innerHTML = dom;
+                    doc.querySelector(".select-dialog").style.display = "block";
+                    doc.querySelector(".select-dialog").setAttribute("id", boxId);
+                }
+
+                $(".select-dialog").on("tap", "li", function () {
+                    var text = this.innerHTML;
+                    var id = this.getAttribute("id");
+                    var boxID = this.parentNode.parentNode.parentNode.getAttribute("id");
+
+                    if (boxID == 'subpackageLeaders') {
+                        obj.subpackageLeader = id;
+                        doc.querySelector("#subpackageLeader").innerHTML = text;
+                    } else {
+                        doc.querySelector("#"+boxID).innerHTML = text;
+                        doc.querySelector("#"+boxID).setAttribute("data-value", id);
+                    }
+
+                    doc.querySelector(".select-dialog").style.display = "none";
+                    doc.querySelector(".select-dialog").setAttribute("id", "");
+                });
+
+                // 获取分包负责人
+                function getSubpackageLeader() {
+                    myLoading();
+                    $.ajax(global.apiURL + '/user/staffPersons.htm', {
+                        data : {
+                            jobId: 5,
+                            personnelNature: 44
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                createtPackLeader(data.data);
+                            } else {
+                                myToast(data.resultMsg);
+                            }
+                            myLoadingOver();
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                            myLoadingOver();
+                        }
+                    });
+                }
+
+                // 添加支付方式
+                jQuery("#add").on("click", function () {
+                    var box = jQuery(".flex-12");
+                    var flag = box.find('div').length + 1;
+                    var dom = "<div>"+
+                        "<span class='simulation-select half' id='payment"+ flag +"'>请选择</span>"+
+                        "<input type='text' value='' placeholder='请输入' class='input' />"+
+                        "<span class='btns del'>-</span>"+
+                    "</div>";
+                    box.append(dom);
+                });
+                jQuery(".flex-12").on("click", ".del", function () {
+                    var that = jQuery(this);
+                    that.closest('div').remove();
+                });
+
+                // 获取分包详情
+                function packDetail(index) {
+                    $.ajax(global.apiURL + '/contract/user/getContractSubpackageInfo.htm', {
+                        data : {
+                            projectId: obj.productId
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data1){
+                            if (data1.success) {
+                                var datas = data1.data[index];
+                                myLoading();
+                                $.ajax(global.apiURL + '/user/staffPersons.htm', {
+                                    data : {
+                                        jobId: 5,
+                                        personnelNature: 44
+                                    },
+                                    dataType : 'json',
+                                    type : 'post',
+                                    success : function(data){
+                                        if (data.success) {
+                                            var list = data.data;
+                                            for (var i = 0; i < list.length; i++) {
+                                                if (datas.subpackageLeader == list[i].userId) {
+                                                    jQuery("#subpackageLeader").html(list[i].userInfo.name);
+                                                }
+                                            }
+                                        } else {
+                                            myToast(data.resultMsg);
+                                        }
+                                        myLoadingOver();
+                                    },
+                                    error : function() {
+                                        myToast("服务器正忙，请稍后重试！");
+                                        myLoadingOver();
+                                    }
+                                });
+                                jQuery("#subpackageCapital").val(datas.subpackageCapital);
+                                jQuery("#subpackageContent").val(datas.subpackageContent);
+                                jQuery("#paymentMemo").val(datas.paymentMemo);
+                                jQuery("#subpackageMemo").val(datas.subpackageMemo);
+                                obj.subpackageLeader = datas.subpackageLeader;
+                                obj.id = datas.id;
+
+                                // 创建支付方式
+                                var subpackagePayment = datas.subpackagePayment;
+                                if (subpackagePayment) {
+                                    var dom = "";
+                                    var box = jQuery(".flex-12");
+                                    for (var i = 0; i < subpackagePayment.length; i++) {
+                                        dom += "<div>"+
+                                            "<span class='simulation-select half' data-value='"+ subpackagePayment[i].paymentMode +"' id='payment"+ [i + 2] +"'>"+ subpackagePayment[i].paymentModeName +"</span>"+
+                                            "<input type='text' value='"+ subpackagePayment[i].paymentAmount +"' class='input' />"+
+                                            "<span class='btns del'>-</span>"+
+                                        "</div>";
+                                    }
+                                    box.append(dom);
+                                }
+                            } else {
+                                myToast(data.resultMsg);
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+
+                doc.querySelector("#submit").addEventListener("tap", function () {
+                    obj.subpackageCapital = jQuery("#subpackageCapital").val();
+                    obj.subpackageContent = jQuery("#subpackageContent").val();
+                    obj.subpackageMemo = jQuery("#subpackageMemo").val();
+                    var name = [];
+                    var ids = [];
+                    var price = [];
+                    var total = 0;
+                    var flag = true;
+                    jQuery(".flex-12 div").each(function () {
+                        if (jQuery(this).find(".simulation-select").html() && jQuery(this).find(".simulation-select").html() != "请选择") {
+                            name.push(jQuery(this).find(".simulation-select").html());
+                            ids.push(jQuery(this).find(".simulation-select").data("value"));
+                            price.push(jQuery(this).find(".input").val());
+                            total += Number(jQuery(this).find(".input").val());
+                        }
+                    });
+                    obj.subpackageId = ids.join(",")
+                    obj.subpackagePrice = price.join(",")
+
+                    for (var i = 0; i < name.length; i++) {
+                        if (name[i] == name[i+1]){
+                           myToast("支付方式重复，请修改后再提交");
+                           return flag = false;
+                        }
+                    }
+
+                    if (!obj.subpackageLeader) {
+                        myToast("请选择负责人");
+                    } else if (!obj.subpackageCapital) {
+                        myToast("分包金额必须大于0");
+                    } else if (total != obj.subpackageCapital) {
+                        myToast("支付方式总额必须等于分包金额");
+                    } else if (flag) {
+                        if (obj.step <= 390) {
+                            if (pack) {
+                               modify();
+                            } else {
+                                submit();
+                            }
+                        } else {
+                            submit();
+                        }
+                    }
+                });
+                doc.querySelector("#delete").addEventListener("tap", function () {
+                    myConfirm('您确定要删除该记录？', success);
+                    function success() {
+                        myLoading();
+                        $.ajax(global.apiURL + '/contract/user/deleteSubpackageByCondition.htm', {
+                            data : {
+                                id: obj.id,
+                                step: obj.step
+                            },
+                            dataType : 'json',
+                            type : 'post',
+                            success : function(data){
+                                if (data.success) {
+                                    myRemoveLocalStorage("pack")
+                                    myOpenWindow("/tpl/product/step-tab.html", 'step-tab');
+                                } else {
+                                    myToast(data.resultMsg);
+                                }
+                                myLoadingOver();
+                            },
+                            error : function() {
+                                myLoadingOver();
+                                myToast("服务器正忙，请稍后重试！");
+                            }
+                        });
+                    }
+                });
+                function submit() {
+                    myLoading();
+                    $.ajax(global.apiURL + '/project/user/insSubpackage.htm', {
+                        data : {
+                            id : obj.id,
+                            projectId: obj.productId,
+                            subpackageLeader: obj.subpackageLeader,
+                            subpackageCapital: obj.subpackageCapital,
+                            subpackageContent: obj.subpackageContent,
+                            payModes: obj.subpackageId,
+                            payAmounts: obj.subpackagePrice,
+                            subpackageMemo: obj.subpackageMemo,
+                            step: obj.step
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                myRemoveLocalStorage("pack")
+                                myOpenWindow("/tpl/product/step-tab.html", 'step-tab');
+                            } else {
+                                myToast(data.resultMsg);
+                            }
+                            myLoadingOver();
+                        },
+                        error : function() {
+                            myLoadingOver();
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+                function modify() {
+                    myLoading();
+                    $.ajax(global.apiURL + '/contract/user/updateContractSubpackageById.htm', {
+                        data : {
+                            id: obj.id,
+                            projectId: obj.productId,
+                            subpackageLeader: obj.subpackageLeader,
+                            subpackageCapital: obj.subpackageCapital,
+                            subpackageContent: obj.subpackageContent,
+                            payModes: obj.subpackageId,
+                            payAmounts: obj.subpackagePrice,
+                            subpackageMemo: obj.subpackageMemo
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                myRemoveLocalStorage("pack")
+                                myOpenWindow("/tpl/product/step-tab.html", 'step-tab');
+                            } else {
+                                myToast(data.resultMsg);
+                            }
+                            myLoadingOver();
+                        },
+                        error : function() {
+                            myLoadingOver();
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+            }
+        }(mui, document));
+    </script>
+</html>

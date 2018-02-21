@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.project.GardenProjectSchemaMapper" >
+  <resultMap id="BaseResultMap" type="GardenProjectSchema" >
+    <id column="schema_id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="project_id" property="projectId" jdbcType="INTEGER" />
+    <result column="scheme_proposer" property="schemeProposer" jdbcType="INTEGER" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="resason" property="resason" jdbcType="VARCHAR" />
+    <result column="recommend" property="recommend" jdbcType="INTEGER" />
+    <result column="accepted" property="accepted" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap type="ProjectSchemaUserInfo" id="schemaUserInfoResultMap" extends="BaseResultMap">
+ 	<association property="userInfo" column="scheme_proposer" javaType="Admin">
+        <id property="id" column="admin_id" />
+        <result property="username" column="username" />
+        <result property="name" column="admin_name" />
+        <result property="mobile" column="mobile" />
+      </association>
+  </resultMap>
+  <resultMap type="GardenProjectSchemaInfo" id="ProjectSchemaResultMap" extends="com.zjzmjr.core.service.mapper.dao.project.GardenProjectMapper.BaseResultMap">
+    <collection property="schema" column="schema_id" ofType="ProjectSchemaUserInfo" resultMap="schemaUserInfoResultMap" >
+    </collection>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, company_id, project_id, scheme_proposer, content, resason, recommend, accepted, create_time, 
+    create_user_id, update_time, update_user_id, version
+  </sql>
+  <select id="getGardenProjectSchemaCount" parameterType="ProjectSchemaQuery" resultType="java.lang.Integer">
+    select COUNT(zps.id)
+    from z_project_schema zps
+    left outer join z_project zp on zp.id = zps.project_id and zp.company_id = zps.company_id
+    <include refid="where_clause"></include>
+  </select>
+  <select id="getGardenProjectSchemaByCondition" resultMap="ProjectSchemaResultMap" parameterType="ProjectSchemaQuery" >
+    select 
+    zps.id schema_id, zps.company_id, zps.project_id, zps.scheme_proposer, zps.content, zps.resason, zps.recommend
+    ,zps.accepted,zps.create_time, zps.create_user_id, zps.update_time, zps.update_user_id, zps.version
+    ,zp.id ,zp.project_no, zp.name, ta.id admin_id, ta.username, ta.name admin_name, ta.mobile,
+	case
+		when zps.recommend=1 and zps.accepted=1 then 1
+		when zps.accepted=1 then 2
+		when zps.accepted=9 then 3
+		when zps.accepted=0 then 4
+		else 5
+	end orderflg
+    from z_project_schema zps
+    left outer join z_project zp on zp.id = zps.project_id and zp.company_id = zps.company_id
+    left outer join t_admin ta on ta.id = zps.scheme_proposer
+    <include refid="where_clause"></include>
+    <choose>
+        <when test="orderBy != null and orderBy!=''">
+            order by #{orderBy}
+        </when>
+        <otherwise>
+            order by orderflg
+        </otherwise>
+    </choose>
+    limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+  <sql id="where_clause">
+    <where>
+        <trim prefixOverrides="and">
+            <if test="id != null">
+                zps.id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="companyId != null">
+                and zps.company_id = #{companyId,jdbcType=INTEGER}
+            </if>
+            <if test="projectId != null">
+                and zps.project_id = #{projectId,jdbcType=INTEGER}
+            </if>
+            <if test="schemeProposer != null">
+                and zps.scheme_proposer = #{schemeProposer,jdbcType=INTEGER}
+            </if>
+            <if test="accepted != null">
+                and zps.accepted = #{accepted,jdbcType=INTEGER}
+            </if>
+        </trim>
+    </where>
+  </sql>
+  <delete id="deleteGardenProjectSchemaById" parameterType="java.lang.Integer" >
+    delete from z_project_schema
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insertBatchGardenProjectSchema" parameterType="java.util.List">
+    insert into z_project_schema (company_id, project_id, scheme_proposer, content, resason, recommend, accepted, create_time, create_user_id, update_time, update_user_id) VALUES
+    <foreach collection="list" open="" close="" separator="," item="item">
+        (#{item.companyId,jdbcType=INTEGER},#{item.projectId,jdbcType=INTEGER},#{item.schemeProposer,jdbcType=INTEGER},#{item.content,jdbcType=VARCHAR},
+        #{item.resason,jdbcType=VARCHAR},#{item.recommend,jdbcType=INTEGER},#{item.accepted,jdbcType=INTEGER},#{item.createTime,jdbcType=TIMESTAMP},
+        #{item.createUserId,jdbcType=INTEGER},#{item.createTime,jdbcType=TIMESTAMP},#{item.createUserId,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+  <insert id="insertGardenProjectSchema" parameterType="GardenProjectSchema" >
+    insert into z_project_schema
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="projectId != null" >
+        project_id,
+      </if>
+      <if test="schemeProposer != null" >
+        scheme_proposer,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="resason != null" >
+        resason,
+      </if>
+      <if test="recommend != null">
+        recommend,
+      </if>
+      <if test="accepted != null" >
+        accepted,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="projectId != null" >
+        #{projectId,jdbcType=INTEGER},
+      </if>
+      <if test="schemeProposer != null" >
+        #{schemeProposer,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="resason != null" >
+        #{resason,jdbcType=VARCHAR},
+      </if>
+      <if test="recommend != null">
+        #{recommend,jdbcType=INTEGER},
+      </if>
+      <if test="accepted != null" >
+        #{accepted,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateGardenProjectSchemaById" parameterType="GardenProjectSchema" >
+    update z_project_schema
+    <set >
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="projectId != null" >
+        project_id = #{projectId,jdbcType=INTEGER},
+      </if>
+      <if test="schemeProposer != null" >
+        scheme_proposer = #{schemeProposer,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="resason != null" >
+        resason = #{resason,jdbcType=VARCHAR},
+      </if>
+      <if test="recommend != null">
+        recommend = #{recommend,jdbcType=INTEGER},
+      </if>
+      <if test="accepted != null" >
+        accepted = #{accepted,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+        version = version + 1,
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

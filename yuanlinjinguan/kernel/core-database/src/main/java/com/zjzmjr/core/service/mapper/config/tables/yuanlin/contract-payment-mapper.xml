@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.project.ContractPaymentMapper" >
+  <resultMap id="BaseResultMap" type="ContractPayment" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="project_id" property="projectId" jdbcType="INTEGER" />
+    <result column="payment_mode" property="paymentMode" jdbcType="INTEGER" />
+    <result column="payment_amount" property="paymentAmount" jdbcType="DECIMAL" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap type="ContractPaymentInfo" id="projectContractPaymentResultMap" extends="BaseResultMap">
+    <association property="project" column="project_id" javaType="GardenProject" fetchType="lazy">
+        <id column="garden_project_id" property="id" jdbcType="INTEGER" />
+        <result column="project_no" property="projectNo" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="city" property="city" jdbcType="INTEGER" />
+        <result column="address" property="address" jdbcType="VARCHAR" />
+        <result column="nature" property="nature" jdbcType="INTEGER" />
+        <result column="design_area" property="designArea" jdbcType="INTEGER" />
+        <result column="investment_mount" property="investmentMount" jdbcType="DECIMAL" />
+        <result column="category" property="category" jdbcType="INTEGER" />
+        <result column="type" property="type" jdbcType="INTEGER" />
+        <result column="have_scheme" property="haveScheme" jdbcType="INTEGER" />
+        <result column="have_development" property="haveDevelopment" jdbcType="INTEGER" />
+        <result column="have_drawing" property="haveDrawing" jdbcType="INTEGER" />
+        <result column="have_planning" property="havePlanning" jdbcType="INTEGER" />
+        <result column="contract_award_company" property="contractAwardCompany" jdbcType="INTEGER" />
+        <result column="management_personnel" property="managementPersonnel" jdbcType="INTEGER" />
+        <result column="management_department" property="managementDepartment" jdbcType="INTEGER" />
+        <result column="project_leader" property="projectLeader" jdbcType="INTEGER" />
+        <result column="remittance_company" property="remittanceCompany" jdbcType="VARCHAR" />
+        <result column="nopass_reason" property="nopassReason" jdbcType="VARCHAR" />
+        <result column="step" property="step" jdbcType="INTEGER" />
+    </association>
+    <association property="leader" column="project_leader" javaType="Admin">
+        <id property="id" column="admin_id" />
+        <result property="username" column="username" />
+        <result property="name" column="admin_name" />
+        <result property="mobile" column="mobile" />
+        <result property="jobId" column="job_id" />
+    </association>
+    <association property="basic" column="payment_mode" javaType="BasicData" fetchType="lazy">
+        <id column="basic_id" property="id" jdbcType="INTEGER" />
+        <result column="basic_category_id" property="categoryId" jdbcType="INTEGER" />
+        <result column="basic_category_name" property="categoryName" jdbcType="VARCHAR" />
+        <result column="basic_attribute_id" property="attributeId" jdbcType="INTEGER" />
+        <result column="basic_attribute_name" property="attributeName" jdbcType="VARCHAR" />
+    </association>
+    <collection property="finance" column="payment_mode" ofType="FinancialAudit" fetchType="lazy">
+        <id column="finance_id" property="id" jdbcType="INTEGER" />
+        <result column="finance_type" property="type" jdbcType="INTEGER" />
+        <result column="finance_payment_mode" property="paymentMode" jdbcType="INTEGER" />
+        <result column="finance_amount" property="amount" jdbcType="DECIMAL" />
+        <result column="finance_status" property="status" jdbcType="INTEGER" />
+    </collection>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, company_id, project_id, payment_mode, payment_amount, status, create_time, create_user_id, 
+    update_time, update_user_id, version
+  </sql>
+  
+  <select id="getProjectContractPaymentCount" resultType="java.lang.Integer" parameterType="ContractPaymentQuery">
+    select count(zcp.id)
+    FROM z_contract_payment zcp
+    LEFT OUTER JOIN z_project zp on zcp.company_id=zp.company_id and zcp.project_id=zp.id 
+    LEFT OUTER JOIN z_financial_audit zfa on zcp.company_id=zfa.company_id and zcp.project_id=zfa.project_id 
+                   and zcp.payment_mode=zfa.payment_mode and zfa.type=#{verifyType,jdbcType=INTEGER}
+    LEFT OUTER JOIN t_basic tb on zcp.payment_mode=tb.id and zcp.company_id=tb.company_id
+    <include refid="where_clause"></include>
+  </select>
+  <select id="getProjectContractPaymentInfo" resultMap="projectContractPaymentResultMap" parameterType="ContractPaymentQuery">
+    SELECT zcp.*, zp.id garden_project_id, zp.project_no, zp.name, zp.city, zp.address, zp.nature, zp.category,
+        zp.type, zp.contract_award_company, zp.management_personnel, zp.project_leader, zp.remittance_company, zp.nopass_reason, zp.step
+        ,zp.design_area,zp.investment_mount,zp.have_scheme,zp.have_development,zp.have_drawing,zp.have_planning
+        ,zfa.id finance_id, zfa.type finance_type, zfa.payment_mode finance_payment_mode, zfa.amount finance_amount, zfa.status finance_status
+        ,tb.id basic_id, tb.category_id basic_category_id, tb.category_name basic_category_name, tb.attribute_id basic_attribute_id
+        ,tb.attribute_name basic_attribute_name
+        ,ta.id admin_id, ta.username, ta.name admin_name, ta.mobile, ta.job_id
+	FROM z_contract_payment zcp
+	LEFT OUTER JOIN z_project zp on zcp.company_id=zp.company_id and zcp.project_id=zp.id 
+	LEFT OUTER JOIN t_admin ta on ta.id=zp.project_leader
+	LEFT OUTER JOIN z_financial_audit zfa on zcp.company_id=zfa.company_id and zcp.project_id=zfa.project_id 
+	               and zcp.payment_mode=zfa.payment_mode and zfa.type=#{verifyType,jdbcType=INTEGER}
+	LEFT OUTER JOIN t_basic tb on zcp.payment_mode=tb.id and zcp.company_id=tb.company_id
+    <include refid="where_clause"></include>
+    <choose>
+        <when test="orderBy != null and orderBy!=''">
+            order by #{orderBy}
+        </when>
+        <otherwise>
+            order by zcp.payment_mode, zcp.create_time
+        </otherwise>
+    </choose>    
+    limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+  <sql id="where_clause">
+    <where>
+        <trim prefixOverrides="and">
+	      <if test="companyId != null" >
+	        zcp.company_id = #{companyId,jdbcType=INTEGER}
+	      </if>
+	      <if test="projectId != null" >
+	        and zcp.project_id = #{projectId,jdbcType=INTEGER}
+	      </if>
+	      <if test="paymentMode != null" >
+	        and zcp.payment_mode = #{paymentMode,jdbcType=INTEGER}
+	      </if>
+	      <if test="projectLeader != null">
+	        and zp.project_leader = #{projectLeader,jdbcType=INTEGER}
+	      </if>
+	      <if test="projectName != null">
+	        and zp.name like CONCAT('%', #{projectName,jdbcType=VARCHAR}, '%')
+	      </if>
+        </trim>
+    </where>
+  </sql>
+  
+  <select id="getContractPaymentById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from z_contract_payment
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="getContractPaymentByCondition" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from z_contract_payment
+    <where>
+        <trim prefixOverrides="and">
+	      <if test="companyId != null" >
+	        company_id = #{companyId,jdbcType=INTEGER}
+	      </if>
+	      <if test="projectId != null" >
+	        and project_id = #{projectId,jdbcType=INTEGER}
+	      </if>
+	      <if test="paymentMode != null" >
+	        and payment_mode = #{paymentMode,jdbcType=INTEGER}
+	      </if>
+	      <if test="status != null" >
+	        and status = #{status,jdbcType=INTEGER}
+	      </if>
+	    </trim>
+	</where>
+  </select>
+  <delete id="deleteContractPaymentByCondition" parameterType="ContractQuery" >
+    delete from z_contract_payment
+    <where>
+    <trim prefixOverrides="and">
+    <if test="id != null">
+       and id = #{id,jdbcType=INTEGER}
+    </if>
+    <if test="projectId != null">
+       and project_id = #{projectId,jdbcType=INTEGER}
+    </if>
+    <if test="companyId != null">
+       and company_id = #{companyId,jdbcType=INTEGER}
+    </if>
+    <if test="status != null">
+       and status = #{status,jdbcType=INTEGER}
+    </if>
+    </trim>
+    </where>
+  </delete>
+
+  <insert id="insertContractPayment" parameterType="ContractPayment" >
+    insert into z_contract_payment
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="projectId != null" >
+        project_id,
+      </if>
+      <if test="paymentMode != null" >
+        payment_mode,
+      </if>
+      <if test="paymentAmount != null" >
+        payment_amount,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="projectId != null" >
+        #{projectId,jdbcType=INTEGER},
+      </if>
+      <if test="paymentMode != null" >
+        #{paymentMode,jdbcType=INTEGER},
+      </if>
+      <if test="paymentAmount != null" >
+        #{paymentAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateContractPaymentById" parameterType="ContractPayment" >
+    update z_contract_payment
+    <set >
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="projectId != null" >
+        project_id = #{projectId,jdbcType=INTEGER},
+      </if>
+      <if test="paymentMode != null" >
+        payment_mode = #{paymentMode,jdbcType=INTEGER},
+      </if>
+      <if test="paymentAmount != null" >
+        payment_amount = #{paymentAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+        version = version + 1,
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+
+   <update id="updateContractPaymentByCondition" parameterType="ContractPayment" >
+    update z_contract_payment
+    <set >
+      <if test="paymentMode != null" >
+        payment_mode = #{paymentMode,jdbcType=INTEGER},
+      </if>
+      <if test="paymentAmount != null" >
+        payment_amount = #{paymentAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+        version = version + 1,
+    </set>
+    <where>
+        <trim prefixOverrides="and">
+	      <if test="companyId != null" >
+	        company_id = #{companyId,jdbcType=INTEGER}
+	      </if>
+	      <if test="projectId != null" >
+	        and project_id = #{projectId,jdbcType=INTEGER}
+	      </if>
+        </trim>
+    </where>
+  </update>
+</mapper>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.coredb.holiday.HolidayMapper" >
+  <resultMap id="BaseResultMap" type="Holiday" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="holiday_time" property="holidayTime" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="flag" property="flag" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, holiday_time, create_time, create_user_id, update_time, update_user_id, version,flag
+  </sql>
+  <insert id="insertHoliday" parameterType="Holiday" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+    insert into t_holiday
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="holidayTime != null" >
+        holiday_time,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="flag != null" >
+        flag,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="holidayTime != null" >
+        #{holidayTime,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="flag != null" >
+        #{flag,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateHoliday" parameterType="Holiday">
+  	update t_holiday
+    <set >
+      <if test="holidayTime != null" >
+        holiday_time = #{holidayTime,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="flag != null" >
+        flag = #{flag,jdbcType=INTEGER},
+      </if>
+      	version = version + 1
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <delete id="deleteByHolidayId" parameterType="java.lang.Integer">
+  	delete from t_holiday
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <select id="queryHoliday" parameterType="HolidayQuery" resultMap="BaseResultMap">
+  	select 
+  	<include refid="Base_Column_List" />
+    from t_holiday
+    <where>
+    	<trim prefixOverrides="and">
+    		<if test="id != null">
+    			id=#{id,jdbcType=INTEGER}
+    		</if>
+    		<if test="holidayTime != null" >
+        		and holiday_time = #{holidayTime,jdbcType=VARCHAR}
+      		</if>
+    	</trim>
+    </where>
+  </select>
+  
+  <select id="getHolidayList" parameterType="HolidayQuery" resultMap="BaseResultMap">
+  	select 
+  	<include refid="Base_Column_List" />
+    from t_holiday
+    <where>
+    	<trim prefixOverrides="and">
+    		<if test="id != null">
+    			id=#{id,jdbcType=INTEGER}
+    		</if>
+    		<if test="holidayTime != null" >
+        		and holiday_time = #{holidayTime,jdbcType=VARCHAR}
+      		</if>
+    	</trim>
+    </where>
+    order by id 
+    limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+  
+  <select id="getHolidayCount" parameterType="HolidayQuery" resultType="int">
+  	select count(id) from t_holiday
+  	<where>
+    	<trim prefixOverrides="and">
+    		<if test="id != null">
+    			id=#{id,jdbcType=INTEGER}
+    		</if>
+    		<if test="holidayTime != null" >
+        		and holiday_time = #{holidayTime,jdbcType=VARCHAR}
+      		</if>
+    	</trim>
+    </where>
+  </select>
+</mapper>

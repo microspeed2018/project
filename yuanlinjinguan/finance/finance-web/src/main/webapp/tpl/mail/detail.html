@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>通讯录</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+    </head>
+    <body>
+        <header class='header'>
+            <img src="../../images/svg/left.svg" class="icon-40" id="goback"  />
+            <span class='tit'>通讯录</span>
+            <i></i>
+        </header>
+        <div>
+            <ul class='wrap-list mail-detail'>
+                <li>
+                    <div class='tit'>
+                        姓名
+                    </div>
+                    <div class='con'>
+                        <input type="text" class='input' id="name" readonly />
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        座机
+                    </div>
+                    <div class='con'>
+                        <a href="tel:" id="telephone" style="color: #666; padding: .25rem 0;"></a>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        座机短号
+                    </div>
+                    <div class='con'>
+                        <a href="tel:" id="shortTelephone" style="color: #666; padding: .25rem 0;"></a>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        联系电话
+                    </div>
+                    <div class='con'>
+                        <a href="tel:" id="mobile" style="color: #666; padding: .25rem 0;"></a>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        虚拟网短号
+                    </div>
+                    <div class='con'>
+                         <a href="tel:" id="virtualMobile" style="color: #666; padding: .25rem 0;"></a>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        邮箱
+                    </div>
+                    <div class='con'>
+                        <input type="text" class='input' id="email" readonly />
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        所属部门
+                    </div>
+                    <div class='con'>
+                        <span class="simulation-select one" id="department"></span>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        岗位
+                    </div>
+                    <div class='con'>
+                        <span class="simulation-select one" id="job"></span>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        状态
+                    </div>
+                    <div class='con'>
+                        <span class="simulation-select one" id="status"></span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class='wrap'>
+            <input type="button" value='返回' class='btn btn-max' id="submit" />
+        </div>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script>
+        (function($, doc) {
+            $.init();
+
+            // 校验app或wap
+            myInit(indexFun);
+            function indexFun() {
+                // 历史url
+                var historyUrl = myGetLocalStorage("curr");
+                // goback
+                doc.querySelector("#goback").addEventListener("click", function () {
+                    myOpenWindow(historyUrl, '');
+                    zjzm.historyUrl("/tpl/mail/detail.html");
+                });
+                doc.querySelector("#submit").addEventListener("click", function () {
+                    myOpenWindow(historyUrl, '');
+                    zjzm.historyUrl("/tpl/mail/detail.html");
+                });
+
+                // 获取详情
+                var mail = JSON.parse(myGetLocalStorage("mail"));
+                if (mail) {
+                    var id = mail.id;
+                    getMailDetail();
+                }
+
+                function getMailDetail() {
+                    myLoading();
+                    $.ajax(global.apiURL + '/user/'+ id +'/staff.htm', {
+                        data : {},
+                        dataType : 'json',
+                        type : 'post',
+                        timeout : 10000,
+                        success : function(data){
+                            if (data.success) {
+                                setInfo(data.data[0]);
+                            } else {
+                                if (data.code == "405" && data.resultMsg == "请登录系统") {
+                                    againLogin(getMailDetail, []);
+                                } else if (data.code == "record_not_exsist") {
+                                    //createNullList();
+                                    myToast("该部门当前没有职员");
+                                } else {
+                                    myToast(data.resultMsg);
+                                }
+                            }
+                            myLoadingOver();
+                        },
+                        error : function() {
+                            myLoadingOver();
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+                function setInfo(data) {
+                    doc.querySelector("#name").value = data.userInfo.name;
+                    doc.querySelector("#mobile").innerHTML = data.userInfo.mobile;
+                    doc.querySelector("#mobile").setAttribute("href", "tel:"+ data.userInfo.mobile);
+                    doc.querySelector("#telephone").innerHTML = data.telephone;
+                    doc.querySelector("#telephone").setAttribute("href", "tel:"+ data.telephone);
+                    doc.querySelector("#shortTelephone").innerHTML = data.shortTelephone;
+                    doc.querySelector("#shortTelephone").setAttribute("href", "tel:"+ data.shortTelephone);
+                    doc.querySelector("#virtualMobile").innerHTML = data.virtualMobile;
+                    doc.querySelector("#virtualMobile").setAttribute("href", "tel:"+ data.virtualMobile);
+                    doc.querySelector("#email").value = data.email;
+                    doc.querySelector("#department").innerHTML = data.departmentName;
+                    doc.querySelector("#job").innerHTML = data.jobName;
+                    if (data.jobStatus) {
+                        doc.querySelector("#status").innerHTML = "在职";
+                    } else {
+                        doc.querySelector("#status").innerHTML = "离职";
+                    }
+                }
+                // // 获取基础数据
+                // function getBasic(id, cb) {
+                //     jQuery.ajax({
+                //         url: "/company/user/getBasic.htm",
+                //         type: 'post',
+                //         dataType: 'json',
+                //         data: {
+                //             categoryId : id
+                //         },
+                //         success: function (data) {
+                //             if (data.success) {
+                //                 cb(data.rows);
+                //             } else {
+                //                 myToast(data.resultMsg);
+                //             }
+                //         }
+                //     });
+                // }
+                // function getdDepartment(id) {
+                //     myLoading();
+                //     $.ajax(global.apiURL + '/company/user/department.htm', {
+                //         data : {},
+                //         dataType : 'json',
+                //         type : 'post',
+                //         timeout : 10000,
+                //         success : function(data){
+                //             if (data.success) {
+                //                 var box = doc.querySelector("#department");
+                //                 var dom = "";
+                //                 for (var i = 0; i < data.department.length; i++) {
+                //                     if (data.department[i].id == id) {
+                //                         dom += "<option selected value='"+ data.department[i].id +"'>"+ data.department[i].name +"</option>";
+                //                     } else {
+                //                         dom += "<option value='"+ data.department[i].id +"'>"+ data.department[i].name +"</option>";
+                //                     }
+                //                 }
+                //                 box.innerHTML = dom;
+                //             } else {
+                //                 myToast(data.resultMsg);
+                //             }
+                //             myLoadingOver();
+                //         },
+                //         error : function() {
+                //             myLoadingOver();
+                //             myToast("服务器正忙，请稍后重试！");
+                //         }
+                //     });
+                // }
+                // function getdJobRank(id) {
+                //     myLoading();
+                //     $.ajax(global.apiURL + '/company/user/jobRank.htm', {
+                //         data : {
+                //             departmentId: id
+                //         },
+                //         dataType : 'json',
+                //         type : 'post',
+                //         timeout : 10000,
+                //         success : function(data){
+                //             if (data.success) {
+                //                 var box = doc.querySelector("#job");
+                //                 var dom = "";
+                //                 for (var i = 0; i < data.job.length; i++) {
+                //                     if (data.job[i].id == id) {
+                //                         dom += "<option selected value='"+ data.job[i].id +"'>"+ data.job[i].name +"</option>";
+                //                     } else {
+                //                         dom += "<option value='"+ data.job[i].id +"'>"+ data.job[i].name +"</option>";
+                //                     }
+                //                 }
+                //                 box.innerHTML = dom;
+                //             } else {
+                //                 myToast(data.resultMsg);
+                //             }
+                //             myLoadingOver();
+                //         },
+                //         error : function() {
+                //             myLoadingOver();
+                //             myToast("服务器正忙，请稍后重试！");
+                //         }
+                //     });
+                // }
+            }
+        }(mui, document));
+    </script>
+</html>

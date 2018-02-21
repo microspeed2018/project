@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.user.StaffInfoMapper" >
+  <resultMap id="StaffPersonResultMap" type="CompanyStaffPerson" >
+    <collection property="staff" ofType="StaffBasicInfo" resultMap="StaffInfoResultMap"></collection>
+    <collection property="person" ofType="ExternalPerson" resultMap="ExternalPersonResultMap"></collection>
+  </resultMap>
+
+  <resultMap id="ExternalPersonResultMap" type="ExternalPerson" >
+    <id column="person_id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="person_name" property="name" jdbcType="VARCHAR" />
+    <result column="personnel_nature" property="personnelNature" jdbcType="INTEGER" />
+    <result column="person_company" property="company" jdbcType="VARCHAR" />
+    <result column="person_job" property="job" jdbcType="VARCHAR" />
+    <result column="person_mobile" property="mobile" jdbcType="VARCHAR" />
+    <result column="person_email" property="email" jdbcType="VARCHAR" />
+    <result column="person_related_person" property="relatedPerson" jdbcType="INTEGER" />
+    <result column="person_memo" property="memo" jdbcType="VARCHAR" />
+    <result column="person_status" property="status" jdbcType="INTEGER" />
+    <result column="person_create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="person_create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="person_update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="person_update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="person_version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  
+  
+  
+</mapper>

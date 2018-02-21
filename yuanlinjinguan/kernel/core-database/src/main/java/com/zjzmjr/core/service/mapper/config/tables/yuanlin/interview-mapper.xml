@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.interview.InterviewMapper" >
+  <resultMap id="BaseResultMap" type="Interview" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="recruitment_id" property="recruitmentId" jdbcType="INTEGER" />
+    <result column="talent_id" property="talentId" jdbcType="INTEGER" />
+    <result column="round" property="round" jdbcType="INTEGER" />
+    <result column="time" property="time" jdbcType="VARCHAR" />
+    <result column="place" property="place" jdbcType="VARCHAR" />
+    <result column="interviewer" property="interviewer" jdbcType="INTEGER" />
+    <result column="written_score" property="writtenScore" jdbcType="INTEGER" />
+    <result column="interview_score" property="interviewScore" jdbcType="INTEGER" />
+    <result column="temperament" property="temperament" jdbcType="INTEGER" />
+    <result column="experience" property="experience" jdbcType="INTEGER" />
+    <result column="specialty" property="specialty" jdbcType="INTEGER" />
+    <result column="intention" property="intention" jdbcType="INTEGER" />
+    <result column="stability" property="stability" jdbcType="INTEGER" />
+    <result column="details" property="details" jdbcType="INTEGER" />
+    <result column="executive" property="executive" jdbcType="INTEGER" />
+    <result column="efficiency" property="efficiency" jdbcType="INTEGER" />
+    <result column="relationship" property="relationship" jdbcType="INTEGER" />
+    <result column="communication" property="communication" jdbcType="INTEGER" />
+    <result column="is_sms" property="isSms" jdbcType="INTEGER" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="result" property="result" jdbcType="INTEGER" />
+    <result column="comment" property="comment" jdbcType="VARCHAR" />
+    <result column="record_time" property="recordTime" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap type="InterviewInfo" id="InterviewInfoResultMap" extends="BaseResultMap">
+     <association property="recruitment" resultMap="RecruitmentResultMap" column="recruitment_id" javaType="Recruitment" />
+     <association property="talent" resultMap="TalentResultMap" column="talent_id" javaType="Talent" />
+     <association property="admin" resultMap="AdminResultMap" column="interviewer" javaType="Admin" />
+  </resultMap>
+  <resultMap type="Recruitment" id="RecruitmentResultMap">
+  	 <id column="recruitment_id" property="id" jdbcType="INTEGER" />
+     <result column="recruitment_department_id" property="departmentId" jdbcType="INTEGER" />
+     <result column="position_name" property="positionName" jdbcType="VARCHAR" />
+  </resultMap>  
+  <resultMap type="Talent" id="TalentResultMap">
+  	 <id column="talent_id" property="id" jdbcType="INTEGER" />
+     <result column="talent_name" property="name" jdbcType="VARCHAR" />
+     <result column="talent_identity_no" property="identityNo" jdbcType="VARCHAR" />
+     <result column="talent_mobile" property="mobile" jdbcType="VARCHAR" />
+  </resultMap>  
+  <resultMap type="Admin" id="AdminResultMap"> 
+    <id column="admin_id" property="admin_id" />
+    <result column="admin_username" property="username" />
+	<result column="admin_name" property="name" />
+	<result column="admin_department" property="department" />
+	<result column="admin_jobId" property="job_id" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, company_id, recruitment_id, talent_id, round, time, place, interviewer, written_score, 
+    interview_score, temperament, experience, specialty, intention, stability, details, 
+    executive, efficiency, relationship, communication, is_sms, memo, result, comment, record_time, 
+    create_time, create_user_id, update_time, update_user_id, version
+  </sql>
+  <select id="getMyInterviewInfoCount" resultType="java.lang.Integer" parameterType="InterviewQuery" >
+    select count(zi.id)
+    from z_interview zi
+    left outer join z_recruitment zr on zr.id = zi.recruitment_id
+    left outer join z_talent zt on zt.id = zi.talent_id
+    left outer join t_admin ta on ta.id = zi.interviewer
+    left outer join t_admin ta2 on ta2.mobile = zt.mobile
+    where ta2.id = #{talentAdminId,jdbcType=INTEGER}
+  </select>
+  <select id="getInterviewInfoCount" resultType="java.lang.Integer" parameterType="InterviewQuery" >
+    select count(zi.id)
+    from z_interview zi
+    left outer join z_recruitment zr on zr.id = zi.recruitment_id
+    left outer join z_talent zt on zt.id = zi.talent_id
+    left outer join t_admin ta on ta.id = zi.interviewer
+    <include refid="where_clause"></include>
+  </select>
+  
+  <select id="getMyInterviewInfo" resultMap="InterviewInfoResultMap" parameterType="InterviewQuery" >
+    select zi.* ,zi.create_time, ta.name admin_name,zt.name talent_name,zt.mobile talent_mobile,zt.identity_no talent_identity_no,zr.position_name
+    from z_interview zi
+    left outer join z_recruitment zr on zr.id = zi.recruitment_id
+    left outer join z_talent zt on zt.id = zi.talent_id
+    left outer join t_admin ta on ta.id = zi.interviewer
+    left outer join t_admin ta2 on ta2.mobile = zt.mobile
+    where ta2.id = #{talentAdminId,jdbcType=INTEGER}
+     <choose>
+        <when test="orderBy != null and orderBy!=''">
+            order by #{orderBy}
+        </when>
+        <otherwise>
+            order by zi.create_time desc
+        </otherwise>
+    </choose>    
+    limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+  
+  <select id="getInterviewInfo" resultMap="InterviewInfoResultMap" parameterType="InterviewQuery" >
+    select zi.* ,zi.create_time, ta.name admin_name,zt.name talent_name,zt.mobile talent_mobile,zt.identity_no talent_identity_no,zr.position_name
+    from z_interview zi
+    left outer join z_recruitment zr on zr.id = zi.recruitment_id
+    left outer join z_talent zt on zt.id = zi.talent_id
+    left outer join t_admin ta on ta.id = zi.interviewer
+    <include refid="where_clause"></include>
+     <choose>
+        <when test="orderBy != null and orderBy!=''">
+            order by #{orderBy}
+        </when>
+        <otherwise>
+            order by zi.create_time desc
+        </otherwise>
+    </choose>    
+    limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+  
+  <select id="getInterviewByCondition" resultMap="BaseResultMap" parameterType="InterviewQuery" >
+    select 
+    <include refid="Base_Column_List" />
+    from z_interview 
+    <where>
+		<trim prefixOverrides="and">
+			 <if test="talentId != null" >
+		        and talent_id = #{talentId,jdbcType=INTEGER}
+		     </if>
+			 <if test="recruitmentId != null" >
+		        and recruitment_id = #{recruitmentId,jdbcType=INTEGER}
+		     </if>
+		     <if test="companyId != null" >
+		        and company_id = #{companyId,jdbcType=INTEGER}
+		     </if>
+		     <if test="id != null" >
+		        and id = #{id,jdbcType=INTEGER}
+		     </if> 
+		     <if test="round != null" >
+		        and round = #{round,jdbcType=INTEGER}
+		     </if> 
+		     
+		</trim>
+	</where>
+  </select>
+  
+  <sql id="where_clause">
+	 <where>
+		<trim prefixOverrides="and">
+		  <if test="id != null" >
+	        and zi.id = #{id,jdbcType=INTEGER}
+	      </if>
+		  <if test="name != null" >
+	        and zt.name like CONCAT('%', #{name,jdbcType=VARCHAR}, '%')
+	      </if>
+	       <if test="round != null" >
+		        and zi.round = #{round,jdbcType=INTEGER}
+		     </if> 
+	      <if test="mobile != null" >
+	        and zt.mobile = #{mobile,jdbcType=VARCHAR}
+	      </if>
+	      <if test="identityNo != null" >
+	        and zt.identity_no = #{identityNo,jdbcType=VARCHAR}
+	      </if>
+	      <if test="recruitmentId != null" >
+	        and zi.recruitment_id = #{recruitmentId,jdbcType=INTEGER}
+	      </if>
+	      <if test="talentId != null" >
+	        and zi.talent_id = #{talentId,jdbcType=INTEGER}
+	      </if>
+	      <if test="interviewer != null" >
+	        and zi.interviewer = #{interviewer,jdbcType=INTEGER}
+	      </if>
+	      <if test="result != null" >
+	        and zi.result = #{result,jdbcType=INTEGER}
+	      </if>
+	      <if test="isSms != null" >
+	        and zi.is_sms = #{isSms,jdbcType=INTEGER}
+	      </if>
+	      <if test=" posNameOrInterview != '' and posNameOrInterview != null">
+	  		and (zt.name like CONCAT('%', #{posNameOrInterview,jdbcType=VARCHAR}, '%') or zr.position_name like CONCAT('%', #{posNameOrInterview,jdbcType=VARCHAR}, '%'))
+	      </if>
+	      <if test="timeStart != null">
+				and zi.time >= #{timeStart,jdbcType=VARCHAR}
+		  </if>
+		  <if test="timeEnd != null">
+               <![CDATA[
+                   and zi.time <= #{timeEnd,jdbcType=VARCHAR}
+               ]]>
+		  </if>
+		  <if test="writtenScoreStart != null">
+				and zi.written_score >= #{writtenScoreStart,jdbcType=VARCHAR}
+		  </if>
+		  <if test="writtenScoreEnd != null">
+               <![CDATA[
+                   and zi.written_score <= #{writtenScoreEnd,jdbcType=VARCHAR}
+               ]]>
+		  </if>
+		  <if test="interviewScoreStart != null">
+				and zi.interview_score >= #{interviewScoreStart,jdbcType=VARCHAR}
+		  </if>
+		  <if test="interviewScoreEnd != null">
+               <![CDATA[
+                   and zi.interview_score <= #{interviewScoreEnd,jdbcType=VARCHAR}
+               ]]>
+		  </if>
+		</trim>
+	 </where>
+  </sql>
+  
+  <select id="getInterviewInfoByCondition" resultMap="InterviewInfoResultMap" parameterType="InterviewQuery"> 	
+	select zi.* ,zi.create_time, ta.name admin_name,zt.name talent_name,zt.mobile talent_mobile,zt.identity_no talent_identity_no,zr.position_name
+	from z_interview zii
+	LEFT OUTER JOIN z_interview zi on zii.talent_id = zi.talent_id and zii.recruitment_id = zi.recruitment_id
+	left outer join z_recruitment zr on zr.id = zi.recruitment_id
+	left outer join z_talent zt on zt.id = zi.talent_id
+	left outer join t_admin ta on ta.id = zi.interviewer
+	where 
+	<if test="interviewer != null" >
+	  zii.interviewer = #{interviewer,jdbcType=INTEGER}
+	</if>
+	<if test=" posNameOrInterview != '' and posNameOrInterview != null">
+	  and (zt.name like CONCAT('%', #{posNameOrInterview,jdbcType=VARCHAR}, '%') or zr.position_name like CONCAT('%', #{posNameOrInterview,jdbcType=VARCHAR}, '%'))
+	</if>
+	  order by zi.create_time desc
+  </select>
+  
+  <delete id="deleteInterview" parameterType="java.lang.Integer" >
+    delete from z_interview
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insertInterview" parameterType="Interview" >
+     insert into z_interview
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="recruitmentId != null" >
+        recruitment_id,
+      </if>
+      <if test="talentId != null" >
+        talent_id,
+      </if>
+      <if test="round != null" >
+        round,
+      </if>
+      <if test="time != null" >
+        time,
+      </if>
+      <if test="place != null" >
+        place,
+      </if>
+      <if test="interviewer != null" >
+        interviewer,
+      </if>
+      <if test="writtenScore != null" >
+        written_score,
+      </if>
+      <if test="interviewScore != null" >
+        interview_score,
+      </if>
+      <if test="temperament != null" >
+        temperament,
+      </if>
+      <if test="experience != null" >
+        experience,
+      </if>
+      <if test="specialty != null" >
+        specialty,
+      </if>
+      <if test="intention != null" >
+        intention,
+      </if>
+      <if test="stability != null" >
+        stability,
+      </if>
+      <if test="details != null" >
+        details,
+      </if>
+      <if test="executive != null" >
+        executive,
+      </if>
+      <if test="efficiency != null" >
+        efficiency,
+      </if>
+      <if test="relationship != null" >
+        relationship,
+      </if>
+      <if test="communication != null" >
+        communication,
+      </if>
+      <if test="isSms != null" >
+        is_sms,
+      </if>
+      <if test="memo != null" >
+        memo,
+      </if>
+      <if test="result != null" >
+        result,
+      </if>
+      <if test="comment != null" >
+        comment,
+      </if>
+      <if test="recordTime != null" >
+        record_time,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="recruitmentId != null" >
+        #{recruitmentId,jdbcType=INTEGER},
+      </if>
+      <if test="talentId != null" >
+        #{talentId,jdbcType=INTEGER},
+      </if>
+      <if test="round != null" >
+        #{round,jdbcType=INTEGER},
+      </if>
+      <if test="time != null" >
+        #{time,jdbcType=VARCHAR},
+      </if>
+      <if test="place != null" >
+        #{place,jdbcType=VARCHAR},
+      </if>
+      <if test="interviewer != null" >
+        #{interviewer,jdbcType=INTEGER},
+      </if>
+      <if test="writtenScore != null" >
+        #{writtenScore,jdbcType=INTEGER},
+      </if>
+      <if test="interviewScore != null" >
+        #{interviewScore,jdbcType=INTEGER},
+      </if>
+      <if test="temperament != null" >
+        #{temperament,jdbcType=INTEGER},
+      </if>
+      <if test="experience != null" >
+        #{experience,jdbcType=INTEGER},
+      </if>
+      <if test="specialty != null" >
+        #{specialty,jdbcType=INTEGER},
+      </if>
+      <if test="intention != null" >
+        #{intention,jdbcType=INTEGER},
+      </if>
+      <if test="stability != null" >
+        #{stability,jdbcType=INTEGER},
+      </if>
+      <if test="details != null" >
+        #{details,jdbcType=INTEGER},
+      </if>
+      <if test="executive != null" >
+        #{executive,jdbcType=INTEGER},
+      </if>
+      <if test="efficiency != null" >
+        #{efficiency,jdbcType=INTEGER},
+      </if>
+      <if test="relationship != null" >
+        #{relationship,jdbcType=INTEGER},
+      </if>
+      <if test="communication != null" >
+        #{communication,jdbcType=INTEGER},
+      </if>
+       <if test="isSms != null" >
+        #{isSms,jdbcType=INTEGER},
+      </if>
+      <if test="memo != null" >
+        #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="result != null" >
+        #{result,jdbcType=INTEGER},
+      </if>
+      <if test="comment != null" >
+        #{comment,jdbcType=VARCHAR},
+      </if>
+      <if test="recordTime != null" >
+        #{recordTime,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateInterview" parameterType="Interview" >
+   update z_interview
+    <set>
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="recruitmentId != null" >
+        recruitment_id = #{recruitmentId,jdbcType=INTEGER},
+      </if>
+      <if test="talentId != null" >
+        talent_id = #{talentId,jdbcType=INTEGER},
+      </if>
+      <if test="round != null" >
+        round = #{round,jdbcType=INTEGER},
+      </if>
+      <if test="time != null" >
+        time = #{time,jdbcType=VARCHAR},
+      </if>
+      <if test="place != null" >
+        place = #{place,jdbcType=VARCHAR},
+      </if>
+      <if test="interviewer != null" >
+        interviewer = #{interviewer,jdbcType=INTEGER},
+      </if>
+      <if test="writtenScore != null" >
+        written_score = #{writtenScore,jdbcType=INTEGER},
+      </if>
+      <if test="interviewScore != null" >
+        interview_score = #{interviewScore,jdbcType=INTEGER},
+      </if>
+      <if test="temperament != null" >
+        temperament = #{temperament,jdbcType=INTEGER},
+      </if>
+      <if test="experience != null" >
+        experience = #{experience,jdbcType=INTEGER},
+      </if>
+      <if test="specialty != null" >
+        specialty = #{specialty,jdbcType=INTEGER},
+      </if>
+      <if test="intention != null" >
+        intention = #{intention,jdbcType=INTEGER},
+      </if>
+      <if test="stability != null" >
+        stability = #{stability,jdbcType=INTEGER},
+      </if>
+      <if test="details != null" >
+        details = #{details,jdbcType=INTEGER},
+      </if>
+      <if test="executive != null" >
+        executive = #{executive,jdbcType=INTEGER},
+      </if>
+      <if test="efficiency != null" >
+        efficiency = #{efficiency,jdbcType=INTEGER},
+      </if>
+      <if test="relationship != null" >
+        relationship = #{relationship,jdbcType=INTEGER},
+      </if>
+      <if test="communication != null" >
+        communication = #{communication,jdbcType=INTEGER},
+      </if>
+      <if test="isSms != null" >
+        is_sms = #{isSms,jdbcType=INTEGER},
+      </if>
+      <if test="memo != null" >
+        memo = #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="result != null" >
+        result = #{result,jdbcType=INTEGER},
+      </if>
+      <if test="comment != null" >
+        comment = #{comment,jdbcType=VARCHAR},
+      </if>
+      <if test="recordTime != null" >
+        record_time = #{recordTime,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

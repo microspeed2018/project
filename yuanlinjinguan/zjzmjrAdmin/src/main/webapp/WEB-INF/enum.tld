@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+	version="2.0">
+	<description>ZJZMJR ENUM TAG LIB</description>
+	<tlib-version>1.0</tlib-version>
+	<short-name>enum</short-name>
+	<uri>http://www.cbylsj.com/jsp/jstl/enum</uri>
+	
+	<function>
+		<description>项目阶段枚举</description>
+		<name>gardenProjectStepEnum</name>
+		<function-class>com.zjzmjr.admin.web.common.util.EnumUtils</function-class>
+		<function-signature>com.zjzmjr.core.enums.project.GardenProjectStepEnum[] getGardenProjectStepEnums()</function-signature>
+	</function>
+	
+	<function>
+	    <description>事务类型枚举</description>
+	    <name>businessTypeEnum</name>
+	    <function-class>com.zjzmjr.admin.web.common.util.EnumUtils</function-class>
+	    <function-signature>com.zjzmjr.core.enums.admin.BusinessTypeEnum[] getBusinessTypeEnums()</function-signature>
+	</function>
+	
+	<function>
+	    <description>处理状态枚举</description>
+	    <name>handleResultEnum</name>
+	    <function-class>com.zjzmjr.admin.web.common.util.EnumUtils</function-class>
+	    <function-signature>com.zjzmjr.core.enums.admin.HandleResultEnum[] getHandleResultEnums()</function-signature>
+	</function>
+	
+	<function>
+		<description>项目状态枚举</description>
+		<name>gardenProjectStatusEnum</name>
+		<function-class>com.zjzmjr.admin.web.common.util.EnumUtils</function-class>
+		<function-signature>com.zjzmjr.core.enums.project.GardenProjectStatusEnum[] getGardenProjectStatusEnums()</function-signature>
+	</function>
+	
+	<function>
+		<description>征信状态枚举</description>
+		<name>creditStatusEnum</name>
+		<function-class>com.zjzmjr.admin.web.common.util.EnumUtils</function-class>
+		<function-signature>com.zjzmjr.core.enums.credit.CreditStatusEnum[] getCreditStatusEnums()</function-signature>
+	</function>
+	
+	<function>
+		<description>保险产品状态枚举</description>
+		<name>insuranceProductStatusEnum</name>
+		<function-class>com.zjzmjr.admin.web.common.util.EnumUtils</function-class>
+		<function-signature>com.zjzmjr.core.enums.insurance.InsuranceProductEnum[] getInsuranceProductEnums()</function-signature>
+	</function>
+	
+	<function>
+		<description>保险产品申请状态枚举</description>
+		<name>insuranceApplyStatusEnum</name>
+		<function-class>com.zjzmjr.admin.web.common.util.EnumUtils</function-class>
+		<function-signature>com.zjzmjr.core.enums.insurance.InsuranceApplyEnum[] getInsuranceApplyEnums()</function-signature>
+	</function>
+	
+	<function>
+		<description>用户状态枚举</description>
+		<name>userStatusEnum</name>
+		<function-class>com.zjzmjr.admin.web.common.util.EnumUtils</function-class>
+		<function-signature>com.zjzmjr.core.enums.user.UserStatusEnum[] getUserStatusEnums()</function-signature>
+	</function>
+	
+	<function>
+		<description>用户的类型枚举</description>
+		<name>userTypeEnum</name>
+		<function-class>com.zjzmjr.admin.web.common.util.EnumUtils</function-class>
+		<function-signature>com.zjzmjr.core.enums.user.UserTypeEnum[] getUserTypeEnums()</function-signature>
+	</function>
+	
+	<function>
+		<description>管理员事物类型枚举</description>
+		<name>adminBusinessTypeEnum</name>
+		<function-class>com.zjzmjr.admin.web.common.util.EnumUtils</function-class>
+		<function-signature>com.zjzmjr.core.enums.admin.AdminBusinessTypeEnum[] getAdminBusinessTypeEnums()</function-signature>
+	</function>
+	
+	<function>
+		<description>代扣状态类型枚举</description>
+		<name>withholdingStatusEnum</name>
+		<function-class>com.zjzmjr.admin.web.common.util.EnumUtils</function-class>
+		<function-signature>com.zjzmjr.core.enums.withholding.WithholdingStatusEnum[] getWithholdingStatusEnums()</function-signature>
+	</function>
+	
+	<function>
+		<description>任务状态类型枚举</description>
+		<name>taskStatusEnum</name>
+		<function-class>com.zjzmjr.admin.web.common.util.EnumUtils</function-class>
+		<function-signature>com.zjzmjr.core.enums.withholding.TaskStatusEnum[] getTaskStatusEnums()</function-signature>
+	</function>
+	
+	<function>
+		<description>菜单使用系统枚举</description>
+		<name>menuProjectEnum</name>
+		<function-class>com.zjzmjr.admin.web.common.util.EnumUtils</function-class>
+		<function-signature>com.zjzmjr.core.enums.menu.MenuProjectEnum[] getMenuProjectEnum()</function-signature>
+	</function>
+	
+	<function>
+		<description>农险申请状态枚举</description>
+		<name>agriInsuranceApplyEnum</name>
+		<function-class>com.zjzmjr.admin.web.common.util.EnumUtils</function-class>
+		<function-signature>com.zjzmjr.core.enums.insurance.AgriInsuranceApplyEnum[] getAgriInsuranceApplyEnum()</function-signature>
+	</function>
+	
+	<function>
+		<description>交易订单状态枚举</description>
+		<name>orderRechangeStatusEnum</name>
+		<function-class>com.zjzmjr.admin.web.common.util.EnumUtils</function-class>
+		<function-signature>com.zjzmjr.core.enums.order.OrderRechangeStatusEnum[] getOrderRechangeStatusEnum()</function-signature>
+	</function>
+	
+	<function>
+		<description>第三方支付公司枚举</description>
+		<name>orderRechangeBankEnum</name>
+		<function-class>com.zjzmjr.admin.web.common.util.EnumUtils</function-class>
+		<function-signature>com.zjzmjr.core.enums.order.OrderRechangeBankEnum[] getOrderRechangeBankEnum()</function-signature>
+	</function>
+	
+	<function>
+		<description>订单类型的枚举型</description>
+		<name>orderRechangeTypeEnum</name>
+		<function-class>com.zjzmjr.admin.web.common.util.EnumUtils</function-class>
+		<function-signature>com.zjzmjr.core.enums.order.OrderRechangeTypeEnum[] getOrderRechangeTypeEnum()</function-signature>
+	</function>
+	
+	<function>
+		<description>保险基础资料枚举型</description>
+		<name>insuranceBasicFileTypeEnum</name>
+		<function-class>com.zjzmjr.admin.web.common.util.EnumUtils</function-class>
+		<function-signature>com.zjzmjr.core.enums.securityinsurance.InsuranceBasicFileTypeEnum[] getInsuranceBasicFileTypeEnum()</function-signature>
+	</function>
+	
+	<function>
+		<description>招聘信息状态枚举型</description>
+		<name>recruitmentIsValidEnum</name>
+		<function-class>com.zjzmjr.admin.web.common.util.EnumUtils</function-class>
+		<function-signature>com.zjzmjr.core.enums.securityinsurance.RecruitmentIsValidEnum[] getRecruitmentIsValidEnum()</function-signature>
+	</function>
+	
+	<function>
+		<description>员工状态枚举型</description>
+		<name>adminJobStatusEnum</name>
+		<function-class>com.zjzmjr.admin.web.common.util.EnumUtils</function-class>
+		<function-signature>com.zjzmjr.core.enums.securityinsurance.AdminJobStatusEnum[] getAdminJobStatusEnum()</function-signature>
+	</function>
+		
+	<function>
+		<description>面试结果状态枚举型</description>
+		<name>interviewResultEnum</name>
+		<function-class>com.zjzmjr.admin.web.common.util.EnumUtils</function-class>
+		<function-signature>com.zjzmjr.core.enums.securityinsurance.InterviewResultEnum[] getInterviewResultEnum()</function-signature>
+	</function>
+	
+	<function>
+		<description>外部员工状态枚举型</description>
+		<name>externalPersonStatusEnum</name>
+		<function-class>com.zjzmjr.admin.web.common.util.EnumUtils</function-class>
+		<function-signature>com.zjzmjr.core.enums.securityinsurance.ExternalPersonStatusEnum[] getExternalPersonStatusEnum()</function-signature>
+	</function>
+</taglib>
+   

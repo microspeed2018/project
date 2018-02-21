@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html style="height: 100%;">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="format-detection" content="telephone=no">
+		<title>诚邦设计</title>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link href="css/base.min.css?v.7" rel="stylesheet" />
+		<style type="text/css">
+			.mui-slider-group div {
+				background-size: cover;
+			}
+			.mui-slider-indicator .mui-indicator {
+				width: 15px;
+				height: 15px;
+				border: 1px solid #ef7e78;
+				box-shadow: 0 0 0 #ef7e78;
+				background: #fff;
+			}
+			.mui-slider-indicator .mui-active.mui-indicator {
+				background: #ef7e78;
+			}
+			.mui-slider-indicator {
+				bottom: 20px;
+			}
+		</style>
+	</head>
+	<body>
+
+		<!-- <div id='sendMsgLocal' style="padding:  10px 0;">发送消息</div> -->
+		<div class="welcome" style="display: none;">
+			<span id="jump">跳过</span>
+			<img src="http://service.project.cbylsj.com/images/pic/logo.png" />
+		</div>
+		<div class='loading' style="display: none; height: 100%;">
+			<span id='jump-loading'>跳过</span>
+			<div id="slider" class="mui-slider" style="height: 100%;">
+                <div class="mui-slider-group" style="height: 100%;">
+					<!-- 第一张 -->
+					<div class="mui-slider-item" style="background-image: url('./images/pic/loading-1.png')">
+						<!-- <img src="../images/pic/loading-1.png"> -->
+					</div>
+					<!-- 第二张 -->
+					<div class="mui-slider-item" style="background-image: url('./images/pic/loading-2.png')">
+						<!-- <img src="../images/pic/loading-2.png"> -->
+					</div>
+					<!-- 第三张 -->
+					<div class="mui-slider-item" style="background-image: url('./images/pic/loading-3.png')">
+						<!-- <img src="../images/pic/loading-3.png"> -->
+						<!-- <span id='inter-loading'>立即体验></span> -->
+					</div>
+                </div>
+                <div class="mui-slider-indicator">
+					<div class="mui-indicator mui-active"></div>
+					<div class="mui-indicator"></div>
+					<div class="mui-indicator"></div>
+				</div>
+            </div>
+		</div>
+		<script src="js/mui.min.js"></script>
+		<script src="js/common.min.js?v.7"></script>
+		<script>
+			(function($, doc) {
+				$.init();
+
+
+
+
+				// 微信内显示title
+				if (isWeiXin()) {
+					document.getElementsByTagName("title")[0].innerHTML = "诚邦设计";
+					//wxJSDK();
+				}
+
+				// 校验app或wap
+				myInit(indexFun);
+				function indexFun() {
+
+
+
+
+
+					// document.querySelector("#sendMsgLocal").addEventListener("tap", function () {
+    	//                 createLocalPushMsg()
+    	//             });
+
+	               //getPushInfo();
+
+            // 监听plusready事件
+            var message = null;
+            document.addEventListener( "plusready", function(){
+                message = document.getElementById("message");
+                // 监听点击消息事件
+                plus.push.addEventListener( "click", function( msg ) {
+                    // 判断是从本地创建还是离线推送的消息
+                    switch( msg.payload ) {
+                        case "LocalMSG":
+                            //alert( "点击本地创建消息启动：" );
+                        break;
+                        default:
+                            //alert( "点击离线推送消息启动：");
+                        break;
+                    }
+                    // 提示点击的内容
+                    plus.nativeUI.//alert( msg.content );
+                    // 处理其它数据
+                    logoutPushMsg( msg );
+                }, false );
+                // 监听在线消息事件
+                plus.push.addEventListener( "receive", function( msg ) {
+                    if ( msg.aps ) {  // Apple APNS message
+                        //alert( "接收到在线APNS消息：" );
+                    } else {
+                        //alert( "接收到在线透传消息：" );
+                    }
+                    logoutPushMsg( msg );
+                }, false );
+            }, false );
+
+
+            /**
+             * 本地创建一条推动消息
+             */
+            function createLocalPushMsg(){
+                var options = {cover:false};
+                var str = new Date();
+                str += ": 欢迎使用HTML5+创建本地消息！";
+                if (mui.os.plus) {
+	                plus.push.createMessage( str, "LocalMSG", options );
+	                //alert( "创建本地消息成功！" );
+	                //alert( "请到系统消息中心查看！" );
+	                if(plus.os.name=="iOS"){
+	                    //alert('*如果无法创建消息，请到"设置"->"通知"中配置应用在通知中心显示!');
+	                }
+                }
+            }
+
+
+
+            /**
+             * 日志输入推送消息内容
+             */
+            function logoutPushMsg( msg ) {
+                //alert( "title: "+msg.title );
+                //alert( "content: "+msg.content );
+                if ( msg.payload ) {
+                    if ( typeof(msg.payload)=="string" ) {
+                        //alert( "payload(String): "+msg.payload );
+                    } else {
+                        //alert( "payload(JSON): "+JSON.stringify(msg.payload) );
+                    }
+                } else {
+                    //alert( "payload: undefined" );
+                }
+                if ( msg.aps ) {
+                    //alert( "aps: "+JSON.stringify(msg.aps) );
+                }
+            }
+
+            /**
+             * 读取所有推送消息
+             */
+            function listAllPush(){
+                var msgs=null;
+                switch ( plus.os.name ) {
+                    case "Android":
+                    msgs = plus.push.getAllMessage();
+                    break;
+                    default:
+                    break;
+                }
+                if ( !msgs ) {
+                    outSet( "此平台不支持枚举推送消息列表！" );
+                    return;
+                }
+                outSet( "枚举消息列表（"+msgs.length+"）：" );
+                for ( var i in msgs ) {
+                    var msg = msgs[i];
+                    outLine( i+": "+msg.title+" - "+msg.content );
+                }
+            }
+
+
+
+
+
+					// 检测手机类型和版本号
+					zjzm.getAPPtype = function () {
+						plus.runtime.getProperty(plus.runtime.appid, function(inf) {
+				            var device;
+				            var ver = inf.version; //版本号
+				            var ua = navigator.userAgent.toLowerCase();
+							if(/android/.test(ua)) {
+								// 安卓设备
+								var device = "android";
+							} else if (/iphone/.test(ua)) {
+								// 苹果手机
+								var device = "iPhone";
+							} else if (/ipad/.test(ua)) {
+								var device = "iPad";
+							}
+							upadteApp(device, ver);
+						});
+					};
+					function upadteApp(device, ver) {
+						mui.ajax(global.apiURL + '/appRelease/getNewAppVertion.htm', {
+							data: {
+								device : device
+							},
+							dataType: 'json',
+							type: 'post',
+							timeout: 10000,
+							success: function(data) {
+								if (data.success) {
+									if (device == 'android') {
+										if (ver != data.appVersion.appVersion) {
+											// 下载最新版安卓app
+											myAlert('当前版本太低，请更新最新版！', callback);
+										  	function callback() {
+										  		// 加载动画，控制页面不能
+										  		myLoading();
+										  		var dtask = plus.downloader.createDownload(data.appVersion.downloadUrl, {}, function(d, status) {
+						                            if (status == 200) {
+						                                var path = d.filename;	//下载apk
+						                                plus.runtime.install(path); // 自动安装apk文件
+						                                mui.currentWebview.close();
+						                            } else {
+						                                myToast("更新失败，请重试！");
+						                            }
+						                        });
+						                        dtask.start();
+										  	}
+										}
+									}
+								}
+							},
+							error: function() {
+								myToast("服务器正忙，请稍后重试！");
+							}
+						});
+					}
+					if (mui.os.plus) {
+						zjzm.getAPPtype();
+					}
+
+					// 历史url
+					zjzm.historyUrl("../../index.html");
+					// 是否显示引导页
+					var isLoading = myGetLocalStorage("isLoading");
+					// todo 引导页
+					if (!isLoading || isLoading) {
+						doc.querySelector(".loading").style.display = "block";
+						document.querySelector('.mui-slider').addEventListener('slide', function(event) {
+							if (event.detail.slideNumber == 2) {
+								//doc.querySelector("#jump-loading").style.display = "none";
+								doc.querySelector("#jump-loading").innerHTML = "立即体验";
+							} else {
+								//doc.querySelector("#jump-loading").style.display = "block";
+								doc.querySelector("#jump-loading").innerHTML = "跳过";
+							}
+						});
+
+						doc.querySelector("#jump-loading").addEventListener("tap", function () {
+							mySetLocalStorage("isLoading", true)
+							myOpenWindow("/tpl/home/home.html", "home");
+						});
+						// doc.querySelector("#inter-loading").addEventListener("tap", function () {
+						// 	mySetLocalStorage("isLoading", true)
+						// 	myOpenWindow("/tpl/home/home.html", "home");
+						// });
+					} else {
+						doc.querySelector(".welcome").style.display = "flex";
+						doc.querySelector("#jump").addEventListener("tap", function () {
+							myOpenWindow("/tpl/home/home.html", "home");
+						});
+						setTimeout(function () {
+							myOpenWindow("/tpl/home/home.html", "home");
+						}, 2000);
+					}
+				}
+			}(mui, document));
+		</script>
+	</body>
+</html>

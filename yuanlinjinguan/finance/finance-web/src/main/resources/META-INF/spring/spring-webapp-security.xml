@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sec="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+    	http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+
+	<sec:http auto-config="false" use-expressions="true"
+		entry-point-ref="entryPoint">
+		<sec:intercept-url pattern="/home/**" access="permitAll" />
+		<sec:intercept-url pattern="/**/user/**" access="authenticated" />
+		<sec:intercept-url pattern="/**" access="permitAll" />
+		<sec:custom-filter position="FORM_LOGIN_FILTER" ref="formLoginFilter" />
+		<sec:logout logout-url="/j_spring_security_logout"
+			invalidate-session="true" success-handler-ref="logoutSuccessHandler" />
+		<sec:session-management><sec:concurrency-control max-sessions="1" error-if-maximum-exceeded="true" expired-url="${ctx.url}/index.htm"/></sec:session-management>
+	</sec:http>
+
+	<bean id="entryPoint"
+		class="com.zjzmjr.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+		<constructor-arg value="${ctx.url}/home/login.htm"></constructor-arg>
+	</bean>
+
+	<!-- 登录拦截器，带有验证码功能的 -->
+	<bean id="formLoginFilter"
+		class="com.zjzmjr.security.web.authentication.filter.FormCheckCodeAuthticationProcessingFilter">
+		<!-- 登录地址 -->
+		<constructor-arg value="/yztz_user_login_check.htm"></constructor-arg>
+		<property name="sessionAuthenticationStrategy" ref="sessionAuthenticationStrategy" />
+		<property name="authenticationManager" ref="authenticationManager"></property>
+		<property name="checkCodeStrategy" ref="checkCodeStrategy"></property>
+		<property name="authenticationSuccessHandler" ref="loginSuccessHandler"></property>
+		<property name="authenticationFailureHandler" ref="loginFailHandler"></property>
+	</bean>
+
+	<sec:authentication-manager alias="authenticationManager">
+		<sec:authentication-provider ref="formAuthenticationProvider"></sec:authentication-provider>
+		<sec:authentication-provider ref="rememberMeAuthenticationProvider"></sec:authentication-provider>
+	</sec:authentication-manager>
+
+	<!-- 用户登录认证器 -->
+	<bean id="formAuthenticationProvider"
+		class="com.zjzmjr.security.web.authentication.provider.UsernamePasswordAuthenticationProvider">
+		<property name="userLoginService" ref="userLoginService"></property>
+		<property name="passwordStrategy" ref="passwordEncodeStrategy"></property>
+	</bean>
+	<!-- key值需与对应的RememberMeServices保持一致 -->
+	<bean id="rememberMeAuthenticationProvider"
+		class="org.springframework.security.authentication.RememberMeAuthenticationProvider">
+	   <property name="key" value="elim" />
+	</bean>
+
+	<bean id="sessionAuthenticationStrategy"
+		class="org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy">
+	</bean>
+
+	<!-- 用户登录userDetailService -->
+	<bean id="userLoginService" class="com.zjzmjr.finance.web.home.service.UserLoginServiceImpl">
+		<property name="userFacade" ref="adminFacade"></property>
+        <property name="adminLoginAuthFacade" ref="adminLoginAuthFacade"></property>
+		<property name="passwordEncodeStrategy" ref="passwordEncodeStrategy"></property>
+	</bean>
+	
+	<!-- 登录成功处理 -->
+	<bean id="loginSuccessHandler"
+		class="com.zjzmjr.security.web.authentication.handler.FormAuthenticationSuccessHandler">
+		<constructor-arg value="${ctx.url}/user/index.htm"></constructor-arg>
+		<property name="targetUrlParameter" value="entrance" />
+		<property name="successHook" ref="loginSuccessHook"></property>
+	</bean>
+
+	<!-- 登录失败处理器 -->
+	<bean id="loginFailHandler"
+		class="com.zjzmjr.security.web.authentication.handler.FormAuthenticationFailureHandler">
+		<property name="failureHook" ref="loginFailureHook"></property>
+		<property name="useForward" value="false"></property>
+		<property name="defaultFailureUrl" value="${ctx.url}/home/login.htm"></property>
+	</bean>
+
+	<bean id="logoutSuccessHandler" class="com.zjzmjr.finance.web.home.security.LogoutSuccessHandler">
+		<property name="logoutSuccessUrl" value="${ctx.url}/index.htm"></property>
+		<property name="cookies">
+			<list>
+				<value>userId</value>
+				<value>username</value>
+				<value>YSESSION</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="loginSuccessHook" class="com.zjzmjr.finance.web.home.security.LoginSuccessHook">
+		<property name="passwordEncodeStrategy" ref="passwordEncodeStrategy"></property>
+	</bean>
+
+	<bean id="loginFailureHook" class="com.zjzmjr.finance.web.home.security.LoginFailureHook">
+	</bean>
+
+	<bean id="passwordEncodeStrategy"
+		class="com.zjzmjr.core.base.security.ZjzmjrPasswordStrategy" />
+
+	<bean id="springContextUtil" class="com.zjzmjr.core.base.util.SpringContextUtil" />
+	
+</beans>

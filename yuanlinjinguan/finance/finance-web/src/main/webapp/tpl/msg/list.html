@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>我的消息</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div class='tab msg-tab' style="margin-top: 0; top: 0">
+            <span id="tt" class="active">提醒</span>
+            <span id="gg">公告</span>
+        </div>
+        <div class='wrap'>
+
+            <ul class='message-list list-moudel' id="msg" style="margin-top: 1.7rem;">
+            </ul>
+        </div>
+        <footer class='footer'>
+            <ul>
+            </ul>
+        </footer>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/jquery.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script>
+        (function($, doc) {
+            $.init();
+
+            // 校验app或wap
+            myInit(indexFun);
+            function indexFun() {
+                // 历史url
+                var historyUrl = myGetLocalStorage("curr");
+                // goback
+                // doc.querySelector("#goback").addEventListener("click", function () {
+                //     myOpenWindow(historyUrl, '');
+                //     zjzm.historyUrl("/tpl/msg/list.html");
+                // });
+
+                // 选项卡
+                jQuery(".tab span").on("click", function () {
+                    jQuery(this).addClass('active').siblings().removeClass("active");
+                    if (jQuery(this).attr("id") == "tt") {
+                        // 提醒
+                        getMessageList(1);
+                    } else {
+                        // 公告
+                        getMessageList(2);
+                    }
+                });
+
+                // getMesNum();
+                // message list
+                function getMessageList(type) {
+                    myLoading();
+                    $.ajax(global.apiURL + '/message/user/getMessage.htm', {
+                        data : {
+                            type: type
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        timeout : 10000,
+                        success : function(data){
+                            if (data.success) {
+                                createMessageList(data.data);
+                            } else {
+                                if (data.code == "405" && data.resultMsg == "请登录系统") {
+                                    againLogin(getMessageList, []);
+                                } else if (data.code == "record_not_exsist") {
+                                    if (type == 1) {
+                                        myToast("您当前没有收到任何提醒");
+                                    } else {
+                                        myToast("您当前没有收到任何公告");
+                                    }
+                                    doc.querySelector("#msg").innerHTML = '';
+                                } else {
+                                    myToast(data.resultMsg);
+                                }
+                            }
+                            myLoadingOver();
+                        },
+                        error : function() {
+                            myLoadingOver();
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+                getMessageList(1);
+
+                // create list
+                var dom = "",
+                    box = doc.querySelector("#msg");
+                function createMessageList(list) {
+                    dom = "";
+                    for (var i = 0; i < list.length; i++) {
+                        var status = list[i].status;
+                        if (status == 0) {
+                            dom +="<li id='"+ list[i].id +"' class='noRead' status='hide'>";
+                        } else {
+                            dom +="<li id='"+ list[i].id +"' status='hide'>";
+                        }
+                        dom += "<h2>"+ list[i].title +"</h2>"+
+                            "<time class='time'>"+ list[i].messageDate +"</time>"+
+                            "<p>"+ list[i].context +"</p>"+
+                            "<i class='del'>"+
+                                "<img src='../../images/svg/delete.svg' class='icon-40' />"+
+                            "</i>"+
+                        "</li>";
+                    }
+                    box.innerHTML = dom;
+                }
+
+                // deleted message list
+                $("#msg").on("tap", ".del", function () {
+                    var _that = this;
+                    myConfirm('您确定要删除该记录？', success);
+                    function success() {
+                        removeMes(_that);
+                    }
+                });
+
+                function removeMes(_that) {
+                    var id = _that.parentNode.getAttribute("id");
+                    $.ajax(global.apiURL + '/message/user/'+ id +'/deleteMessage.htm', {
+                        data : {},
+                        dataType : 'json',
+                        type : 'post',
+                        timeout : 10000,
+                        success : function(data){
+                            if (data.success) {
+                                var type;
+                                if (jQuery("#tt").hasClass('active')) {
+                                    type = 1;
+                                } else {
+                                    type = 2;
+                                }
+                                getMessageList(type);
+                            } else {
+                                myToast(data.resultMsg);
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+
+                jQuery("#msg").on("click", "li", function () {
+                    var id = jQuery(this).attr("id");
+                    jQuery(this).removeClass("noRead");
+                    messageStatus(id);
+                });
+                function messageStatus(id) {
+                    $.ajax(global.apiURL + '/message/user/updateMessage.htm', {
+                        data : {
+                            id : id
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        timeout : 10000,
+                        success : function(data){
+                            if (data.success) {
+                                var type;
+                                if (jQuery("#tt").hasClass('active')) {
+                                    type = 1;
+                                } else {
+                                    type = 2;
+                                }
+                                getMessageList(type);
+                            } else {
+                                if (data.code == "405" && data.resultMsg == "请登录系统") {
+                                    againLogin(messageStatus, []);
+                                }
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+
+                // 底部导航
+                function footer(index) {
+                    var dom = "",
+                        box = document.querySelector(".footer ul"),
+                        list = base.menu,
+                        url,
+                        id;
+                    for (var i = 0; i < list.length; i++) {
+                        switch(i) {
+                            case 0:
+                                url = "/tpl/home/home.html";
+                                id = 'home';
+                                break;
+                            case 1:
+                                url = "/tpl/product/list.html";
+                                id = "product";
+                                break;
+                            case 2:
+                                url = "/tpl/msg/list.html";
+                                id = "msg";
+                                break;
+                            case 3:
+                                url = "/tpl/user-info/user.html";
+                                id = "user";
+                                break;
+                            default:
+                                break;
+                        }
+                        if (i == index) {
+                            dom += "<li id='"+ id +"' url='"+ url +"' class='active'><i class='"+ id +"-icon'></i><span>"+ list[i] +"</span></li>";
+                        } else {
+                            dom += "<li id='"+ id +"' url='"+ url +"'><i class='"+ id +"-icon'></i><span>"+ list[i] +"</span></li>";
+                        }
+                    }
+                    box.innerHTML = dom;
+
+                    $(".footer").on('tap', 'li', function() {
+                        var url = this.getAttribute("url");
+                        var id = this.getAttribute("id");
+                        if (id == "product") {
+                            var user = JSON.parse(myGetLocalStorage("user"));
+                            if (user) {
+                                // 判断是否是外部人员
+                                if (user.department == "99" && user.personnelNature != "44") {
+                                    myAlert("暂无查看权限");
+                                } else {
+                                    myOpenWindowFooter(url, id);
+                                }
+                            } else {
+                                myOpenWindow("/tpl/login/login.html", "login");
+                            }
+                        } else {
+                            myOpenWindowFooter(url, id);
+                        }
+                    });
+                };
+                footer(2);
+            }
+        }(mui, document));
+    </script>
+</html>

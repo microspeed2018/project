@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>项目详细</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/mui.picker.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+    </head>
+    <body>
+        <header class="header">
+            <img src="../../images/svg/left.svg" class="icon-40" id="goback" />
+            <span class="tit">项目详细</span>
+            <i></i>
+        </header>
+        <div class="wrap">
+            <ul class='wrap-list'>
+                <li>
+                    <div class='tit'>
+                        项目编号
+                    </div>
+                    <div class='con'>
+                        <input type="text" placeholder="请输入项目编号" class="input" id="projectNo" readonly />
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        项目名称
+                    </div>
+                    <div class='con'>
+                        <!-- <input type="text" placeholder="请输入项目名称" class="input" id="name" readonly /> -->
+                        <textarea type="text" placeholder="请输入项目名称" id="name" style="min-height: auto; border: 0; text-align: right; color: #666;" readonly></textarea>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        设计面积(㎡)
+                    </div>
+                    <div class='con'>
+                        <input type="tel" name="" placeholder="请输入设计面积" class="input" id="designArea" readonly />
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        投资额(万元)
+                    </div>
+                    <div class='con'>
+                        <input type="tel" name="" placeholder="请输入投资额" class="input" id="investmentMount" readonly />
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        项目介绍人
+                    </div>
+                    <div class='con'>
+                        <span class="simulation-select one" id="introducer" disabled="disabled">请选择项目介绍人</span>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        项目性质
+                    </div>
+                    <div class='con'>
+                        <span class="simulation-select one" id="attribute" disabled="disabled">请选择项目性质</span>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        项目类别
+                    </div>
+                    <div class='con'>
+                        <span class="simulation-select one" id="category" disabled="disabled">请选择项目类别</span>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        项目类型
+                    </div>
+                    <div class='con'>
+                        <span class="simulation-select one" id="type" disabled="disabled">请选择项目类型</span>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        经营部门
+                    </div>
+                    <div class='con'>
+                        <span class="simulation-select one" id="department" disabled="disabled">请选择经营部门</span>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        发包单位
+                    </div>
+                    <div class='con'>
+                        <span class="simulation-select one" id="contractAwardCompany" disabled="disabled">请选择发包单位</span>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        意向委托
+                    </div>
+                    <div class='con'>
+                        <span class="simulation-select one" id="intentionalCooperation" disabled="disabled">请选择意向委托</span>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        所在城市
+                    </div>
+                    <div class='con'>
+                        <button id='cityId' class="mui-btn mui-btn-block simulation-select one" disabled>请选择所在城市</button>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        详细地址
+                    </div>
+                    <div class='con'>
+                        <input type="text" name="" placeholder="请输入详细地址" class="input" id="address" readonly />
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        项目设计阶段
+                    </div>
+                    <div class='con'>
+                        <div>
+                            <div class="mui-input-row mui-checkbox mui-left">
+                                <label>方案设计</label>
+                                <input type="checkbox" id="haveScheme" name="design" disabled />
+                            </div>
+                            <div class="mui-input-row mui-checkbox mui-left">
+                                <label>扩初方案设计</label>
+                                <input type="checkbox" id="haveDevelopment" name="design" disabled />
+                            </div>
+                            <div class="mui-input-row mui-checkbox mui-left">
+                                <label>施工图设计及后期服务</label>
+                                <input type="checkbox" id="haveDrawing" name="design" disabled />
+                            </div>
+                            <div class="mui-input-row mui-checkbox mui-left">
+                                <label>规划设计</label>
+                                <input type="checkbox" id="havePlanning" name="design" disabled />
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        项目介绍
+                    </div>
+                    <div class='con'>
+                        <textarea id="introduction" readonly>项目介绍</textarea>
+                    </div>
+                </li>
+                 <li>
+                    <div class='tit'>
+                        是否技术支持
+                    </div>
+                    <div class='con' id="needTechnical">
+                        <div class="mui-input-row mui-radio mui-left">
+                            <label>是</label>
+                            <input type="radio" name="needTechnical" value="1" disabled />
+                        </div>
+                        <div class="mui-input-row mui-radio mui-left">
+                            <label>否</label>
+                            <input type="radio" name="needTechnical" value="0" disabled />
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        技术支持要求
+                    </div>
+                    <div class='con'>
+                        <textarea id="preRequirements" readonly>前期技术支持要求</textarea>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class='wrap'>
+            <input type="button" value='返回' class='btn btn-max' id="back" />
+        </div>
+        <div class='wrap'>
+            <input type="button" value='提交' class='btn btn-max' id="submit" />
+        </div>
+        <div class='select-dialog'>
+            <div class='select-mask'></div>
+            <div class='select-content'>
+                <ul></ul>
+            </div>
+        </div>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/mui.picker.js"></script>
+    <script src="../../js/mui.poppicker.js"></script>
+    <script src="../../js/mui.picker.min.js"></script>
+    <script src="../../js/jquery.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script>
+        (function($, doc) {
+            $.init();
+
+            // 校验app或wap
+            myInit(indexFun);
+            function indexFun() {
+                // goback
+                var historyUrl = myGetLocalStorage("curr");
+                doc.querySelector("#goback").addEventListener("click", function () {
+                    myLoading();
+                    myOpenWindow(historyUrl, '');
+                    myRemoveLocalStorage("curr");
+                });
+
+                var obj = {};
+                var step = myGetLocalStorage("step");
+                var user = JSON.parse(myGetLocalStorage("user"));
+                var role;
+                if (user) {
+                    role = user.jobId;
+                }
+                // var step = 10;
+                if (step <= 10 && role == 4) {
+                    jQuery("input, textarea, select").each(function () {
+                        jQuery(this).attr("readonly", false);
+                    });
+                    jQuery("input, textarea, select, button").each(function () {
+                        jQuery(this).attr("disabled", false);
+                    });
+                    jQuery(".simulation-select").each(function () {
+                        jQuery(this).attr("disabled", false);
+                    });
+                    jQuery("#projectNo").prop("readonly", true);
+                    jQuery("#back").hide();
+                    doc.querySelector("#submit").addEventListener("tap", function () {
+                        submit();
+                    });
+                } else {
+                    jQuery("#submit").hide();
+                    doc.querySelector("#back").addEventListener("tap", function () {
+                        myLoading();
+                        myOpenWindow(historyUrl, '');
+                        myRemoveLocalStorage("curr");
+                    });
+                }
+
+                // 获取详情
+                var productId = myGetLocalStorage("productId");
+                    if (productId) {
+                        getDeatail(productId);
+                    }
+                function getDeatail(id) {
+                    $.ajax(global.apiURL + '/project/user/list.htm', {
+                        data : {
+                            id : id
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                createDeatail(data.rows[0]);
+                            } else {
+                                if (data.code == "405" && data.resultMsg == "请登录系统") {
+                                    againLogin(getDeatail, []);
+                                } else {
+                                    myToast(data.resultMsg);
+                                }
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+                function createDeatail(data) {
+                    obj.id = data.id;
+                    obj.projectNo = data.projectNo;
+                    obj.name = data.name;
+                    obj.introducer = data.introducer;
+                    obj.city = data.city;
+                    obj.address = data.address;
+                    obj.designArea = data.designArea;
+                    obj.investmentMount = data.investmentMount;
+                    obj.nature = data.nature;
+                    obj.category = data.category;
+                    obj.type = data.type;
+                    obj.managementDepartment = data.managementDepartment;
+                    obj.introduction = data.introduction;
+                    obj.intentionalCooperation = data.intentionalCooperation;
+                    obj.needTechnical = data.needTechnical;
+                    obj.preRequirements = data.preRequirements;
+                    obj.contractAwardCompany = data.contractAwardCompany;
+                    obj.haveScheme = data.haveScheme;
+                    obj.haveDevelopment = data.haveDevelopment;
+                    obj.haveDrawing = data.haveDrawing;
+                    obj.havePlanning = data.havePlanning;
+                    obj.version = data.version;
+                    obj.step = data.step;
+                    jQuery("#projectNo").val(data.projectNo);
+                    jQuery("#name").val(data.name);
+                    jQuery("#designArea").val(formatCurrency1(data.designArea));
+                    if (!data.address) {
+                        jQuery("#address").attr("placeholder", "");
+                    }
+                    jQuery("#address").val(data.address);
+                    jQuery("#investmentMount").val(formatCurrency1(data.investmentMount));
+                    getDetailAddress(data.city);
+                    // 项目介绍人
+                    if (data.introducer) {
+                        $.ajax(global.apiURL + '/user/companyStaffs.htm', {
+                            data : {},
+                            dataType : 'json',
+                            type : 'post',
+                            success : function(data){
+                                if (data.success) {
+                                    var datas = data.data;
+                                    for (var i = 0; i < datas.length; i++) {
+                                        if (datas[i].userId == obj.introducer) {
+                                            jQuery("#introducer").html(datas[i].userInfo.name)
+                                        }
+                                    }
+                                } else {
+                                    myToast(data.resultMsg);
+                                }
+                            },
+                            error : function() {
+                                myToast("服务器正忙，请稍后重试！");
+                            }
+                        });
+                    }
+                    // 项目性质
+                    if (obj.nature) {
+                        getBasic(4, createAttribute);
+                        function createAttribute(datas) {
+                            for (var i = 0; i < datas.length; i++) {
+                                if (datas[i].attributeId == obj.nature) {
+                                    jQuery("#attribute").html(datas[i].attributeName)
+                                }
+                            }
+
+                        }
+                    }
+                    // 获取项目类别
+                    if (obj.category) {
+                        getBasic(5, createCategory);
+                        function createCategory(datas) {
+                            for (var i = 0; i < datas.length; i++) {
+                                if (datas[i].attributeId == obj.category) {
+                                    jQuery("#category").html(datas[i].attributeName)
+                                }
+                            }
+                        }
+                    }
+                    // 获取项目类型
+                    if (obj.type) {
+                        getBasic(6, createtype);
+                        function createtype(datas) {
+                            for (var i = 0; i < datas.length; i++) {
+                                if (datas[i].attributeId == obj.type) {
+                                    jQuery("#type").html(datas[i].attributeName)
+                                }
+                            }
+                        }
+                    }
+                    // 获取经营部门
+                    if (obj.managementDepartment) {
+                        getBasic(7, createdepartment);
+                        function createdepartment(datas) {
+                            for (var i = 0; i < datas.length; i++) {
+                                if (datas[i].attributeId == obj.managementDepartment) {
+                                    jQuery("#department").html(datas[i].attributeName)
+                                }
+                            }
+                        }
+                    }
+                    // 获取发包单位
+                    if (obj.contractAwardCompany) {
+                        $.ajax(global.apiURL + '/companyAssocited/user/getCompanyAssociatedInfo.htm', {
+                            data : {},
+                            dataType : 'json',
+                            type : 'post',
+                            success : function(data){
+                                if (data.success) {
+                                    var datas = data.rows;
+                                    for (var i = 0; i < datas.length; i++) {
+                                        if (datas[i].id == obj.contractAwardCompany) {
+                                            jQuery("#contractAwardCompany").html(datas[i].companyName)
+                                        }
+                                    }
+                                }
+                            },
+                            error : function() {
+                                myToast("服务器正忙，请稍后重试！");
+                            }
+                        });
+                    }
+                    // 获取意向委托
+                    if (obj.intentionalCooperation) {
+                        jQuery.ajax({
+                            url: global.apiURL + "/company/user/getBasic.htm",
+                            type: 'post',
+                            dataType: 'json',
+                            data: {
+                                rows : 100
+                            },
+                            success: function (data) {
+                                if (data.success) {
+                                    var datas = data.rows;
+                                    for (var i = 0; i < datas.length; i++) {
+                                        if (datas[i].id == obj.intentionalCooperation) {
+                                            jQuery("#intentionalCooperation").html(datas[i].attributeName)
+                                        }
+                                    }
+                                } else {
+                                    myToast(data.resultMsg);
+                                }
+                            }
+                        });
+                    }
+                    if (data.needTechnical) {
+                        jQuery("#needTechnical input").eq(0).attr("checked", true);
+                    } else {
+                        jQuery("#needTechnical input").eq(1).attr("checked", true);
+                        jQuery("#preRequirements").attr("readonly", true);
+                    }
+                    if (data.haveScheme) {
+                       jQuery("#haveScheme").attr("checked", true);
+                    }
+                    if (data.haveDevelopment) {
+                       jQuery("#haveDevelopment").attr("checked", true);
+                    }
+                    if (data.haveDrawing) {
+                       jQuery("#haveDrawing").attr("checked", true);
+                    }
+                    if (data.havePlanning) {
+                       jQuery("#havePlanning").attr("checked", true);
+                    }
+                    jQuery("#introduction").val(data.introduction);
+                    jQuery("#preRequirements").val(data.preRequirements);
+                }
+
+                // 根据id值获取详细地址
+                function getDetailAddress(id) {
+                    jQuery.ajax({
+                        url: global.apiURL + "/company/user/getAllArea.htm",
+                        type: 'post',
+                        dataType: 'json',
+                        data: {
+                            id: id
+                        },
+                        success: function (data) {
+                            if (data.success) {
+                                jQuery("#cityId").html(data.rows[0].areaName);
+                            } else {
+                                myToast(data.resultMsg);
+                            }
+                        }
+                    });
+                }
+                // 获取基础数据
+                function getBasic(id, cb) {
+                    jQuery.ajax({
+                        url: global.apiURL + "/company/user/getBasic.htm",
+                        type: 'post',
+                        dataType: 'json',
+                        data: {
+                            categoryId : id
+                        },
+                        success: function (data) {
+                            if (data.success) {
+                                cb(data.rows);
+                            } else {
+                                myToast(data.resultMsg);
+                            }
+                        }
+                    });
+                }
+
+                // 城市选择
+                //mui.ready(function() {
+                    var areaBtn = doc.getElementById('cityId');
+                    areaBtn.addEventListener('tap', function(event) {
+                        myLoading();
+                        jQuery.ajax({
+                            url: global.apiURL + "/area/getAllNameArea.htm",
+                            type: 'post',
+                            dataType: 'json',
+                            data: {},
+                            success: function (data) {
+                                if (data.success) {
+                                    var cityData3 = data.data;
+                                    var cityPicker3 = new mui.PopPicker({
+                                        layer: 3
+                                    });
+                                    cityPicker3.setData(cityData3);
+                                    cityPicker3.show(function(items) {
+                                        var pro = items[0].text;
+                                        var city = items[1].text;
+                                        var area = items[2].text;
+                                        if (city == "不限") {
+                                            city = "";
+                                        }
+                                        if (area == "不限") {
+                                            area = "";
+                                        }
+                                        if (pro == city) {
+                                            city = '';
+                                        }
+                                        areaBtn.innerHTML = pro + city + area;
+                                        obj.city = items[2].value;
+                                    });
+                                } else {
+                                    myToast(data.resultMsg);
+                                }
+                                myLoadingOver();
+                            }
+                        });
+                    }, false);
+                //});
+
+                // 获取项目介绍人
+                jQuery("#introducer").on("click", function () {
+                    var disabled = jQuery(this).attr("disabled");
+                    if (!disabled) {
+                        getintroducer();
+                    }
+                });
+                function getintroducer() {
+                    $.ajax(global.apiURL + '/user/companyStaffs.htm', {
+                        data : {},
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                var datas = data.data;
+                                createIntroducer(datas);
+                            } else {
+                                myToast(data.resultMsg);
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+                function createIntroducer(list) {
+                    var box = doc.querySelector(".select-dialog ul");
+                    var dom = "";
+                    for (var i = 0; i < list.length; i++) {
+                        dom += "<li id='"+ list[i].userId +"'>"+ list[i].userInfo.name +"</li>";
+                    }
+                    box.innerHTML = dom;
+                    doc.querySelector(".select-dialog").style.display = "block";
+                    doc.querySelector(".select-dialog").setAttribute("id", "introducers");
+                }
+                // 获取项目性质
+                jQuery("#attribute").on("click", function () {
+                    var disabled = jQuery(this).attr("disabled");
+                    if (!disabled) {
+                        getBasic(4, createAttribute);
+                    }
+                });
+                function createAttribute(list) {
+                    var box = doc.querySelector(".select-dialog ul");
+                    var dom = "";
+                    for (var i = 0; i < list.length; i++) {
+                        dom += "<li id='"+ list[i].attributeId +"'>"+ list[i].attributeName +"</li>";
+                    }
+                    box.innerHTML = dom;
+                    doc.querySelector(".select-dialog").style.display = "block";
+                    doc.querySelector(".select-dialog").setAttribute("id", "attributes");
+                }
+                // 获取项目类别
+                jQuery("#category").on("click", function () {
+                    var disabled = jQuery(this).attr("disabled");
+                    if (!disabled) {
+                        getBasic(5, createcategory);
+                    }
+                });
+                function createcategory(list) {
+                    var box = doc.querySelector(".select-dialog ul");
+                    var dom = "";
+                    for (var i = 0; i < list.length; i++) {
+                        dom += "<li id='"+ list[i].attributeId +"'>"+ list[i].attributeName +"</li>";
+                    }
+                    box.innerHTML = dom;
+                    doc.querySelector(".select-dialog").style.display = "block";
+                    doc.querySelector(".select-dialog").setAttribute("id", "categorys");
+                }
+                // 获取项目类型
+                jQuery("#type").on("click", function () {
+                    var disabled = jQuery(this).attr("disabled");
+                    if (!disabled) {
+                        getBasic(6, createtype);
+                    }
+                });
+                function createtype(list) {
+                    var box = doc.querySelector(".select-dialog ul");
+                    var dom = "";
+                    for (var i = 0; i < list.length; i++) {
+                        dom += "<li id='"+ list[i].attributeId +"'>"+ list[i].attributeName +"</li>";
+                    }
+                    box.innerHTML = dom;
+                    doc.querySelector(".select-dialog").style.display = "block";
+                    doc.querySelector(".select-dialog").setAttribute("id", "types");
+                }
+                // 获取经营部门
+                jQuery("#department").on("click", function () {
+                    var disabled = jQuery(this).attr("disabled");
+                    if (!disabled) {
+                        getBasic(7, createdepartment);
+                    }
+                });
+                function createdepartment(list) {
+                    var box = doc.querySelector(".select-dialog ul");
+                    var dom = "";
+                    for (var i = 0; i < list.length; i++) {
+                        dom += "<li id='"+ list[i].attributeId +"'>"+ list[i].attributeName +"</li>";
+                    }
+                    box.innerHTML = dom;
+                    doc.querySelector(".select-dialog").style.display = "block";
+                    doc.querySelector(".select-dialog").setAttribute("id", "departments");
+                }
+                // 获取发包单位
+                jQuery("#contractAwardCompany").on("click", function () {
+                    var disabled = jQuery(this).attr("disabled");
+                    if (!disabled) {
+                        getCompanyAssociatedInfo();
+                    }
+                });
+                // 获取发包单位
+                function getCompanyAssociatedInfo() {
+                    $.ajax(global.apiURL + '/companyAssocited/user/getCompanyAssociatedInfo.htm', {
+                        data : {},
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                cteateCompanyAssociatedInfo(data.rows);
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+                function cteateCompanyAssociatedInfo(list) {
+                    var box = doc.querySelector(".select-dialog ul");
+                    var dom = "";
+                    for (var i = 0; i < list.length; i++) {
+                        dom += "<li id='"+ list[i].id +"'>"+ list[i].companyName +"</li>";
+                    }
+                    box.innerHTML = dom;
+                    doc.querySelector(".select-dialog").style.display = "block";
+                    doc.querySelector(".select-dialog").setAttribute("id", "contractAwardCompanys");
+                }
+                // 获取意向委托
+                jQuery("#intentionalCooperation").on("click", function () {
+                    var disabled = jQuery(this).attr("disabled");
+                    if (!disabled) {
+                        getBasic(16, createintentionalCooperation);
+                    }
+                });
+                function createintentionalCooperation(list) {
+                    var box = doc.querySelector(".select-dialog ul");
+                    var dom = "";
+                    for (var i = 0; i < list.length; i++) {
+                        dom += "<li id='"+ list[i].id +"'>"+ list[i].attributeName +"</li>";
+                    }
+                    box.innerHTML = dom;
+                    doc.querySelector(".select-dialog").style.display = "block";
+                    doc.querySelector(".select-dialog").setAttribute("id", "intentionalCooperations");
+                }
+                $(".select-dialog").on("tap", "li", function () {
+                    var text = this.innerHTML;
+                    var id = this.getAttribute("id");
+                    var boxID = this.parentNode.parentNode.parentNode.getAttribute("id");
+
+                    if (boxID == 'introducers') {
+                        obj.introducer = id;
+                        doc.querySelector("#introducer").innerHTML = text;
+                    }
+                    if (boxID == 'attributes') {
+                        obj.nature = id;
+                        doc.querySelector("#attribute").innerHTML = text;
+                    }
+                    if (boxID == 'categorys') {
+                        obj.category = id;
+                        doc.querySelector("#category").innerHTML = text;
+                    }
+                    if (boxID == 'types') {
+                        obj.type = id;
+                        doc.querySelector("#type").innerHTML = text;
+                    }
+                    if (boxID == 'departments') {
+                        obj.managementDepartment = id;
+                        doc.querySelector("#department").innerHTML = text;
+                    }
+                    if (boxID == 'intentionalCooperations') {
+                        obj.intentionalCooperation = id;
+                        doc.querySelector("#intentionalCooperation").innerHTML = text;
+                    }
+                    if (boxID == 'contractAwardCompanys') {
+                        obj.contractAwardCompany = id;
+                        doc.querySelector("#contractAwardCompany").innerHTML = text;
+                    }
+                    doc.querySelector(".select-dialog").style.display = "none";
+                    doc.querySelector(".select-dialog").setAttribute("id", "");
+                });
+
+                jQuery("#needTechnical input").on("click", function () {
+                    var value = jQuery(this).val();
+                    if (value == 0) {
+                        jQuery("#preRequirements").attr("readonly", true).val("");
+                        obj.needTechnical = 0;
+                    } else {
+                        jQuery("#preRequirements").attr("readonly", false);
+                        obj.needTechnical = 1;
+                    }
+                });
+
+                // 提交
+                function submit() {
+                    obj.name = jQuery("#name").val();
+                    obj.designArea = Number(jQuery("#designArea").val().replace(/,/g,''));
+                    obj.investmentMount = Number(jQuery("#investmentMount").val().replace(/,/g,''));
+                    obj.address = jQuery("#address").val();
+                    obj.introduction = jQuery("#introduction").val();
+                    obj.preRequirements = jQuery("#preRequirements").val();
+                    if (jQuery("#haveScheme").is(':checked')) {
+                        obj.haveScheme = 1;
+                    } else {
+                        obj.haveScheme = 0;
+                    }
+                    if (jQuery("#haveDevelopment").is(':checked')) {
+                        obj.haveDevelopment = 1;
+                    } else {
+                        obj.haveDevelopment = 0;
+                    }
+                    if (jQuery("#haveDrawing").is(':checked')) {
+                        obj.haveDrawing = 1;
+                    } else {
+                        obj.haveDrawing = 0;
+                    }
+                    if (jQuery("#havePlanning").is(':checked')) {
+                        obj.havePlanning = 1;
+                    } else {
+                        obj.havePlanning = 0;
+                    }
+                    if (!obj.name) {
+                        myToast("项目名称不能为空");
+                    } else if (!obj.designArea) {
+                        myToast("设计面积必须大于0");
+                    } else if (!obj.investmentMount) {
+                        myToast("投资额必须大于0");
+                    } else if (!obj.introducer || obj.introducer == -1) {
+                        myToast("请选择项目介绍人");
+                    } else if (!obj.nature || obj.nature == -1) {
+                        myToast("请选择项目性质");
+                    } else if (!obj.category || obj.category == -1) {
+                        myToast("请选择项目类别");
+                    } else if (!obj.type || obj.type == -1) {
+                        myToast("请选择项目类型");
+                    } else if (!obj.managementDepartment || obj.managementDepartment == -1) {
+                        myToast("请选择经营部门");
+                    } else if (!obj.contractAwardCompany || obj.contractAwardCompany == -1) {
+                        myToast("请选择发包单位");
+                    } else if (!obj.intentionalCooperation || obj.intentionalCooperation == -1) {
+                        myToast("请选择意向委托");
+                    } else if (!obj.city) {
+                        myToast("请选择所在城市");
+                    } else if (!obj.haveScheme && !obj.haveDevelopment && !obj.haveDrawing && !obj.havePlanning) {
+                        myToast("请至少选择一个项目设计阶段");
+                    } else if (obj.needTechnical == 1 && (!obj.preRequirements || obj.preRequirements == "")) {
+                        myToast("请输入前期技术支持要求");
+                    } else {
+                        myLoading();
+                        $.ajax(global.apiURL + '/project/user/updateProject.htm', {
+                            data : {
+                                id : obj.id,
+                                projectNo : obj.projectNo,
+                                name : obj.name,
+                                introducer : obj.introducer,
+                                city : obj.city,
+                                address : obj.address,
+                                designArea : obj.designArea,
+                                investmentMount : obj.investmentMount,
+                                nature : obj.nature,
+                                category : obj.category,
+                                type : obj.type,
+                                managementDepartment : obj.managementDepartment,
+                                introduction : obj.introduction,
+                                intentionalCooperation : obj.intentionalCooperation,
+                                needTechnical : obj.needTechnical,
+                                preRequirements : obj.preRequirements,
+                                contractAwardCompany : obj.contractAwardCompany,
+                                haveScheme : obj.haveScheme,
+                                haveDevelopment : obj.haveDevelopment,
+                                haveDrawing : obj.haveDrawing,
+                                havePlanning : obj.havePlanning,
+                                version : obj.version,
+                                step : obj.step
+                            },
+                            dataType : 'json',
+                            type : 'post',
+                            success : function(data){
+                                if (data.success) {
+                                    myOpenWindow(historyUrl, '');
+                                    myRemoveLocalStorage("curr");
+                                } else {
+                                    myToast(data.resultMsg);
+                                }
+                                myLoadingOver();
+                            },
+                            error : function() {
+                                myLoadingOver();
+                                myToast("服务器正忙，请稍后重试！");
+                            }
+                        });
+                    }
+                }
+            }
+        }(mui, document));
+    </script>
+</html>

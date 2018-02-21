@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.user.ExternalPersonMapper" >
+  <resultMap id="BaseResultMap" type="ExternalPerson" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="employee_no" property="employeeNo" jdbcType="INTEGER" />
+    <result column="personnel_nature" property="personnelNature" jdbcType="INTEGER" />
+    <result column="company" property="company" jdbcType="VARCHAR" />
+    <result column="job" property="job" jdbcType="VARCHAR" />
+    <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="related_person" property="relatedPerson" jdbcType="INTEGER" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap type="ExternalPersonInfo" id="ExternalPersonInfoResultMap" extends="BaseResultMap">
+    <result column="personnel_nature_name" property="personnelNatureName" jdbcType="VARCHAR" />
+    <result column="related_person_name" property="relatedPersonName" jdbcType="VARCHAR" />
+    <association property="userInfo" column="user_id" javaType="Admin" resultMap="com.zjzmjr.core.service.mapper.dao.coredb.admin.AdminDao.adminResultMap"></association>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, employee_no, personnel_nature, company, job, mobile, email, related_person, 
+    memo, status, create_time, create_user_id, update_time, update_user_id, version
+  </sql>
+  <select id="getExternalPersonCount" parameterType="ExternalPersonQuery" resultType="java.lang.Integer">
+    select COUNT(zep.id)
+    from z_external_person zep
+    INNER JOIN t_admin tu on tu.id = zep.user_id    
+    left outer JOIN t_basic tb on tb.id = zep.personnel_nature
+    left outer JOIN z_staff_info zui on zui.id = zep.related_person
+    left outer JOIN t_admin tac on tac.id = zui.user_id
+    <include refid="where_clause"></include>
+  </select>
+  <select id="getExternalPersonByCondition" parameterType="ExternalPersonQuery" resultMap="ExternalPersonInfoResultMap">
+    select zep.*, tu.*,tb.attribute_name personnel_nature_name,tac.name related_person_name,tac.client_id,tu.acc_status
+    from z_external_person zep
+    INNER JOIN t_admin tu on tu.id = zep.user_id
+    left outer JOIN t_basic tb on tb.id = zep.personnel_nature
+    left outer JOIN z_staff_info zui on zui.id = zep.related_person
+    left outer JOIN t_admin tac on tac.id = zui.user_id
+    <include refid="where_clause"></include>
+    <choose>
+        <when test="orderBy != null and orderBy!=''">
+            order by #{orderBy}
+        </when>
+        <otherwise>
+            order by zep.id 
+        </otherwise>
+    </choose>
+    limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+  <sql id="where_clause">
+    <where>
+        <trim prefixOverrides="and">
+            <if test="id != null">
+                zep.id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="userId != null">
+	            and zep.user_id = #{userId,jdbcType=INTEGER}
+	        </if>
+            <if test="mobile != null">
+                and tu.mobile = #{mobile,jdbcType=VARCHAR}
+            </if>
+            <if test="name != null">
+                and tu.name like CONCAT(#{name,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="personnelNature != null">
+                and zep.personnel_nature = #{personnelNature,jdbcType=INTEGER}
+            </if>
+            <if test="company != null">
+                and zep.company like CONCAT(#{company,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="relatedPersonName != null">
+                and tac.name like CONCAT(#{relatedPersonName,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="mobile != null">
+				and zep.mobile = #{mobile,jdbcType=VARCHAR}
+			</if>
+			<if test="email != null">
+				and zep.email = #{email,jdbcType=VARCHAR}
+			</if>
+			<if test="status != null">
+				and zep.status = #{status,jdbcType=VARCHAR}
+			</if>
+			<if test="createTimeStart != null">
+                <![CDATA[
+					and DATE_FORMAT(zep.create_time,'%Y%m%d') >= #{createTimeStart,jdbcType=TIMESTAMP}
+                ]]>
+			</if>
+			<if test="createTimeEnd != null">
+                <![CDATA[
+                    and DATE_FORMAT(zep.create_time,'%Y%m%d') <= #{createTimeEnd,jdbcType=TIMESTAMP}
+                ]]>
+			</if>
+			<if test="companyId != null">
+                    and tu.company_id = #{companyId,jdbcType=INTEGER}
+			</if>
+        </trim>
+    </where>
+  </sql>
+  <select id="getExternalPersonById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from z_external_person
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteExternalPersonById" parameterType="java.lang.Integer" >
+    delete from z_external_person
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+ <select id="getExternalPersonEmployeeMaxNo" resultType="java.lang.String">
+    select MAX(zui.employee_no)
+    from z_external_person zui
+    left outer JOIN t_admin tac on tac.id = zui.user_id
+    where zui.employee_no is not null
+    GROUP BY tac.company_id
+  </select>
+  <insert id="insertExternalPerson" parameterType="ExternalPerson" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+    insert into z_external_person
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="employeeNo != null">
+        employee_no,
+      </if>
+      <if test="personnelNature != null" >
+        personnel_nature,
+      </if>
+      <if test="company != null" >
+        company,
+      </if>
+      <if test="job != null" >
+        job,
+      </if>
+      <if test="mobile != null" >
+        mobile,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="relatedPerson != null" >
+        related_person,
+      </if>
+      <if test="memo != null" >
+        memo,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="employeeNo != null">
+        #{employeeNo,jdbcType=INTEGER},
+      </if>
+      <if test="personnelNature != null" >
+        #{personnelNature,jdbcType=INTEGER},
+      </if>
+      <if test="company != null" >
+        #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="job != null" >
+        #{job,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="relatedPerson != null" >
+        #{relatedPerson,jdbcType=INTEGER},
+      </if>
+      <if test="memo != null" >
+        #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateExternalPersonById" parameterType="ExternalPerson" >
+    update z_external_person
+    <set >
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="employeeNo != null">
+        employee_no = #{employeeNo,jdbcType=INTEGER},
+      </if>
+      <if test="personnelNature != null" >
+        personnel_nature = #{personnelNature,jdbcType=INTEGER},
+      </if>
+      <if test="company != null" >
+        company = #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="job != null" >
+        job = #{job,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        mobile = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="relatedPerson != null" >
+        related_person = #{relatedPerson,jdbcType=INTEGER},
+      </if>
+      <if test="memo != null" >
+        memo = #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+        version = version + 1,
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

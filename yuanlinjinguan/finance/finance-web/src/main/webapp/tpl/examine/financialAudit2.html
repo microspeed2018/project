@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>财务审核开票</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+    </head>
+    <body>
+        <header class="header">
+            <img src="../../images/svg/left.svg" class="icon-40" id="goback"  />
+            <span class="tit">财务审核开票</span>
+            <i></i>
+        </header>
+        <div class='wrap'>
+            <table class='examine-table'>
+                <thead>
+                    <tr>
+                        <th>审核金额(万元)</th>
+                        <th>付款方式</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td align="center" id="paymentModeName"></td>
+                        <td align="center" id="amount"></td>
+                   </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class='wrap'>
+            <input type="button" value='通过' class='btn btn-max btn-top' id="true" />
+        </div>
+        <div class='wrap'>
+            <input type="button" value='不通过' class='btn btn-max' id="false" />
+        </div>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/jquery.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script>
+        (function($, doc) {
+            $.init();
+
+            // 校验app或wap
+            myInit(indexFun);
+            function indexFun() {
+                // 历史url
+                var historyUrl = myGetLocalStorage("curr");
+                var obj = {};
+                // goback
+                doc.querySelector("#goback").addEventListener("click", function () {
+                    myOpenWindow("/tpl/examine/financialAudit.html", 'financialAudit');
+                });
+
+
+                jQuery(".examine-table tr").show();
+                var productId = myGetLocalStorage("productId");
+                var projectId = myGetLocalStorage("projectId");
+                var paymentModeName = myGetLocalStorage("paymentModeName");
+                var amount = myGetLocalStorage("amount");
+                if (paymentModeName && amount) {
+                    jQuery("#paymentModeName").html(paymentModeName);
+                    jQuery("#amount").html(amount);
+                }
+
+                doc.querySelector("#true").addEventListener("tap", function () {
+                    myLoading();
+                    $.ajax(global.apiURL + '/financialAudit/user/updateChiefAuditById.htm', {
+                        data : {
+                            projectId : projectId,
+                            id: productId,
+                            status: 1,
+                            type: 28
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                myOpenWindow("financialAudit.html", "financialAudit");
+                            } else {
+                                //myToast(data.resultMsg);
+                            }
+                            myLoadingOver();
+                        },
+                        error : function() {
+                            myLoadingOver();
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                });
+                doc.querySelector("#false").addEventListener("tap", function () {
+                    var btnArray = ['返回', '提交'];
+                    mui.prompt('请输入不通过理由', '', '提示', btnArray, function(e) {
+                        if (e.index == 1) {
+                            var memo = e.value;
+                            myLoading();
+                            $.ajax(global.apiURL + '/financialAudit/user/updateChiefAuditById.htm', {
+                                data : {
+                                    projectId : projectId,
+                                    id: productId,
+                                    status: 2,
+                                    type: 28,
+                                    memo: memo
+                                },
+                                dataType : 'json',
+                                type : 'post',
+                                success : function(data){
+                                    if (data.success) {
+                                        myOpenWindow("financialAudit.html", "financialAudit");
+                                    } else {
+                                        //myToast(data.resultMsg);
+                                    }
+                                    myLoadingOver();
+                                },
+                                error : function() {
+                                    myLoadingOver();
+                                    myToast("服务器正忙，请稍后重试！");
+                                }
+                            });
+                        }
+                    })
+                });
+            }
+        }(mui, document));
+    </script>
+</html>

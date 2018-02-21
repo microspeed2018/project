@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>申请开发票</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+    </head>
+    <body>
+        <header class="header">
+            <img src="../../images/svg/left.svg" class="icon-40" id="goback" />
+            <span class="tit">申请开发票</span>
+            <i></i>
+        </header>
+        <div class="wrap">
+            <ul class='wrap-list'>
+                <li>
+                    <div class='tit'>
+                        项目名称
+                    </div>
+                    <div class='con'>
+                        <input type="text" class="input" id="name" readonly />
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        技术负责人
+                    </div>
+                    <div class='con'>
+                        <input type="text" class="input" id="projectLeader" readonly />
+                    </div>
+                </li>
+                <!-- <li>
+                    <div class='tit'>
+
+                    </div>
+                    <div class='con'>
+                        <input type="text" class="input" id="" value="开发票" readonly />
+                    </div>
+                </li> -->
+                <li>
+                    <div class='tit'>
+                        付款方式
+                    </div>
+                    <div class='con'>
+                        <input type="text" class="input" id="step" readonly />
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        未开票金额(万元)
+                    </div>
+                    <div class='con'>
+                        <input type="text" class="input" id="price" readonly />
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        申请金额(万元)
+                    </div>
+                    <div class='con'>
+                        <input type="number" placeholder="请输入申请金额" class="input" id="result" />
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class='wrap'>
+            <input type="button" value='提交' class='btn btn-max' id="submit" />
+        </div>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/jquery.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script>
+        (function($, doc) {
+            $.init();
+
+            // 校验app或wap
+            myInit(indexFun);
+            function indexFun() {
+                // 历史url
+                var historyUrl = myGetLocalStorage("curr");
+                // goback
+                doc.querySelector("#goback").addEventListener("click", function () {
+                    myOpenWindow("/tpl/invoice/list.html", 'list');
+                });
+
+                var invoice = JSON.parse(myGetLocalStorage("invoice"));
+                var obj = {};
+                if (invoice) {
+                    jQuery("#name").val(invoice.name);
+                    jQuery("#step").val(invoice.status);
+                    jQuery("#price").val(invoice.price);
+                    jQuery("#projectLeader").val(invoice.projectLeader);
+                    obj.paymentMode = invoice.paymentMode
+                    obj.projectId = invoice.projectId
+                    obj.projectName = invoice.name
+                    obj.billType = invoice.billType
+                }
+                // todo
+                doc.querySelector("#submit").addEventListener("tap", function () {
+                    obj.amount = jQuery("#result").val();
+                    if (!obj.amount) {
+                        myToast("请输入开票金额");
+                    } else if (Number(obj.amount) > Number(invoice.price)) {
+                        myToast("开票金额不得大于未开票金额");
+                    } else {
+                        submit();
+                    }
+
+                });
+                function submit() {
+                    myLoading();
+                    $.ajax(global.apiURL + '/project/user/applyBill.htm', {
+                        data : {
+                            projectName: obj.projectName,
+                            projectId: obj.projectId,
+                            paymentMode: obj.paymentMode,
+                            amount : obj.amount,
+                            billType : obj.billType
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                myOpenWindow("/tpl/invoice/list.html", 'detail');
+                                myRemoveLocalStorage("invoice");
+                            } else {
+                                myToast(data.resultMsg);
+                            }
+                            myLoadingOver();
+                        },
+                        error : function() {
+                            myLoadingOver();
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+            }
+        }(mui, document));
+    </script>
+</html>

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.company.WorkReportMapper" >
+  <resultMap id="BaseResultMap" type="WorkReport" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="project_id" property="projectId" jdbcType="INTEGER" />
+    <result column="work_type_id" property="workTypeId" jdbcType="INTEGER" />
+    <result column="work_content" property="workContent" jdbcType="VARCHAR" />
+    <result column="work_proof" property="workProof" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="latitude" property="latitude" jdbcType="DECIMAL" />
+    <result column="longitude" property="longitude" jdbcType="DECIMAL" />
+    <result column="precision_gps" property="precisionGps" jdbcType="DECIMAL" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap type="WorkReportInfo" id="WorkReportInfoResultMap" extends="BaseResultMap">
+    <association property="project" column="project_id" javaType="GardenProject" fetchType="lazy">
+        <id column="garden_id" property="id" jdbcType="INTEGER" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+    </association>
+    <association property="basic" column="work_type_id" javaType="BasicData" fetchType="lazy">
+        <id column="basic_id" property="id" jdbcType="INTEGER" />
+	    <result column="category_id" property="categoryId" jdbcType="INTEGER" />
+	    <result column="category_name" property="categoryName" jdbcType="VARCHAR" />
+	    <result column="attribute_id" property="attributeId" jdbcType="INTEGER" />
+	    <result column="attribute_name" property="attributeName" jdbcType="VARCHAR" />
+	    <result column="abbreviate" property="abbreviate" jdbcType="VARCHAR" />
+    </association>
+    <association property="user" column="user_id" javaType="Admin" fetchType="lazy">
+        <id property="id" column="admin_id" />
+        <result property="name" column="admin_name" />
+        <result property="mobile" column="admin_mobile" />
+        <result property="imageAddress" column="admin_image_address" />
+    </association>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, project_id, work_type_id, work_content, work_proof, address, latitude, longitude, 
+    precision_gps, create_time, create_user_id, update_time, update_user_id, version
+  </sql>
+  <select id="getWorkReportCount" parameterType="WorkReportQuery" resultType="java.lang.Integer">
+    select count(zwr.id)
+    from z_work_report zwr
+    left outer join z_project zp on zp.id=zwr.project_id
+    <include refid="where_clause"></include>
+  </select>
+  <select id="getWorkReportByCondition" resultMap="WorkReportInfoResultMap" parameterType="WorkReportQuery" >
+    select zwr.*, zp.id garden_id, zp.name, tb.id basic_id, tb.category_id, tb.category_name, 
+        tb.attribute_id, tb.attribute_name, tb.abbreviate, ta.id admin_id, ta.name admin_name, ta.mobile admin_mobile,
+        ta.image_address admin_image_address
+    from z_work_report zwr
+    left outer join z_project zp on zp.id=zwr.project_id
+    left outer join t_basic tb on tb.id=zwr.work_type_id
+    left outer join t_admin ta on ta.id=zwr.user_id
+    <include refid="where_clause"></include>
+    <choose>
+        <when test="orderBy != null and orderBy!=''">
+            order by #{orderBy}
+        </when>
+        <otherwise>
+            order by zwr.id DESC
+        </otherwise>
+    </choose>
+    limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+  <sql id="where_clause">
+    <where>
+        <trim prefixOverrides="and">
+            <if test="id != null">
+                zwr.id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="userId != null">
+                zwr.user_id = #{userId,jdbcType=INTEGER}
+            </if>
+            <if test="projectId != null">
+                zwr.project_id = #{projectId,jdbcType=INTEGER}
+            </if>
+        </trim>
+    </where>
+  </sql>
+  <delete id="deleteWorkReportById" parameterType="java.lang.Integer" >
+    delete from z_work_report
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertWorkReport" parameterType="WorkReport" >
+    insert into z_work_report
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="projectId != null" >
+        project_id,
+      </if>
+      <if test="workTypeId != null" >
+        work_type_id,
+      </if>
+      <if test="workContent != null" >
+        work_content,
+      </if>
+      <if test="workProof != null" >
+        work_proof,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="latitude != null" >
+        latitude,
+      </if>
+      <if test="longitude != null" >
+        longitude,
+      </if>
+      <if test="precisionGps != null" >
+        precision_gps,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="projectId != null" >
+        #{projectId,jdbcType=INTEGER},
+      </if>
+      <if test="workTypeId != null" >
+        #{workTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="workContent != null" >
+        #{workContent,jdbcType=VARCHAR},
+      </if>
+      <if test="workProof != null" >
+        #{workProof,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="latitude != null" >
+        #{latitude,jdbcType=DECIMAL},
+      </if>
+      <if test="longitude != null" >
+        #{longitude,jdbcType=DECIMAL},
+      </if>
+      <if test="precisionGps != null" >
+        #{precisionGps,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateWorkReportById" parameterType="WorkReport" >
+    update z_work_report
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="projectId != null" >
+        project_id = #{projectId,jdbcType=INTEGER},
+      </if>
+      <if test="workTypeId != null" >
+        work_type_id = #{workTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="workContent != null" >
+        work_content = #{workContent,jdbcType=VARCHAR},
+      </if>
+      <if test="workProof != null" >
+        work_proof = #{workProof,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="latitude != null" >
+        latitude = #{latitude,jdbcType=DECIMAL},
+      </if>
+      <if test="longitude != null" >
+        longitude = #{longitude,jdbcType=DECIMAL},
+      </if>
+      <if test="precisionGps != null" >
+        precision_gps = #{precisionGps,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+      version = version + 1,
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

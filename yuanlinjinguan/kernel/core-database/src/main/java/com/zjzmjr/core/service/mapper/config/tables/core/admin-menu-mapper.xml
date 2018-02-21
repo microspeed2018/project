@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.coredb.menu.AdminMenuDao">
+	<resultMap id="adminMenuResultMap" type="AdminMenu">
+		<id property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="url" column="url" />
+		<result property="parent" column="parent" />
+		<result property="order" column="disporder" />
+		<result property="project" column="project"/>
+		<result property="time" column="create_time" />
+		<result property="version" column="version" />
+	</resultMap>
+
+	<select id="getById" parameterType="int" resultMap="adminMenuResultMap" resultType="AdminMenu">
+		SELECT *
+		FROM t_menu WHERE id=#{id}
+	</select>
+	
+	<select id="getByIds" parameterType="list" resultMap="adminMenuResultMap" resultType="AdminMenu">
+		SELECT * FROM t_menu WHERE id IN
+			<foreach collection="list" open="(" close=")" separator="," item="item">
+				#{item}
+			</foreach>
+	</select>
+
+	<select id="getMenu" resultMap="adminMenuResultMap" parameterType="map">
+		SELECT * FROM t_menu
+		<where>
+			<trim prefixOverrides="and">
+			<if test="parentId != null">
+				parent=#{parentId}
+			</if>
+			<if test="project != null">
+				and project = #{project}
+			</if>
+			</trim>
+		</where>
+		ORDER BY parent ASC,disporder ASC
+	</select>
+
+	<insert id="addMenu" keyProperty="id" parameterType="AdminMenu">
+		INSERT INTO
+		t_menu
+		(name,url,parent,disporder,project,create_time) VALUES
+		(#{name},#{url},#{parent},#{order},#{project},#{time})
+	</insert>
+	<update id="update" parameterType="AdminMenu">
+		UPDATE t_menu
+		<set>
+			<if test="name != null">
+				name=#{name},
+			</if>
+			<if test="url != null">
+				url=#{url},
+			</if>
+			<if test="parent != null">
+				parent=#{parent},
+			</if>
+			<if test="order != null">
+				disporder=#{order},
+			</if>
+			<if test="project != null">
+				project=#{project},
+			</if>
+			<if test="time != null">
+				create_time=#{time},
+			</if>
+		</set>
+		<where>
+			id=#{id}
+			<if test="version != null">
+				AND version=#{version}
+			</if>
+		</where>
+	</update>
+
+	<delete id="deleteByIds" parameterType="list">
+		DELETE FROM t_menu WHERE id IN
+		<foreach collection="list" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

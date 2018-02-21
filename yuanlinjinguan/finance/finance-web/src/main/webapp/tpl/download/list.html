@@ -1,0 +1,95 @@
+
+<!DOCTYPE html>
+<html class="ui-page-login">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+        <title>app下载</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/base.min.css?v.7" rel="stylesheet" />
+    </head>
+    <body>
+        <div class='download'>
+            <h2>
+                app下载
+            </h2>
+            <p>
+                <span id='android' class='btns active'>安卓下载</span>
+            </p>
+            <p>
+                <span id='iphone' class='btns active'>iPhone下载</span>
+            </p>
+            <p>
+                <span id='ipad' class='btns active'>iPad下载</span>
+            </p>
+            <p>
+                <span id='window-phone' class='btns'>windowPhone下载</span>
+            </p>
+        </div>
+        <div class='mask wx' style='background: rgba(0,0,0,.8)'>
+            <img src='../../images/search/share-tips.png' id='share-tips' />
+            <p>
+                点击右上角，在浏览器中打开！
+            </p>
+        </div>
+        <script src="../../js/mui.min.js"></script>
+        <script src="../../js/common.min.js?v.7"></script>
+        <script>
+            (function($, doc) {
+                $.init();
+
+                // 历史url
+                zjzm.historyUrl("/tpl/single/download.html");
+
+                var wxBox = doc.querySelector(".wx");
+                wxBox.style.opacity = "0";
+                wxBox.style.zIndex = "-1";
+                wxBox.addEventListener("tap", function () {
+                    wxBox.style.opacity = "0";
+                    wxBox.style.zIndex = "-1";
+                });
+
+                $(".download").on("tap", "span", function () {
+                    var id = this.getAttribute("id");
+                    var clazz = this.getAttribute("class");
+                    if (clazz.indexOf("active") >= 0) {
+                        if (id == "android") {
+                            if (isWeiXin()) {
+                                wxBox.style.opacity = "1";
+                                wxBox.style.zIndex = "997";
+                            } else {
+                                // 安卓下载
+                                $.ajax(global.apiURL + '/appRelease/getNewAppVertion.htm', {
+                                    data : {
+                                        device : "android"
+                                    },
+                                    dataType : 'json',
+                                    type : 'post',
+                                    timeout : 10000,
+                                    success : function(data){
+                                        if (data.success) {
+                                            window.location.href = data.appVersion.downloadUrl;
+                                        }
+                                    },
+                                    error : function(xhr, type , errorThrown) {
+                                        myToast("服务器正忙，请稍后重试！");
+                                    }
+                                });
+                            }
+                        } else if (id == "iphone") {
+                            // iPhone下载
+                            window.location.href = 'https://itunes.apple.com/cn/app/%E8%AF%9A%E9%82%A6%E8%AE%BE%E8%AE%A1/id1313188460';
+                        } else if (id == "ipad") {
+                            // iPad下载
+                            window.location.href = 'https://itunes.apple.com/cn/app/%E8%AF%9A%E9%82%A6%E8%AE%BE%E8%AE%A1/id1313188460';
+                        } else {
+                            // windowPhone下载
+
+                        }
+                    }
+                });
+
+            }(mui, document));
+        </script>
+    </body>
+</html>

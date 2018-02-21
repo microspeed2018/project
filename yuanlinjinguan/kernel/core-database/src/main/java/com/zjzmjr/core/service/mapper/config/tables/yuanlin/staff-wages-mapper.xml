@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.user.StaffWagesMapper" >
+  <resultMap id="BaseResultMap" type="StaffWages" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="staff_info_id" property="staffInfoId" jdbcType="INTEGER" />
+    <result column="wages_year" property="wagesYear" jdbcType="INTEGER" />
+    <result column="wages_month" property="wagesMonth" jdbcType="INTEGER" />
+    <result column="base_pay" property="basePay" jdbcType="DECIMAL" />
+    <result column="post_pay" property="postPay" jdbcType="DECIMAL" />
+    <result column="merit_pay" property="meritPay" jdbcType="DECIMAL" />
+    <result column="bonus_pay" property="bonusPay" jdbcType="DECIMAL" />
+    <result column="professional_pay" property="professionalPay" jdbcType="DECIMAL" />
+    <result column="siling_pay" property="silingPay" jdbcType="DECIMAL" />
+    <result column="other_pay" property="otherPay" jdbcType="DECIMAL" />
+    <result column="pay_subtotal" property="paySubtotal" jdbcType="DECIMAL" />
+    <result column="absence_deduct" property="absenceDeduct" jdbcType="DECIMAL" />
+    <result column="social_fund" property="socialFund" jdbcType="DECIMAL" />
+    <result column="housing_provident" property="housingProvident" jdbcType="DECIMAL" />
+    <result column="other_deduct" property="otherDeduct" jdbcType="DECIMAL" />
+    <result column="deduct_subtotal" property="deductSubtotal" jdbcType="DECIMAL" />
+    <result column="taxable_wages" property="taxableWages" jdbcType="DECIMAL" />
+    <result column="individual_tax" property="individualTax" jdbcType="DECIMAL" />
+    <result column="communication_subsidy" property="communicationSubsidy" jdbcType="DECIMAL" />
+    <result column="real_wages" property="realWages" jdbcType="DECIMAL" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <resultMap type="StaffWagesInfo" id="InfoResultMap" extends="BaseResultMap">
+  	<result column="employee_no" property="employeeNo" jdbcType="INTEGER" />
+    <result column="job_status" property="jobStatus" jdbcType="INTEGER" />
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+    <result property="name" column="name" jdbcType="VARCHAR"/>
+	<result property="mobile" column="mobile" jdbcType="VARCHAR"/>
+	<result property="department" column="department" jdbcType="INTEGER"/>
+	<result property="departmentName" column="department_name" jdbcType="VARCHAR"/>
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, company_id, staff_info_id, wages_year, wages_month, base_pay, post_pay, merit_pay, bonus_pay, 
+    professional_pay, siling_pay, other_pay, pay_subtotal, absence_deduct, social_fund, 
+    housing_provident, other_deduct, deduct_subtotal, taxable_wages, individual_tax, 
+    communication_subsidy, real_wages, memo, create_time, create_user_id, update_time, 
+    update_user_id, version
+  </sql>
+  
+  <select id="getStaffWageById" parameterType="java.lang.Integer" resultMap="InfoResultMap">
+  	select sw.id, sw.company_id, sw.staff_info_id, sw.wages_year, sw.wages_month, sw.base_pay, sw.post_pay, sw.merit_pay, sw.bonus_pay,
+     sw.professional_pay, sw.siling_pay, sw.other_pay, sw.pay_subtotal, sw.absence_deduct, sw.social_fund,
+     sw.housing_provident, sw.other_deduct, sw.deduct_subtotal, sw.taxable_wages, sw.individual_tax,
+     sw.communication_subsidy, sw.real_wages, sw.memo, sw.create_time, sw.create_user_id, sw.update_time,
+     sw.update_user_id, sw.version,
+     si.employee_no, si.telephone, ta.name, ta.mobile, si.job_status, td.name as department_name
+  	from z_staff_wages sw
+  	left outer join z_staff_info si on sw.staff_info_id = si.id
+  	left outer join t_admin ta on si.user_id = ta.id
+  	left outer join z_department td on td.id = ta.department
+  	where sw.id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="queryStaffWagesCount" parameterType="StaffWagesQuery" resultType="java.lang.Integer">
+  	select count(1)
+  	from z_staff_wages sw
+  	left outer join z_staff_info si
+  	on sw.staff_info_id = si.id
+  	left outer join t_admin ta ON si.user_id = ta.id
+  	<include refid="where_clause"/>
+  </select>
+  
+  <select id="queryStaffWages" parameterType="StaffWagesQuery" resultMap="InfoResultMap">
+  	select sw.id, sw.company_id, sw.staff_info_id, sw.wages_year, sw.wages_month, sw.base_pay, sw.post_pay, sw.merit_pay, sw.bonus_pay,
+     sw.professional_pay, sw.siling_pay, sw.other_pay, sw.pay_subtotal, sw.absence_deduct, sw.social_fund,
+     sw.housing_provident, sw.other_deduct, sw.deduct_subtotal, sw.taxable_wages, sw.individual_tax,
+     sw.communication_subsidy, sw.real_wages, sw.memo, sw.create_time, sw.create_user_id, sw.update_time,
+     sw.update_user_id, sw.version,
+     si.employee_no, si.telephone, ta.name, ta.mobile, si.job_status, td.name as department_name
+  	from z_staff_wages sw
+  	left outer join z_staff_info si on sw.staff_info_id = si.id
+  	left outer join t_admin ta on si.user_id = ta.id
+  	left outer join z_department td on td.id = ta.department
+  	<include refid="where_clause"/>
+  	<choose>
+        <when test="orderBy != null and orderBy!=''">
+            order by #{orderBy}
+        </when>
+        <otherwise>
+		  	order by sw.wages_year desc,sw.wages_month desc, sw.staff_info_id
+        </otherwise>
+    </choose>
+    limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+  
+  <sql id="where_clause">
+  	<where>
+  		<trim prefixOverrides="and">
+  			<if test="employeeNo != null">
+  				and si.employee_no = #{employeeNo,jdbcType=INTEGER}
+  			</if>
+  			<if test="staffInfoId != null">
+  				and sw.staff_info_id = #{staffInfoId,jdbcType=INTEGER}
+  			</if>
+  			<if test="userId != null">
+  				and ta.id = #{userId,jdbcType=INTEGER}
+  			</if>
+  			<if test="wagesYear != null">
+  				and sw.wages_year = #{wagesYear,jdbcType=INTEGER}
+  			</if>
+  			<if test="wagesMonth != null">
+  				and sw.wages_month = #{wagesMonth,jdbcType=INTEGER}
+  			</if>
+  			<if test="name != null and name != ''">
+  				and ta.name like CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+  			</if>
+  			<if test="departmentId != null">
+  				and ta.department = #{departmentId,jdbcType=INTEGER}
+  			</if>
+  			<if test="mobile != null and mobile != ''">
+  				and ta.mobile like CONCAT('%',#{mobile,jdbcType=VARCHAR},'%')
+  			</if>
+  			<if test="telephone != null and telephone != ''">
+  				and si.telephone like CONCAT('%',#{telephone,jdbcType=VARCHAR},'%')
+  			</if>
+  			<if test="status != null">
+  				and si.job_status = #{status,jdbcType=INTEGER}
+  			</if>
+  			<if test="startDate != null and startDate != ''">
+  				and 
+  				(sw.wages_year >= year(str_to_date(#{startDate,jdbcType=VARCHAR},'%Y%m%d'))
+  					and sw.wages_year >= month(str_to_date(#{startDate,jdbcType=VARCHAR},'%Y%m%d')) )
+  			</if>
+  			<if test="endDate != null and endDate != ''">
+  				<![CDATA[
+	  			and 
+  				(sw.wages_year <= year(str_to_date(#{startDate,jdbcType=VARCHAR},'%Y%m%d'))
+  					and sw.wages_year <= month(str_to_date(#{startDate,jdbcType=VARCHAR},'%Y%m%d')) )
+  				]]>
+  			</if>
+  		</trim>
+  	</where>
+  </sql>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from z_staff_wages
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="batchInsert"  useGeneratedKeys="true" parameterType="java.util.List">
+    insert into z_staff_wages (company_id, staff_info_id, wages_year,
+      wages_month, base_pay, post_pay, 
+      merit_pay, bonus_pay, professional_pay, 
+      siling_pay, other_pay, pay_subtotal, 
+      absence_deduct, social_fund, housing_provident, 
+      other_deduct, deduct_subtotal, taxable_wages, 
+      individual_tax, communication_subsidy, real_wages, 
+      memo, create_time, create_user_id)
+      values
+      <foreach collection="list" item="item" separator="," index="index">
+	     (#{item.companyId,jdbcType=INTEGER}, #{item.staffInfoId,jdbcType=INTEGER}, 
+	      #{item.wagesYear,jdbcType=INTEGER}, #{item.wagesMonth,jdbcType=INTEGER}, #{item.basePay,jdbcType=DECIMAL}, #{item.postPay,jdbcType=DECIMAL}, 
+	      #{item.meritPay,jdbcType=DECIMAL}, #{item.bonusPay,jdbcType=DECIMAL}, #{item.professionalPay,jdbcType=DECIMAL}, 
+	      #{item.silingPay,jdbcType=DECIMAL}, #{item.otherPay,jdbcType=DECIMAL}, #{item.paySubtotal,jdbcType=DECIMAL}, 
+	      #{item.absenceDeduct,jdbcType=DECIMAL}, #{item.socialFund,jdbcType=DECIMAL}, #{item.housingProvident,jdbcType=DECIMAL}, 
+	      #{item.otherDeduct,jdbcType=DECIMAL}, #{item.deductSubtotal,jdbcType=DECIMAL}, #{item.taxableWages,jdbcType=DECIMAL}, 
+	      #{item.individualTax,jdbcType=DECIMAL}, #{item.communicationSubsidy,jdbcType=DECIMAL}, #{item.realWages,jdbcType=DECIMAL}, 
+	      #{item.memo,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.createUserId,jdbcType=INTEGER})
+      </foreach>
+  </insert>
+  <insert id="insertStaffWages" parameterType="StaffWages" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+    insert into z_staff_wages
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="staffInfoId != null" >
+        staff_info_id,
+      </if>
+      <if test="wagesYear != null" >
+        wages_year,
+      </if>
+      <if test="wagesMonth != null" >
+        wages_month,
+      </if>
+      <if test="basePay != null" >
+        base_pay,
+      </if>
+      <if test="postPay != null" >
+        post_pay,
+      </if>
+      <if test="meritPay != null" >
+        merit_pay,
+      </if>
+      <if test="bonusPay != null" >
+        bonus_pay,
+      </if>
+      <if test="professionalPay != null" >
+        professional_pay,
+      </if>
+      <if test="silingPay != null" >
+        siling_pay,
+      </if>
+      <if test="otherPay != null" >
+        other_pay,
+      </if>
+      <if test="paySubtotal != null" >
+        pay_subtotal,
+      </if>
+      <if test="absenceDeduct != null" >
+        absence_deduct,
+      </if>
+      <if test="socialFund != null" >
+        social_fund,
+      </if>
+      <if test="housingProvident != null" >
+        housing_provident,
+      </if>
+      <if test="otherDeduct != null" >
+        other_deduct,
+      </if>
+      <if test="deductSubtotal != null" >
+        deduct_subtotal,
+      </if>
+      <if test="taxableWages != null" >
+        taxable_wages,
+      </if>
+      <if test="individualTax != null" >
+        individual_tax,
+      </if>
+      <if test="communicationSubsidy != null" >
+        communication_subsidy,
+      </if>
+      <if test="realWages != null" >
+        real_wages,
+      </if>
+      <if test="memo != null" >
+        memo,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="staffInfoId != null" >
+        #{staffInfoId,jdbcType=INTEGER},
+      </if>
+      <if test="wagesYear != null" >
+        #{wagesYear,jdbcType=INTEGER},
+      </if>
+      <if test="wagesMonth != null" >
+        #{wagesMonth,jdbcType=INTEGER},
+      </if>
+      <if test="basePay != null" >
+        #{basePay,jdbcType=DECIMAL},
+      </if>
+      <if test="postPay != null" >
+        #{postPay,jdbcType=DECIMAL},
+      </if>
+      <if test="meritPay != null" >
+        #{meritPay,jdbcType=DECIMAL},
+      </if>
+      <if test="bonusPay != null" >
+        #{bonusPay,jdbcType=DECIMAL},
+      </if>
+      <if test="professionalPay != null" >
+        #{professionalPay,jdbcType=DECIMAL},
+      </if>
+      <if test="silingPay != null" >
+        #{silingPay,jdbcType=DECIMAL},
+      </if>
+      <if test="otherPay != null" >
+        #{otherPay,jdbcType=DECIMAL},
+      </if>
+      <if test="paySubtotal != null" >
+        #{paySubtotal,jdbcType=DECIMAL},
+      </if>
+      <if test="absenceDeduct != null" >
+        #{absenceDeduct,jdbcType=DECIMAL},
+      </if>
+      <if test="socialFund != null" >
+        #{socialFund,jdbcType=DECIMAL},
+      </if>
+      <if test="housingProvident != null" >
+        #{housingProvident,jdbcType=DECIMAL},
+      </if>
+      <if test="otherDeduct != null" >
+        #{otherDeduct,jdbcType=DECIMAL},
+      </if>
+      <if test="deductSubtotal != null" >
+        #{deductSubtotal,jdbcType=DECIMAL},
+      </if>
+      <if test="taxableWages != null" >
+        #{taxableWages,jdbcType=DECIMAL},
+      </if>
+      <if test="individualTax != null" >
+        #{individualTax,jdbcType=DECIMAL},
+      </if>
+      <if test="communicationSubsidy != null" >
+        #{communicationSubsidy,jdbcType=DECIMAL},
+      </if>
+      <if test="realWages != null" >
+        #{realWages,jdbcType=DECIMAL},
+      </if>
+      <if test="memo != null" >
+        #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateById" parameterType="StaffWages" >
+    update z_staff_wages
+    <set >
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="staffInfoId != null" >
+        staff_info_id = #{staffInfoId,jdbcType=INTEGER},
+      </if>
+      <if test="wagesYear != null" >
+        wages_year = #{wagesYear,jdbcType=INTEGER},
+      </if>
+      <if test="wagesMonth != null" >
+        wages_month = #{wagesMonth,jdbcType=INTEGER},
+      </if>
+      <if test="basePay != null" >
+        base_pay = #{basePay,jdbcType=DECIMAL},
+      </if>
+      <if test="postPay != null" >
+        post_pay = #{postPay,jdbcType=DECIMAL},
+      </if>
+      <if test="meritPay != null" >
+        merit_pay = #{meritPay,jdbcType=DECIMAL},
+      </if>
+      <if test="bonusPay != null" >
+        bonus_pay = #{bonusPay,jdbcType=DECIMAL},
+      </if>
+      <if test="professionalPay != null" >
+        professional_pay = #{professionalPay,jdbcType=DECIMAL},
+      </if>
+      <if test="silingPay != null" >
+        siling_pay = #{silingPay,jdbcType=DECIMAL},
+      </if>
+      <if test="otherPay != null" >
+        other_pay = #{otherPay,jdbcType=DECIMAL},
+      </if>
+      <if test="paySubtotal != null" >
+        pay_subtotal = #{paySubtotal,jdbcType=DECIMAL},
+      </if>
+      <if test="absenceDeduct != null" >
+        absence_deduct = #{absenceDeduct,jdbcType=DECIMAL},
+      </if>
+      <if test="socialFund != null" >
+        social_fund = #{socialFund,jdbcType=DECIMAL},
+      </if>
+      <if test="housingProvident != null" >
+        housing_provident = #{housingProvident,jdbcType=DECIMAL},
+      </if>
+      <if test="otherDeduct != null" >
+        other_deduct = #{otherDeduct,jdbcType=DECIMAL},
+      </if>
+      <if test="deductSubtotal != null" >
+        deduct_subtotal = #{deductSubtotal,jdbcType=DECIMAL},
+      </if>
+      <if test="taxableWages != null" >
+        taxable_wages = #{taxableWages,jdbcType=DECIMAL},
+      </if>
+      <if test="individualTax != null" >
+        individual_tax = #{individualTax,jdbcType=DECIMAL},
+      </if>
+      <if test="communicationSubsidy != null" >
+        communication_subsidy = #{communicationSubsidy,jdbcType=DECIMAL},
+      </if>
+      <if test="realWages != null" >
+        real_wages = #{realWages,jdbcType=DECIMAL},
+      </if>
+      <if test="memo != null" >
+        memo = #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+        version = version + 1
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

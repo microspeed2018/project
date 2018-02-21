@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+		<setting name="logImpl" value="LOG4J"/>
+	</settings>
+	<typeAliases>
+		<typeAlias type="com.zjzmjr.core.model.company.CompanyInfo" alias="CompanyInfo"/>
+        <typeAlias type="com.zjzmjr.core.model.company.CompanyInfoQuery" alias="CompanyInfoQuery"/>
+        <typeAlias type="com.zjzmjr.core.model.company.BasicData" alias="BasicData"/>
+        <typeAlias type="com.zjzmjr.core.model.company.BasicDataQuery" alias="BasicDataQuery"/>
+        <typeAlias type="com.zjzmjr.core.model.user.StaffInfo" alias="StaffInfo"/>
+        <typeAlias type="com.zjzmjr.core.model.user.StaffInfoQuery" alias="StaffInfoQuery"/>
+        <typeAlias type="com.zjzmjr.core.model.user.StaffBasicInfo" alias="StaffBasicInfo"/>
+        <typeAlias type="com.zjzmjr.core.model.user.ExternalPerson" alias="ExternalPerson"/>
+        <typeAlias type="com.zjzmjr.core.model.user.ExternalPersonQuery" alias="ExternalPersonQuery"/>
+        <typeAlias type="com.zjzmjr.core.model.user.ExternalPersonInfo" alias="ExternalPersonInfo"/>
+        <typeAlias type="com.zjzmjr.core.model.user.CompanyStaffPerson" alias="CompanyStaffPerson"/>
+        <typeAlias type="com.zjzmjr.core.model.company.WorkReport" alias="WorkReport"/>
+        <typeAlias type="com.zjzmjr.core.model.company.WorkReportInfo" alias="WorkReportInfo"/>
+        <typeAlias type="com.zjzmjr.core.model.company.WorkReportQuery" alias="WorkReportQuery"/>
+        <typeAlias type="com.zjzmjr.core.model.company.CompanyAptitude" alias="CompanyAptitude"/>
+        <typeAlias type="com.zjzmjr.core.model.company.CompanyInfoAptitude" alias="CompanyInfoAptitude"/>
+        <typeAlias type="com.zjzmjr.core.model.company.CompanyAssociated" alias="CompanyAssociated"/>
+        <typeAlias type="com.zjzmjr.core.model.company.CompanyAssociatedInfo" alias="CompanyAssociatedInfo"/>
+        <typeAlias type="com.zjzmjr.core.model.company.CompanyAssociatedQuery" alias="CompanyAssociatedQuery"/>        
+        <typeAlias type="com.zjzmjr.core.model.company.CompanyAssociatedContact" alias="CompanyAssociatedContact"/>
+        <typeAlias type="com.zjzmjr.core.model.company.CompanyDepartment" alias="CompanyDepartment"/>
+        <typeAlias type="com.zjzmjr.core.model.company.CompanyDepartmentQuery" alias="CompanyDepartmentQuery"/>        
+        <typeAlias type="com.zjzmjr.core.model.company.CompanyDepartmentStaff" alias="CompanyDepartmentStaff"/>
+        <typeAlias type="com.zjzmjr.core.model.company.CompanyJob" alias="CompanyJob"/> 
+        <typeAlias type="com.zjzmjr.core.model.company.CompanyDepartmentJob" alias="CompanyDepartmentJob"/>
+        <typeAlias type="com.zjzmjr.core.model.project.GardenProject" alias="GardenProject"/>
+        <typeAlias type="com.zjzmjr.core.model.project.GardenProjectInfo" alias="GardenProjectInfo"/>
+        <typeAlias type="com.zjzmjr.core.model.project.GardenProjectQuery" alias="GardenProjectQuery"/>
+        <typeAlias type="com.zjzmjr.core.model.project.GardenProjectSchema" alias="GardenProjectSchema"/>
+        <typeAlias type="com.zjzmjr.core.model.project.ProjectSchemaQuery" alias="ProjectSchemaQuery"/>
+        <typeAlias type="com.zjzmjr.core.model.project.GardenProjectSchemaInfo" alias="GardenProjectSchemaInfo"/>
+        <typeAlias type="com.zjzmjr.core.model.project.ProjectSchemaUserInfo" alias="ProjectSchemaUserInfo"/>
+        <typeAlias type="com.zjzmjr.core.model.project.ProjectFile" alias="ProjectFile"/>
+        <typeAlias type="com.zjzmjr.core.model.project.ProjectFileUpload" alias="ProjectFileUpload"/>
+        <typeAlias type="com.zjzmjr.core.model.project.ProjectFileQuery" alias="ProjectFileQuery"/>
+        <typeAlias type="com.zjzmjr.core.model.project.ProjectFileInfo" alias="ProjectFileInfo"/>
+        <typeAlias type="com.zjzmjr.core.model.project.BiddingInfo" alias="BiddingInfo"/>
+        <typeAlias type="com.zjzmjr.core.model.project.BiddingInfoQuery" alias="BiddingInfoQuery"/>
+        <typeAlias type="com.zjzmjr.core.model.project.TenderBidCompanyInfo" alias="TenderBidCompanyInfo"/>
+        <typeAlias type="com.zjzmjr.core.model.project.ProjectContract" alias="ProjectContract"/>
+        <typeAlias type="com.zjzmjr.core.model.project.ContractPaymentInfo" alias="ContractPaymentInfo"/>
+        <typeAlias type="com.zjzmjr.core.model.project.ContractPayment" alias="ContractPayment"/>
+        <typeAlias type="com.zjzmjr.core.model.project.ContractPaymentQuery" alias="ContractPaymentQuery"/>
+        <typeAlias type="com.zjzmjr.core.model.project.ContractQuery" alias="ContractQuery"/>
+        <typeAlias type="com.zjzmjr.core.model.project.ProjectContractInfo" alias="ProjectContractInfo"/>
+        <typeAlias type="com.zjzmjr.core.model.project.ContractSubpackage" alias="ContractSubpackage"/>
+        <typeAlias type="com.zjzmjr.core.model.project.ContractSubpackageQuery" alias="ContractSubpackageQuery"/>
+        <typeAlias type="com.zjzmjr.core.model.project.ContractSubpackageInfo" alias="ContractSubpackageInfo"/>
+        <typeAlias type="com.zjzmjr.core.model.project.SubpackagePayment" alias="SubpackagePayment"/>
+        <typeAlias type="com.zjzmjr.core.model.project.SubpackagePaymentInfo" alias="SubpackagePaymentInfo"/>
+        <typeAlias type="com.zjzmjr.core.model.project.ProjectDisplayRule" alias="ProjectDisplayRule"/>
+        <typeAlias type="com.zjzmjr.core.model.project.ReportCondition" alias="ReportCondition"/>
+        <typeAlias type="com.zjzmjr.core.model.project.ReportCondQuery" alias="ReportCondQuery"/>
+        <typeAlias type="com.zjzmjr.core.model.project.ReportStatisticField" alias="ReportStatisticField"/>
+        <typeAlias type="com.zjzmjr.core.model.company.JobAuthority" alias="JobAuthority"/>
+        <typeAlias type="com.zjzmjr.core.model.company.JobMenu" alias="JobMenu"/>
+        <typeAlias type="com.zjzmjr.core.model.company.JobMenuQuery" alias="JobMenuQuery"/>
+        <typeAlias type="com.zjzmjr.core.model.audit.OfficeAudit" alias="OfficeAudit"/>
+        <typeAlias type="com.zjzmjr.core.model.audit.GardenProjectOfficeAudit" alias="GardenProjectOfficeAudit"/>
+        <typeAlias type="com.zjzmjr.core.model.audit.GardenProjectAuditQuery" alias="GardenProjectAuditQuery"/>
+        <typeAlias type="com.zjzmjr.core.model.audit.ManageAudit" alias="ManageAudit"/>
+        <typeAlias type="com.zjzmjr.core.model.audit.GardenProjectManageAudit" alias="GardenProjectManageAudit"/>
+        <typeAlias type="com.zjzmjr.core.model.audit.AdministrativeSeal" alias="AdministrativeSeal"/> 
+        <typeAlias type="com.zjzmjr.core.model.audit.GardenProjectAdministrativeSeal" alias="GardenProjectAdministrativeSeal"/>      
+        <typeAlias type="com.zjzmjr.core.model.audit.ChiefAudit" alias="ChiefAudit"/> 
+        <typeAlias type="com.zjzmjr.core.model.audit.GardenProjectChiefAudit" alias="GardenProjectChiefAudit"/> 
+        <typeAlias type="com.zjzmjr.core.model.audit.FinancialAudit" alias="FinancialAudit"/> 
+        <typeAlias type="com.zjzmjr.core.model.audit.GardenProjectFinancialAudit" alias="GardenProjectFinancialAudit"/> 
+        <typeAlias type="com.zjzmjr.core.model.audit.CashierConfirmation" alias="CashierConfirmation"/>
+        <typeAlias type="com.zjzmjr.core.model.audit.GardenProjectCashierConfirmation" alias="GardenProjectCashierConfirmation"/>
+	    <typeAlias type="com.zjzmjr.core.model.audit.LeaderAudit" alias="LeaderAudit"/> 
+        <typeAlias type="com.zjzmjr.core.model.audit.GardenProjectLeaderAudit" alias="GardenProjectLeaderAudit"/>
+        <typeAlias type="com.zjzmjr.core.model.audit.LawAudit" alias="LawAudit"/> 
+        <typeAlias type="com.zjzmjr.core.model.audit.GardenProjectLawAudit" alias="GardenProjectLawAudit"/> 
+        <typeAlias type="com.zjzmjr.core.model.user.StaffWages" alias="StaffWages"/>
+        <typeAlias type="com.zjzmjr.core.model.user.StaffWagesQuery" alias="StaffWagesQuery"/>
+        <typeAlias type="com.zjzmjr.core.model.user.StaffWagesInfo" alias="StaffWagesInfo"/>
+        <typeAlias type="com.zjzmjr.core.model.file.SharedFile" alias="SharedFile"/> 
+        <typeAlias type="com.zjzmjr.core.model.file.SharedFileQuery" alias="SharedFileQuery"/>
+        <typeAlias type="com.zjzmjr.core.model.file.SharedFileInfo" alias="SharedFileInfo"/> 
+        <typeAlias type="com.zjzmjr.core.model.recruitment.Recruitment" alias="Recruitment"/> 
+        <typeAlias type="com.zjzmjr.core.model.recruitment.RecruitmentQuery" alias="RecruitmentQuery"/> 
+        <typeAlias type="com.zjzmjr.core.model.recruitment.RecruitmentInfo" alias="RecruitmentInfo"/>
+        <typeAlias type="com.zjzmjr.core.model.talent.Talent" alias="Talent"/>
+        <typeAlias type="com.zjzmjr.core.model.talent.TalentEducation" alias="TalentEducation"/>
+        <typeAlias type="com.zjzmjr.core.model.talent.TalentEducationQuery" alias="TalentEducationQuery"/>
+        <typeAlias type="com.zjzmjr.core.model.talent.TalentJob" alias="TalentJob"/>
+        <typeAlias type="com.zjzmjr.core.model.talent.TalentJobQuery" alias="TalentJobQuery"/>
+        <typeAlias type="com.zjzmjr.core.model.talent.TalentDocument" alias="TalentDocument"/>
+        <typeAlias type="com.zjzmjr.core.model.talent.TalentDocumentQuery" alias="TalentDocumentQuery"/>
+        <typeAlias type="com.zjzmjr.core.model.talent.TalentFamily" alias="TalentFamily"/>
+        <typeAlias type="com.zjzmjr.core.model.talent.TalentFamilyQuery" alias="TalentFamilyQuery"/>
+        <typeAlias type="com.zjzmjr.core.model.talent.TalentInfo" alias="TalentInfo"/>
+        <typeAlias type="com.zjzmjr.core.model.talent.TalentQuery" alias="TalentQuery"/>
+        <typeAlias type="com.zjzmjr.core.model.interview.Interview" alias="Interview"/>
+        <typeAlias type="com.zjzmjr.core.model.interview.InterviewInfo" alias="InterviewInfo"/>
+        <typeAlias type="com.zjzmjr.core.model.interview.InterviewQuery" alias="InterviewQuery"/>
+	</typeAliases>
+
+	<typeHandlers>
+		<typeHandler javaType="java.lang.Double" handler="com.zjzmjr.core.service.handler.DoubleTypeHandler" />
+	</typeHandlers>
+	
+</configuration>

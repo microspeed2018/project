@@ -1,0 +1,95 @@
+.insurance-apply > div {
+  margin-bottom: 0.2rem;
+  background: #fff;
+  font-size: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 0 0.4rem;
+}
+.insurance-apply > div h2 {
+  font-weight: normal;
+  font-size: 1.6rem;
+  padding: 0.6rem 0;
+  color: #666;
+  text-align: center;
+}
+.insurance-apply > div h3 {
+  font-weight: normal;
+  font-size: 1rem;
+  color: #666;
+  padding: 0.4rem 0;
+}
+.insurance-apply > div li {
+  padding: 0.2rem 0;
+}
+.insurance-apply > div li:before,
+.insurance-apply > div li:after {
+  content: " ";
+  display: table;
+}
+.insurance-apply > div li:after {
+  clear: both;
+}
+.insurance-apply > div li span {
+  float: left;
+  width: 10rem;
+  color: #666;
+  padding-top: 0.2rem;
+}
+.insurance-apply > div li em {
+  color: #333;
+  float: left;
+  font-size: 0.8rem;
+}
+.insurance-apply > div li em .data-input {
+  width: 3.84rem;
+}
+.insurance-apply > div li em #province,
+.insurance-apply > div li em #city {
+  float: left;
+  width: 4.1rem;
+}
+.insurance-apply > div li em #province {
+  margin-right: 0.2rem;
+}
+.insurance-apply > div li em i {
+  height: 1rem;
+  line-height: 1rem;
+  padding-left: 10px;
+}
+.insurance-apply > div li em .item {
+  padding-top: 0.2rem;
+  width: 400px;
+}
+.insurance-apply > div li em .item:before,
+.insurance-apply > div li em .item:after {
+  content: " ";
+  display: table;
+}
+.insurance-apply > div li em .item:after {
+  clear: both;
+}
+.insurance-apply > div li em #driver-money,
+.insurance-apply > div li em #passenger-money,
+.insurance-apply > div li em #thired {
+  width: 2.6rem;
+  margin-left: 0.4rem;
+}
+.insurance-apply > div li em b {
+  font-weight: normal;
+  color: #666;
+}
+.insurance-apply > div li em .half label {
+  width: 50%;
+  display: inline-block;
+  float: left;
+}
+li{
+list-style:none;
+}
+.left {
+	float: left;
+	width:150px;
+}
+.right {
+	float: right;
+}

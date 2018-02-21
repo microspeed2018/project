@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.project.ReportStatisticMapper" >
+  <resultMap id="ReportStatisticResultMap" type="ReportStatisticField" >
+	<result column="name" property="projectName" jdbcType="VARCHAR" />
+    <result column="introducer" property="introducer" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="design_area" property="designArea" jdbcType="INTEGER" />
+    <result column="investment_mount" property="investmentMount" jdbcType="DECIMAL" />
+    <result column="nature" property="nature" jdbcType="VARCHAR" />
+    <result column="category" property="category" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="management_department" property="managementDepartment" jdbcType="VARCHAR" />
+    <result column="introduction" property="introduction" jdbcType="VARCHAR" />
+    <result column="intentional_cooperation" property="intentionalCooperation" jdbcType="VARCHAR" />
+    <result column="need_technical" property="needTechnical" jdbcType="VARCHAR" />
+    <result column="pre_requirements" property="preRequirements" jdbcType="VARCHAR" />
+    <result column="contract_award_company" property="contractAwardCompany" jdbcType="VARCHAR" />
+    <result column="have_scheme" property="haveScheme" jdbcType="VARCHAR" />
+    <result column="have_development" property="haveDevelopment" jdbcType="VARCHAR" />
+    <result column="have_drawing" property="haveDrawing" jdbcType="VARCHAR" />
+    <result column="have_planning" property="havePlanning" jdbcType="VARCHAR" />
+    <result column="management_personnel" property="managementPersonnel" jdbcType="VARCHAR" />
+    <result column="project_leader" property="projectLeader" jdbcType="VARCHAR" />
+    <result column="apply_deadline" property="applyDeadline" jdbcType="VARCHAR" />
+    <result column="is_major_project" property="isMajorProject" jdbcType="VARCHAR" />
+    <result column="bidding_deadline" property="biddingDeadline" jdbcType="VARCHAR" />
+    <result column="bidding_memo" property="biddingMemo" jdbcType="VARCHAR" />
+    <result column="bidding_documents_producer" property="biddingDocumentsProducer" jdbcType="VARCHAR" />
+    <result column="registration_results" property="registrationResults" jdbcType="VARCHAR" />
+    <result column="registration_results_memo" property="registrationResultsMemo" jdbcType="VARCHAR" />
+    <result column="have_technical" property="haveTechnical" jdbcType="VARCHAR" />
+    <result column="margin_deadline" property="marginDeadline" jdbcType="VARCHAR" />
+    <result column="tender_deadline" property="tenderDeadline" jdbcType="VARCHAR" />
+    <result column="bidding_documents_memo" property="biddingDocumentsMemo" jdbcType="VARCHAR" />
+    <result column="bail" property="bail" jdbcType="DECIMAL" />
+    <result column="latest_remittance_date" property="latestRemittanceDate" jdbcType="VARCHAR" />
+    <result column="remittance_company" property="remittanceCompany" jdbcType="VARCHAR" />
+    <result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+    <result column="account_no" property="accountNo" jdbcType="VARCHAR" />
+    <result column="bail_memo" property="bailMemo" jdbcType="VARCHAR" />
+    <result column="business_producer" property="businessProducer" jdbcType="VARCHAR" />
+    <result column="tender_offer" property="tenderOffer" jdbcType="DECIMAL" />
+    <result column="is_win_bidding" property="isWinBidding" jdbcType="VARCHAR" />
+    <result column="nopass_reason" property="nopassReason" jdbcType="VARCHAR" />
+    <result column="step" property="step" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    
+    <result column="contract_no" property="contractNo" jdbcType="VARCHAR" />
+    <result column="contract_capital" property="contractCapital" jdbcType="DECIMAL" />
+    <result column="sign_date" property="signDate" jdbcType="VARCHAR" />
+    <result column="contract_memo" property="contractMemo" jdbcType="VARCHAR" />
+    <result column="ratio" property="ratio" jdbcType="DECIMAL" />
+    <result column="ratio_memo" property="ratioMemo" jdbcType="VARCHAR" />
+
+  </resultMap>
+  
+  <select id="getReportStaticCount" resultType="java.lang.Integer" parameterType="ReportCondQuery">
+    SELECT COUNT(zp.id)
+    FROM z_project zp
+        LEFT OUTER JOIN z_contract zc on zc.company_id=zp.company_id and zc.project_id=zp.id
+        LEFT OUTER JOIN t_admin intrd on zp.introducer = intrd.id
+        LEFT OUTER JOIN t_area cty on cty.id=zp.city
+        LEFT OUTER JOIN t_basic ntu on ntu.company_id=zp.company_id and ntu.category_id=4 and ntu.attribute_id=zp.nature
+        LEFT OUTER JOIN t_basic catg on catg.company_id=zp.company_id and catg.category_id=5 and catg.attribute_id=zp.category
+        LEFT OUTER JOIN t_basic bty on bty.company_id=zp.company_id and bty.category_id=6 and bty.attribute_id=zp.type
+        LEFT OUTER JOIN t_basic mndep on mndep.company_id=zp.company_id and mndep.category_id=7 and mndep.attribute_id=zp.management_department
+        LEFT OUTER JOIN t_basic incop on incop.company_id=zp.company_id and incop.id=zp.intentional_cooperation
+        LEFT OUTER JOIN z_company_associated zcas on zcas.id=zp.contract_award_company and zcas.company_id=zp.company_id
+        LEFT OUTER JOIN t_admin mnper on zp.management_personnel = mnper.id
+        LEFT OUTER JOIN t_admin pld on zp.project_leader = pld.id
+        LEFT OUTER JOIN t_admin bddp on zp.bidding_documents_producer = bddp.id
+        LEFT OUTER JOIN t_admin bspr on zp.business_producer = bspr.id
+        
+        <include refid="report_statistic_clause"></include>
+         
+  </select>
+
+    <select id="getReportStaticByCondition" resultMap="ReportStatisticResultMap" parameterType="ReportCondQuery">
+        SELECT zp.name,intrd.name introducer,cty.area_name city,zp.address,zp.design_area,zp.investment_mount
+            ,ntu.attribute_name nature, catg.attribute_name category,bty.attribute_name type,mndep.attribute_name management_department
+            ,zp.introduction,incop.attribute_name intentional_cooperation
+            ,CASE zp.need_technical WHEN 0 THEN '否' ELSE '是' END need_technical,zp.pre_requirements,zcas.company_name contract_award_company
+            ,CASE zp.have_scheme WHEN 0 THEN '否' ELSE '是' END have_scheme,CASE zp.have_development WHEN 0 THEN '否' ELSE '是' END have_development
+            ,CASE zp.have_drawing WHEN 0 THEN '否' ELSE '是' END have_drawing,CASE zp.have_planning WHEN 0 THEN '否' ELSE '是' END have_planning
+            ,mnper.name management_personnel,pld.name project_leader,zp.apply_deadline
+            ,CASE zp.is_major_project WHEN 0 THEN '否' ELSE '是' END is_major_project,zp.bidding_deadline,zp.bidding_memo
+            ,bddp.name bidding_documents_producer,CASE zp.registration_results WHEN 0 THEN '不成功' ELSE '成功' END registration_results
+            ,zp.registration_results_memo,CASE zp.have_technical WHEN 0 THEN '否' ELSE '是' END have_technical,zp.margin_deadline,zp.tender_deadline
+            ,zp.bidding_documents_memo,zp.bail,zp.latest_remittance_date,zp.remittance_company,zp.bank_name,zp.account_no
+            ,zp.bail_memo,bspr.name business_producer,zp.tender_offer
+            ,CASE zp.is_win_bidding WHEN 0 THEN '未开标' WHEN 1 THEN '中标' ELSE '未中标' END is_win_bidding,zp.nopass_reason,zp.step,zp.status
+            , zc.*
+        FROM z_project zp
+        LEFT OUTER JOIN z_contract zc on zc.company_id=zp.company_id and zc.project_id=zp.id
+        LEFT OUTER JOIN t_admin intrd on zp.introducer = intrd.id
+        LEFT OUTER JOIN t_area cty on cty.id=zp.city
+        LEFT OUTER JOIN t_basic ntu on ntu.company_id=zp.company_id and ntu.category_id=4 and ntu.attribute_id=zp.nature
+        LEFT OUTER JOIN t_basic catg on catg.company_id=zp.company_id and catg.category_id=5 and catg.attribute_id=zp.category
+        LEFT OUTER JOIN t_basic bty on bty.company_id=zp.company_id and bty.category_id=6 and bty.attribute_id=zp.type
+        LEFT OUTER JOIN t_basic mndep on mndep.company_id=zp.company_id and mndep.category_id=7 and mndep.attribute_id=zp.management_department
+        LEFT OUTER JOIN t_basic incop on incop.company_id=zp.company_id and incop.id=zp.intentional_cooperation
+        LEFT OUTER JOIN z_company_associated zcas on zcas.id=zp.contract_award_company and zcas.company_id=zp.company_id
+        LEFT OUTER JOIN t_admin mnper on zp.management_personnel = mnper.id
+        LEFT OUTER JOIN t_admin pld on zp.project_leader = pld.id
+        LEFT OUTER JOIN t_admin bddp on zp.bidding_documents_producer = bddp.id
+        LEFT OUTER JOIN t_admin bspr on zp.business_producer = bspr.id
+        
+        <include refid="report_statistic_clause"></include>
+        <choose>
+	        <when test="orderBy != null and orderBy!=''">
+	            order by #{orderBy}
+	        </when>
+	        <otherwise>
+	            order by zp.update_time desc 
+	        </otherwise>
+	    </choose>
+	    limit #{pageBean.offset},#{pageBean.pageSize}
+    </select>
+    <sql id="report_statistic_clause">
+        <where>
+            <trim prefixOverrides="and">
+                <if test="companyId != null">
+                    zp.company_id = #{companyId,jdbcType=INTEGER}
+                </if>
+                <if test="timeStart != null">
+                   <![CDATA[
+		            and DATE_FORMAT(zp.create_time, '%Y%m%d') >= #{timeStart,jdbcType=VARCHAR}
+		          ]]>
+                </if>
+				<if test="timeEnd != null">
+					<![CDATA[
+					 and DATE_FORMAT(zp.create_time, '%Y%m%d') <= #{timeEnd,jdbcType=VARCHAR}
+					]]>
+				</if>
+				<if test="projectLeaderLst != null">
+				    and zp.project_leader in 
+                    <foreach collection="projectLeaderLst" open="(" close=")" separator="," item="item">
+                        #{item}
+                    </foreach>
+				</if>
+				<if test="managePersonLst != null">
+                    and zp.management_personnel in 
+				    <foreach collection="managePersonLst" open="(" close=")" separator="," item="item">
+				        #{item}
+				    </foreach>
+				</if>
+				<if test="projectStepLst != null">
+				    and zp.step in 
+                    <foreach collection="projectStepLst" open="(" close=")" separator="," item="item">
+                        #{item}
+                    </foreach>
+				</if>
+				<if test="projectNo != null">
+                and zp.project_no like CONCAT(#{projectNo,jdbcType=VARCHAR}, '%')
+	            </if>
+	            <if test="name != null">
+	                and zp.name like CONCAT('%', #{name,jdbcType=VARCHAR}, '%')
+	            </if>
+	            <if test="cityId != null">
+	                and cty.area_name like CONCAT('%', #{cityId,jdbcType=VARCHAR}, '%')
+	            </if>
+	            <if test="contractAwardCompany != null">
+	                and zp.contract_award_company = #{contractAwardCompany,jdbcType=INTEGER}
+	            </if>
+	            <if test="department != null">
+	                and zp.management_department = #{department,jdbcType=INTEGER}
+	            </if>
+		        <if test="nature != null">
+	                and zp.nature = #{nature,jdbcType=INTEGER}
+	            </if>
+	            <if test="category != null">
+	                and zp.category = #{category,jdbcType=INTEGER}
+	            </if>
+	            <if test="haveTechnical != null">
+	                and zp.have_technical = #{haveTechnical,jdbcType=INTEGER}
+	            </if>
+	            <if test="investmentMountStart != null">
+	                    <![CDATA[
+	                and zp.investment_mount >= #{investmentMountStart,jdbcType=VARCHAR}
+	                    ]]>
+	            </if>
+	            <if test="investmentMountEnd != null">
+	                    <![CDATA[
+	                and zp.investment_mount <= #{investmentMountEnd,jdbcType=VARCHAR}
+	                    ]]>
+	            </if>
+	            <if test="designAreaStart != null">
+	                    <![CDATA[
+	                and zp.design_area >= #{designAreaStart,jdbcType=VARCHAR}
+	                    ]]>
+	            </if>
+	            <if test="designAreaEnd != null">
+	                    <![CDATA[
+	                and zp.design_area <= #{designAreaEnd,jdbcType=VARCHAR}
+	                    ]]>
+	            </if>
+	            <if test="projectLiable != null">
+	                and zp.project_liable like CONCAT('%', #{projectLiable}, '%')
+	            </if>
+	            <if test="ratioFrom != null">
+			        and zc.ratio >= #{ratioFrom,jdbcType=DECIMAL}
+		        </if>
+	            <if test="ratioTo != null">
+	            <![CDATA[
+	              and zc.ratio <= #{ratioTo,jdbcType=DECIMAL}
+	            ]]>
+	            </if>
+	            <if test="contractCapitalFrom != null">
+		          and zc.contract_capital >= #{contractCapitalFrom,jdbcType=DECIMAL}
+		        </if>
+	            <if test="contractCapitalTo != null">
+	            <![CDATA[
+	              and zc.contract_capital <= #{contractCapitalTo,jdbcType=DECIMAL}
+	            ]]>
+	            </if>
+	            <if test="contractNo != null" >
+			        and zc.contract_no like CONCAT(#{contractNo,jdbcType=VARCHAR}, '%')
+			    </if>
+				<choose>
+				    <when test="statusLst != null">
+	                    and zp.status in 
+	                    <foreach collection="statusLst" open="(" close=")" separator="," item="item">
+	                        #{item}
+	                    </foreach>
+	                    <![CDATA[
+	                       and zp.status <> 3
+	                    ]]>
+				    </when>
+				    <otherwise>
+				        <![CDATA[
+                           and zp.status <> 3
+                        ]]>
+				    </otherwise>
+				</choose>
+            </trim>
+        </where>
+    </sql>
+    
+</mapper>

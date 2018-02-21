@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>事务记录一览</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+        <style type="text/css">
+            table {
+                width: 90%;
+                margin: 5%
+            }
+            th,td {
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <header class="header">
+            <img src="../../images/svg/left.svg" class="icon-40" id="goback" />
+            <span class="tit">事务记录一览</span>
+            <i></i>
+        </header>
+        <div class="wrap record-list">
+            <ul>
+            </ul>
+        </div>
+        <div class='wrap'>
+            <input type="button" value='返回' class='btn btn-max' id="back" />
+        </div>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/jquery.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script>
+        (function($, doc) {
+            $.init();
+
+            // 校验app或wap
+            myInit(indexFun);
+            function indexFun() {
+                // goback
+                doc.querySelector("#goback").addEventListener("click", function () {
+                    if (myGetLocalStorage("productPage") == "detailPage") {
+                        myOpenWindow("list-step.html", 'list-step');
+                    } else {
+                        myOpenWindow("step-tab.html", 'step-tab');
+                    }
+                });
+                doc.querySelector("#back").addEventListener("click", function () {
+                    if (myGetLocalStorage("productPage") == "detailPage") {
+                        myOpenWindow("list-step.html", 'list-step');
+                    } else {
+                        myOpenWindow("step-tab.html", 'step-tab');
+                    }
+                });
+
+                var productId = myGetLocalStorage("productId");
+                function getList() {
+                    myLoading();
+                    $.ajax(global.apiURL + '/adminTransaction/user/index.htm', {
+                        data : {
+                            action : "getAdminTransactionList",
+                            projectId : productId
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                var dom = "",
+                                    box = jQuery(".wrap ul");
+                                for (var i = 0; i < data.data.length; i++) {
+                                    dom += "<li>"+
+                                        "<div>"+
+                                            "<span class='time'>"+ data.data[i].time +"</span>"+
+                                            "<span class='name'>"+ data.data[i].adminName +"</span>"+
+                                            "<span class='type'>"+ data.data[i].businessName +"</span>"+
+                                        "</div>"+
+                                        "<div class='box'>";
+                                        if (data.data[i].result) {
+                                            dom += "<span class='result'>成功</span>";
+                                        } else {
+                                            dom += "<span class='result'>失败</span>";
+                                        }
+                                        dom +="<span class='comment'>"+ data.data[i].comment +"</span>"+
+                                        "</div>"+
+                                    "</li>";
+                                }
+                                box.append(dom);
+                            } else {
+                                myToast(data.resultMsg);
+                            }
+                            myLoadingOver();
+                        },
+                        error : function() {
+                            myLoadingOver();
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+                getList()
+
+                jQuery("ul").on("click", "li", function () {
+                    jQuery(this).find("div").show();
+                    jQuery(this).siblings().find(".box").hide();
+                });
+            }
+        }(mui, document));
+    </script>
+</html>

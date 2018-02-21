@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.company.CompanyInfoMapper" >
+  <resultMap id="BaseResultMap" type="CompanyInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="license_number" property="licenseNumber" jdbcType="VARCHAR" />
+    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    <result column="legal_person" property="legalPerson" jdbcType="VARCHAR" />
+    <result column="registered_capital" property="registeredCapital" jdbcType="DECIMAL" />
+    <result column="duration" property="duration" jdbcType="VARCHAR" />
+    <result column="introduction" property="introduction" jdbcType="VARCHAR" />
+    <result column="business_scope" property="businessScope" jdbcType="VARCHAR" />
+    <result column="quality_grade" property="qualityGrade" jdbcType="VARCHAR" />
+    <result column="account_name" property="accountName" jdbcType="VARCHAR" />
+    <result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+    <result column="account_no" property="accountNo" jdbcType="VARCHAR" />
+    <result column="ios_quality" property="iosQuality" jdbcType="VARCHAR" />
+    <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+    <result column="fax_phone" property="faxPhone" jdbcType="VARCHAR" />
+    <result column="staff_count" property="staffCount" jdbcType="INTEGER" />
+    <result column="city_id" property="cityId" jdbcType="INTEGER" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="zip_code" property="zipCode" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap type="CompanyInfoAptitude" id="CompanyAptitudeResultMap" extends="BaseResultMap">
+    <association property="area" column="city_id" javaType="Area" fetchType="lazy">
+        <id property="id" column="area_id" />
+        <result property="areaName" column="area_name" />
+    </association>
+    <collection property="aptitudes" column="company_id" ofType="CompanyAptitude" resultMap="com.zjzmjr.core.service.mapper.dao.company.CompanyAptitudeMapper.CompanyAptitudeResultMap"></collection>
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, license_number, company_name, legal_person, registered_capital, duration, introduction, 
+    business_scope, quality_grade, account_name, bank_name, account_no, ios_quality, 
+    mobile, fax_phone, staff_count, city_id, address, zip_code, status, create_time, create_user_id, 
+    update_time, update_user_id, version
+  </sql>
+  
+  <select id="getCompanyInfoAptitudeById" resultMap="CompanyAptitudeResultMap" parameterType="java.lang.Integer">
+    select zci.*, zca.id aptitude_grade_id, zca.company_id, zca.aptitude_id, zca.grade_id, zca.certificate_no
+    from z_company_info zci
+    left outer join z_company_aptitude zca on zca.company_id = zci.id
+    where zci.id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getCompanyInfoCount" parameterType="CompanyInfoQuery" resultType="java.lang.Integer">
+    select count(zci.id)
+    from z_company_info zci
+    <include refid="where_clause"></include>
+  </select>
+  <select id="getCompanyInfoByCondition" resultMap="CompanyAptitudeResultMap" parameterType="CompanyInfoQuery" >
+    select zci.*, zca.id aptitude_grade_id, zca.company_id, zca.aptitude_id, zca.grade_id, zca.certificate_no,
+    ta.area_name 
+    from z_company_info zci
+    left outer join z_company_aptitude zca on zca.company_id = zci.id
+    left outer join t_area ta on ta.id = zci.city_id
+    <include refid="where_clause"></include>
+    <choose>
+        <when test="orderBy != null and orderBy!=''">
+            order by #{orderBy}
+        </when>
+        <otherwise>
+            order by id DESC
+        </otherwise>
+    </choose>
+    limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+  
+  <sql id="where_clause">
+    <where>
+        <trim prefixOverrides="and">
+            <if test="id != null">
+                zci.id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="companyName != null">
+                and zci.company_name like CONCAT('%', #{companyName,jdbcType=VARCHAR} , '%') 
+            </if>
+            <if test="legalPerson != null">
+                and zci.legal_person like CONCAT(#{legalPerson,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="capitalFrom != null">
+                and zci.registered_capital >= #{capitalFrom,jdbcType=DECIMAL}
+            </if>
+            <if test="capitalTo != null">
+	            <![CDATA[
+                    and zci.registered_capital <= #{capitalTo,jdbcType=DECIMAL}
+		          ]]>
+            </if>
+            <if test="durationFrom != null">
+                <![CDATA[
+                    and zci.duration >= #{durationFrom,jdbcType=VARCHAR}
+                  ]]>
+            </if>
+            <if test="durationTo != null">
+                <![CDATA[
+                    and zci.duration <= #{durationTo,jdbcType=VARCHAR}
+                  ]]>
+            </if>
+            <if test="address != null">
+                and zci.address like CONCAT(#{address,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="createTimeStart != null">
+                and DATE_FORMAT(zci.create_time,'%Y%m%d') >= #{createTimeStart,jdbcType=TIMESTAMP}
+            </if>
+            <if test="createTimeEnd != null">
+                <![CDATA[
+                    and DATE_FORMAT(zci.create_time,'%Y%m%d') <= #{createTimeEnd,jdbcType=TIMESTAMP}
+                ]]>
+            </if>
+        </trim>
+    </where>
+  </sql>
+  
+  <delete id="deleteCompanyInfoById" parameterType="java.lang.Integer" >
+    delete from z_company_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertCompanyInfo" parameterType="CompanyInfo" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
+    insert into z_company_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="licenseNumber != null" >
+        license_number,
+      </if>
+      <if test="companyName != null" >
+        company_name,
+      </if>
+      <if test="legalPerson != null" >
+        legal_person,
+      </if>
+      <if test="registeredCapital != null" >
+        registered_capital,
+      </if>
+      <if test="duration != null" >
+        duration,
+      </if>
+      <if test="introduction != null" >
+        introduction,
+      </if>
+      <if test="businessScope != null" >
+        business_scope,
+      </if>
+      <if test="qualityGrade != null" >
+        quality_grade,
+      </if>
+      <if test="accountName != null" >
+        account_name,
+      </if>
+      <if test="bankName != null" >
+        bank_name,
+      </if>
+      <if test="accountNo != null" >
+        account_no,
+      </if>
+      <if test="iosQuality != null" >
+        ios_quality,
+      </if>
+      <if test="mobile != null" >
+        mobile,
+      </if>
+      <if test="faxPhone != null" >
+        fax_phone,
+      </if>
+      <if test="staffCount != null" >
+        staff_count,
+      </if>
+      <if test="cityId != null">
+        city_id,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="zipCode != null" >
+        zip_code,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="licenseNumber != null" >
+        #{licenseNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null" >
+        #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="legalPerson != null" >
+        #{legalPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="registeredCapital != null" >
+        #{registeredCapital,jdbcType=DECIMAL},
+      </if>
+      <if test="duration != null" >
+        #{duration,jdbcType=VARCHAR},
+      </if>
+      <if test="introduction != null" >
+        #{introduction,jdbcType=VARCHAR},
+      </if>
+      <if test="businessScope != null" >
+        #{businessScope,jdbcType=VARCHAR},
+      </if>
+      <if test="qualityGrade != null" >
+        #{qualityGrade,jdbcType=VARCHAR},
+      </if>
+      <if test="accountName != null" >
+        #{accountName,jdbcType=VARCHAR},
+      </if>
+      <if test="bankName != null" >
+        #{bankName,jdbcType=VARCHAR},
+      </if>
+      <if test="accountNo != null" >
+        #{accountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="iosQuality != null" >
+        #{iosQuality,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="faxPhone != null" >
+        #{faxPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="staffCount != null" >
+        #{staffCount,jdbcType=INTEGER},
+      </if>
+      <if test="cityId != null">
+        #{cityId,jdbcType=INTEGER},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="zipCode != null" >
+        #{zipCode,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateCompanyInfoById" parameterType="CompanyInfo" >
+    update z_company_info
+    <set >
+      <if test="licenseNumber != null" >
+        license_number = #{licenseNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null" >
+        company_name = #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="legalPerson != null" >
+        legal_person = #{legalPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="registeredCapital != null" >
+        registered_capital = #{registeredCapital,jdbcType=DECIMAL},
+      </if>
+      <if test="duration != null" >
+        duration = #{duration,jdbcType=VARCHAR},
+      </if>
+      <if test="introduction != null" >
+        introduction = #{introduction,jdbcType=VARCHAR},
+      </if>
+      <if test="businessScope != null" >
+        business_scope = #{businessScope,jdbcType=VARCHAR},
+      </if>
+      <if test="qualityGrade != null" >
+        quality_grade = #{qualityGrade,jdbcType=VARCHAR},
+      </if>
+      <if test="accountName != null" >
+        account_name = #{accountName,jdbcType=VARCHAR},
+      </if>
+      <if test="bankName != null" >
+        bank_name = #{bankName,jdbcType=VARCHAR},
+      </if>
+      <if test="accountNo != null" >
+        account_no = #{accountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="iosQuality != null" >
+        ios_quality = #{iosQuality,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        mobile = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="faxPhone != null" >
+        fax_phone = #{faxPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="staffCount != null" >
+        staff_count = #{staffCount,jdbcType=INTEGER},
+      </if>
+      <if test="cityId != null">
+        city_id = #{cityId,jdbcType=INTEGER},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="zipCode != null" >
+        zip_code = #{zipCode,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+      version = version + 1,
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

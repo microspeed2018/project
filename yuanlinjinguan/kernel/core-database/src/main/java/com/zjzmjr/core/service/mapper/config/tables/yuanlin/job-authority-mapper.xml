@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.company.JobAuthorityMapper" >
+  <resultMap id="BaseResultMap" type="JobAuthority" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="job_id" property="jobId" jdbcType="INTEGER" />
+    <result column="authority_id" property="authorityId" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, company_id, job_id, authority_id, create_time, create_user_id, update_time, update_user_id, 
+    version
+  </sql>
+	
+	<select id="getJobAuthByJobId" parameterType="int" resultMap="com.zjzmjr.core.service.mapper.dao.coredb.admin.AdminAuthDao.adminAuthResultMap" >
+	    SELECT au.* 
+	    FROM z_job_authority um 
+	    INNER JOIN  t_auth au ON um.authority_id = au.id 
+	    WHERE um.job_id=#{jobId}
+	</select>
+
+    <insert id="insertJobAuthList" parameterType="list">
+        INSERT INTO z_job_authority (company_id, job_id, authority_id,create_time,create_user_id) VALUES
+        <foreach collection="list" open="" close="" separator="," item="item">
+            (#{item.companyId},#{item.jobId},#{item.authorityId},#{item.createTime},#{item.createUserId})
+        </foreach>
+    </insert>
+    
+    <delete id="deleteJobAuthByJobId" parameterType="map">
+        DELETE FROM z_job_authority WHERE job_id =#{jobId} AND authority_id IN
+            <foreach collection="authIds" open="(" close=")" separator="," item="item">
+                #{item}
+            </foreach>
+    </delete>
+    
+  <insert id="insertJobAuthority" parameterType="JobAuthority" >
+    insert into z_job_authority
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="jobId != null" >
+        job_id,
+      </if>
+      <if test="authorityId != null" >
+        authority_id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="jobId != null" >
+        #{jobId,jdbcType=INTEGER},
+      </if>
+      <if test="authorityId != null" >
+        #{authorityId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateJobAuthorityById" parameterType="JobAuthority" >
+    update z_job_authority
+    <set >
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="jobId != null" >
+        job_id = #{jobId,jdbcType=INTEGER},
+      </if>
+      <if test="authorityId != null" >
+        authority_id = #{authorityId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+        version = version + 1,
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

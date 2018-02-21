@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>我的</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+        <link href="../../css/normalize.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div class='user-info'>
+            <div>
+                <p class='portrait'>
+                    <img id="view" />
+                    <span></span>
+                    <input id="file" type="file" accept="image/*" multiple  />
+                </p>
+                <p class='info'>
+                    <span id="name"></span>
+                    <span id="company"></span>
+                </p>
+            </div>
+            <em id="msg">
+                <span class="message-num"></span>
+                <img src="../../images/svg/message.svg" class="icon-40" />
+            </em>
+        </div>
+        <div class='wrap'>
+            <ul class='wrap-list' id="user-info">
+                <!-- <li id="mail">
+                    <div class='tit'>
+                        <img src="../../images/svg/user-email.svg" class="icon-30" />通讯录
+                    </div>
+                    <div class='con'>
+                        <img src="../../images/svg/list-right.svg" class="icon-30" />
+                    </div>
+                </li>
+                <li id="work">
+                    <div class='tit'>
+                        <img src="../../images/svg/user-work.svg" class="icon-30" />工作汇报
+                    </div>
+                    <div class='con'>
+                        <img src="../../images/svg/list-right.svg" class="icon-30" />
+                    </div>
+                </li>
+                <li id="table" style="display: none;">
+                    <div class='tit'>
+                        <img src="../../images/svg/user-table.svg" class="icon-30" />统计查看
+                    </div>
+                    <div class='con'>
+                        <img src="../../images/svg/list-right.svg" class="icon-30" />
+                    </div>
+                </li> -->
+                <li id="pwd">
+                    <div class='tit'>
+                        <img src="../../images/svg/user-pwd.svg" class="icon-30" />修改密码
+                    </div>
+                    <div class='con'>
+                        <img src="../../images/svg/list-right.svg" class="icon-30" />
+                    </div>
+                </li>
+                <li id="version" style='display: none;'>
+                    <div class='tit'>
+                        <img src="../../images/svg/user-work.svg" class="icon-30" />系统版本
+                    </div>
+                    <div class='con'>
+                        <img src="../../images/svg/list-right.svg" class="icon-30" />
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class='wrap'>
+            <input type="button" value='退出' class='btn btn-max btn-top' id="lgout" />
+        </div>
+        <footer class='footer'>
+            <ul>
+            </ul>
+        </footer>
+        <article class="htmleaf-container" style="display: none;">
+            <div id="clipArea"></div>
+            <button id="cancel">取消</button>
+            <button id="clipBtn">保存</button>
+        </article>
+    </body>
+    <script src="../../js/jquery.js" type="text/javascript"></script>
+    <script src="../../js/iscroll-zoom.js"></script>
+    <script src="../../js/hammer.js"></script>
+    <script src="../../js/jquery.photoClip.js"></script>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script>
+        (function($, doc) {
+            $.init();
+
+            // 校验app或wap
+            myInit(indexFun);
+            function indexFun() {
+
+                getMesNum();
+                var user = JSON.parse(myGetLocalStorage("user"));
+                var role;
+                var personnelNature;
+                if (user) {
+                    role = user.jobId;
+                    personnelNature = user.personnelNature;
+
+                    // 基本信息
+                    if (user.company) {
+                        doc.querySelector("#company").innerHTML = user.company;
+                    } else {
+                        doc.querySelector("#company").style.display = "none";
+                    }
+                    var userName = user.name;
+                    if (userName) {
+                        doc.querySelector("#name").innerHTML = userName;
+                        if (userName.length >= 2) {
+                            userName = userName.substr(userName.length - 1);
+                        }
+                    } else {
+                        doc.querySelector("#name").innerHTML = user.mobile;
+                        doc.querySelector(".portrait span").innerHTML = "访客";
+                    }
+                    // 头像
+                    if (user.imageAddress) {
+                        doc.querySelector(".portrait img").setAttribute("src", user.imageAddress);
+                        doc.querySelector(".portrait img").style.display = "flex";
+                    } else {
+                        doc.querySelector(".portrait span").innerHTML = userName;
+                        doc.querySelector(".portrait span").style.display = "flex";
+                    }
+                }
+
+                jQuery("#cancel").on("click", function () {
+                    jQuery(".htmleaf-container").hide();
+                });
+                var one_obj = {
+                    /**
+                     * @param base64Codes
+                     *        图片的base64编码
+                     */
+                    funUploadFile: function(base64Codes){
+                        var self = this;
+                        //var formData = new FormData();
+                        //convertBase64UrlToBlob函数是将base64编码转换为Blob
+                        //append函数的第一个参数是后台获取数据的参数名,在php中用$FILES['imageName']接收，
+                        //formData.append("imageName", self.convertBase64UrlToBlob(base64Codes));
+                        basestr = base64Codes;
+                        $.ajax(global.apiURL + '/file/images.htm', {
+                            data : {
+                                images : basestr
+                            },
+                            dataType : 'json',
+                            type     : 'post',
+                            timeout  : 10000,
+                            success  : function(data){
+                                if (data.success) {
+                                    if (data.data) {
+                                        var code = data.data;
+                                        myLoading();
+                                        $.ajax(global.apiURL + '/token/getUserInfo.htm', {
+                                            data : {code : code},
+                                            dataType : 'json',
+                                            type : 'post',
+                                            success : function(data){
+                                                if (data.success) {
+                                                    mySetLocalStorage("user", {
+                                                        "springtoken"       : user.springtoken,
+                                                        "nickname"          : user.userName,
+                                                        "mobile"            : user.username,
+                                                        "name"              : user.name,
+                                                        "jobId"             : user.jobId,
+                                                        "personnelNature"   : user.personnelNature,
+                                                        "userId"            : user.userId,
+                                                        "company"           : user.company,
+                                                        "imageAddress"      : code
+                                                    });
+                                                    jQuery(".portrait #view").attr("src", code);
+                                                } else {
+                                                    myToast(data.resultMsg);
+
+                                                }
+                                                myLoadingOver();
+                                            },
+                                            error : function() {
+                                                myLoadingOver();
+                                                myToast("服务器正忙，请稍后重试！");
+                                            }
+                                        });
+                                    } else {
+                                        myToast('上传图片失败，请重试');
+                                    }
+                                } else {
+                                    myToast(data.resultMsg);
+                                }
+                            },
+                            error : function(xhr, type , errorThrown) {
+                                myToast("服务器正忙，请稍后重试！");
+                            }
+                        });
+                    },
+
+                    /**
+                     * 将以base64的图片url数据转换为Blob
+                     * @param urlData
+                     *            用url方式表示的base64图片数据
+                     */
+                    convertBase64UrlToBlob: function(urlData){
+                        //去掉url的头，并转换为byte
+                        var bytes=window.atob(urlData.split(',')[1]);
+
+                        //处理异常,将ascii码小于0的转换为大于0
+                        var ab = new ArrayBuffer(bytes.length);
+                        var ia = new Uint8Array(ab);
+                        for (var i = 0; i < bytes.length; i++) {
+                            ia[i] = bytes.charCodeAt(i);
+                        }
+                        // 此处type注意与photoClip初始化中的outputType类型保持一致
+                        return new Blob( [ab] , {type : 'image/jpeg'});
+                    },
+
+                    init: function() {
+                        var self = this;
+                        jQuery("#clipArea").photoClip({
+                            width: 200,
+                            height: 200,
+                            file: "#file",
+                            view: "#view",
+                            ok: "#clipBtn",
+                            outputType: 'jpg',
+                            loadStart: function() {
+                                //console.log("照片读取中");
+                            },
+                            loadComplete: function() {
+                                //console.log("照片读取完成");
+                                jQuery(".htmleaf-container").show();
+                            },
+                            clipFinish: function(dataURL) {
+                                //console.log('裁剪完成');
+                                self.funUploadFile(dataURL);
+                                jQuery("#view").show();
+                                jQuery(".htmleaf-container").hide();
+                                jQuery(".portrait span").hide();
+                            }
+                        });
+                    }
+                };
+                one_obj.init();
+
+                // 获取URL参数
+                // var code = getQueryString("code");
+                // function getQueryString(name) {
+                //     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+                //     var r = window.location.search.substr(1).match(reg);
+                //     if (r != null)
+                //         return unescape(r[2]);
+                //     return null;
+                // }
+                // if(isWeiXin() && code && myGetLocalStorage("wx-code") != code){
+                //     getImage();
+                // } else {
+                //     var user = JSON.parse(myGetLocalStorage("user"));
+                //     if (user != null) {
+                //         if (user.imageAddress) {
+                //             doc.querySelector(".portrait").innerHTML = "<img src='"+ user.imageAddress +"'>";
+                //         }
+                //     }
+                // }
+                // function getImage() {
+                //     myLoading();
+                //     $.ajax(global.apiURL + '/token/getUserInfo.htm', {
+                //         data : {code : code},
+                //         dataType : 'json',
+                //         type : 'post',
+                //         success : function(data){
+                //             if (data.success) {
+                //                 //mySetLocalStorage("headImg", {"url" : data.data.headImgUrl});
+                //                 mySetLocalStorage("wx-code", code);
+                //             } else {
+                //                 // if (data.resultMsg == "") {
+                //                 //     var headImg = JSON.parse(myGetLocalStorage("headImg"));
+                //                 //     if (headImg != null) {
+                //                 //         doc.querySelector("#portrait").setAttribute("src", headImg.url);
+                //                 //     }
+                //                 // } else {
+                //                 //     myToast(data.resultMsg);
+                //                 // }
+                //                 myToast(data.resultMsg);
+                //             }
+                //             myLoadingOver();
+                //         },
+                //         error : function() {
+                //             myLoadingOver();
+                //             myToast("服务器正忙，请稍后重试！");
+                //         }
+                //     });
+                // };
+
+                // 历史url
+                zjzm.historyUrl("/tpl/user-info/user.html");
+
+                doc.querySelector("#msg").addEventListener("tap", function () {
+                    myOpenWindow("/tpl/msg/list.html", "msg");
+                });
+                // doc.querySelector("#mail").addEventListener("tap", function () {
+                //     myOpenWindow("/tpl/mail/list.html", "mail");
+                // });
+                // doc.querySelector("#work").addEventListener("tap", function () {
+                //     myOpenWindow("/tpl/work/add.html", "work");
+                // });
+                doc.querySelector("#pwd").addEventListener("tap", function () {
+                    myOpenWindow("/tpl/pwd/setter-pwd.html", "pwd");
+                });
+                // if (role == 1 || role == 2 || role == 3 || role == 4 || role == 5 || personnelNature == 44 || role == 8 || role == 9) {
+                //     document.querySelector("#table").style.display = "flex";
+                //     doc.querySelector("#table").addEventListener("tap", function () {
+                //         myOpenWindow("/tpl/table/list.html", "pwd");
+                //     });
+                // }
+                if (mui.os.plus) {
+                	doc.querySelector("#version").style.display = "flex";
+                }
+                doc.querySelector("#version").addEventListener("tap", function () {
+                    $.ajax(global.apiURL + '/appRelease/getNewAppVertion.htm', {
+                        data : {
+                            device : "android"
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        timeout : 10000,
+                        success : function(data){
+                            if (data.success) {
+                                myAlert("当前版本  " + data.appVersion.appVersion);
+                            }
+                        },
+                        error : function(xhr, type , errorThrown) {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                });
+                
+                // login out
+                doc.querySelector("#lgout").addEventListener("tap", function () {
+                    myConfirm('确认退出？', success);
+                    function success() {
+                        lgout();
+                    }
+                });
+                function lgout() {
+                    myLoading();
+                    $.ajax(global.apiURL + '/j_spring_security_logout', {
+                        data : {},
+                        dataType : 'json',
+                        type : 'get',
+                        timeout : 10000,
+                        success : function(data){
+                            if (data.code == 405) {
+                                myClearStorage();
+                                myOpenWindow('/tpl/login/login.html', 'home');
+                            } else {
+                                myToast(data.resultMsg);
+                            }
+                            myLoadingOver();
+                        },
+                        error : function(xhr, type , errorThrown) {
+                            myLoadingOver();
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+
+                // 底部导航
+                function footer(index) {
+                    var dom = "",
+                        box = document.querySelector(".footer ul"),
+                        list = base.menu,
+                        url,
+                        id;
+                    for (var i = 0; i < list.length; i++) {
+                        switch(i) {
+                            case 0:
+                                url = "/tpl/home/home.html";
+                                id = 'home';
+                                break;
+                            case 1:
+                                url = "/tpl/product/list.html";
+                                id = "product";
+                                break;
+                            case 2:
+                                url = "/tpl/msg/list.html";
+                                id = "msg";
+                                break;
+                            case 3:
+                                url = "/tpl/user-info/user.html";
+                                id = "user";
+                                break;
+                            default:
+                                break;
+                        }
+                        if (i == index) {
+                            dom += "<li id='"+ id +"' url='"+ url +"' class='active'><i class='"+ id +"-icon'></i><span>"+ list[i] +"</span></li>";
+                        } else {
+                            dom += "<li id='"+ id +"' url='"+ url +"'><i class='"+ id +"-icon'></i><span>"+ list[i] +"</span></li>";
+                        }
+                    }
+                    box.innerHTML = dom;
+
+                    $(".footer").on('tap', 'li', function() {
+                        var url = this.getAttribute("url");
+                        var id = this.getAttribute("id");
+                        if (id == "product") {
+                            var user = JSON.parse(myGetLocalStorage("user"));
+                            if (user) {
+                                // 判断是否是外部人员
+                                if (user.department == "99" && user.personnelNature != "44") {
+                                    myAlert("暂无查看权限");
+                                } else {
+                                    myOpenWindowFooter(url, id);
+                                }
+                            } else {
+                                myOpenWindow("/tpl/login/login.html", "login");
+                            }
+                        } else {
+                            myOpenWindowFooter(url, id);
+                        }
+                    });
+                };
+                footer(3);
+            }
+        }(mui, document));
+    </script>
+    <script>
+
+    </script>
+</html>

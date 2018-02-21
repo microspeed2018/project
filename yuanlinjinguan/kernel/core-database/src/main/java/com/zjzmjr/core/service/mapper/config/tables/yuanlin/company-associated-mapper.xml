@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.company.CompanyAssociatedMapper" >
+  <resultMap id="BaseResultMap" type="CompanyAssociated" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="company_distinguish" property="companyDistinguish" jdbcType="INTEGER" />
+    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    <result column="legal_person" property="legalPerson" jdbcType="VARCHAR" />
+    <result column="legal_mobile" property="legalMobile" jdbcType="VARCHAR" />
+    <result column="city_id" property="cityId" jdbcType="INTEGER" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="introduction" property="introduction" jdbcType="VARCHAR" />
+    <result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+    <result column="account_no" property="accountNo" jdbcType="VARCHAR" />
+    <result column="license_number" property="licenseNumber" jdbcType="VARCHAR" />
+    <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+    <result column="fax_phone" property="faxPhone" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <resultMap type="CompanyAssociatedInfo" id="CompanyAssociatedInfoResultMap" extends="BaseResultMap">
+    <association property="area" column="city_id" javaType="Area" resultMap="AreaResultMap"/>
+    <association property="basicData" column="company_distinguish" javaType="BasicData" resultMap="CompanyBasicInfoResultMap"/>   
+    <collection property="companyAssociatedContact" column="associate_company" ofType="CompanyAssociatedContact" resultMap="CompanyAssociatedContactResultMap" />
+ </resultMap>
+  
+  <resultMap id="CompanyAssociatedContactResultMap" type="CompanyAssociatedContact" >
+    <id column="contact_id" property="id" jdbcType="INTEGER" />
+    <result column="contact_company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="associate_company" property="associateCompany" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="job" property="job" jdbcType="VARCHAR" />
+    <result column="contact_mobile" property="mobile" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="contact_address" property="address" jdbcType="VARCHAR" />
+    <result column="contact_status" property="status" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="AreaResultMap" type="Area" >
+    <id column="area_id" property="id" jdbcType="INTEGER" />
+    <result column="area_name" property="areaName" jdbcType="VARCHAR" />
+    <result column="prov_code" property="provCode" jdbcType="VARCHAR" />
+    <result column="city_code" property="cityCode" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="CompanyBasicInfoResultMap" type="BasicData" >
+    <id column="basic_data_id" property="id" jdbcType="INTEGER" />
+    <result column="attribute_name" property="attributeName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, company_id, company_distinguish, company_name, legal_person, legal_mobile, city_id, 
+    address, introduction, bank_name, account_no, license_number, mobile, fax_phone, 
+    status, create_time, create_user_id, update_time, 
+    update_user_id, version
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+   <include refid="Base_Column_List" />
+    from z_company_associated
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="getCompanyAssociatedInfoCount" resultType="java.lang.Integer" parameterType="CompanyAssociatedQuery">
+     select count(ca.id)
+     from z_company_associated ca 
+     <include refid="where_clause"></include>
+  </select>
+  
+  <select id="getCompanyAssociatedInfo" resultMap="CompanyAssociatedInfoResultMap" parameterType="CompanyAssociatedQuery" >
+     select ca.*,   
+     cat.id contact_id,cat.name,cat.company_id contact_company_id,cat.job,cat.mobile contact_mobile,cat.email,cat.address contact_address,cat.status contact_status,
+     ta.id area_id,ta.area_name,ta.prov_code,ta.city_code,
+     tb.id basic_data_id,tb.attribute_name
+     from z_company_associated ca 
+     left outer join z_company_associated_contact cat on ca.id = cat.associate_company
+     left outer join t_area ta on ta.id = ca.city_id
+     left outer join t_basic tb on tb.id = ca.company_distinguish
+     <include refid="where_clause"></include>
+     <choose>
+        <when test="orderBy != null and orderBy!=''">
+            order by #{orderBy}
+        </when>
+        <otherwise>
+            order by ca.id ,cat.id
+        </otherwise>
+    </choose>
+    limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+  
+  <sql id="where_clause">
+     <where>
+        <trim prefixOverrides="and">
+            <if test="id != null">
+                ca.id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="companyId != null">
+                and ca.company_id = #{companyId,jdbcType=INTEGER}
+            </if>
+            <if test="companyName != null">
+                and ca.company_name like CONCAT('%', #{companyName,jdbcType=VARCHAR} , '%') 
+            </if>
+            <if test="legalPerson != null">
+                and ca.legal_person like CONCAT(#{legalPerson,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="address != null">
+                and ca.address like CONCAT(#{address,jdbcType=VARCHAR}, '%')
+            </if>
+             <if test="status != null">
+                and ca.status = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="createTimeStart != null">
+                and DATE_FORMAT(ca.create_time,'%Y%m%d') >= #{createTimeStart,jdbcType=TIMESTAMP}
+            </if>
+            <if test="createTimeEnd != null">
+                <![CDATA[
+                    and DATE_FORMAT(ca.create_time,'%Y%m%d') <= #{createTimeEnd,jdbcType=TIMESTAMP}
+                ]]>
+            </if>
+        </trim>
+    </where>
+  </sql>
+  
+  <delete id="deleteCompanyAssociatedById" parameterType="java.lang.Integer" >
+    delete from z_company_associated
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertCompanyAssociated" parameterType="CompanyAssociated" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
+    insert into z_company_associated
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="companyDistinguish != null" >
+        company_distinguish,
+      </if>
+      <if test="companyName != null" >
+        company_name,
+      </if>
+      <if test="legalPerson != null" >
+        legal_person,
+      </if>
+      <if test="legalMobile != null" >
+        legal_mobile,
+      </if>
+      <if test="cityId != null" >
+        city_id,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="introduction != null" >
+        introduction,
+      </if>
+      <if test="bankName != null" >
+        bank_name,
+      </if>
+      <if test="accountNo != null" >
+        account_no,
+      </if>
+      <if test="licenseNumber != null" >
+        license_number,
+      </if>
+      <if test="mobile != null" >
+        mobile,
+      </if>
+      <if test="faxPhone != null" >
+        fax_phone,
+      </if>     
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="companyDistinguish != null" >
+        #{companyDistinguish,jdbcType=INTEGER},
+      </if>
+      <if test="companyName != null" >
+        #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="legalPerson != null" >
+        #{legalPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="legalMobile != null" >
+        #{legalMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="cityId != null" >
+        #{cityId,jdbcType=INTEGER},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="introduction != null" >
+        #{introduction,jdbcType=VARCHAR},
+      </if>
+      <if test="bankName != null" >
+        #{bankName,jdbcType=VARCHAR},
+      </if>
+      <if test="accountNo != null" >
+        #{accountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="licenseNumber != null" >
+        #{licenseNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="faxPhone != null" >
+        #{faxPhone,jdbcType=VARCHAR},
+      </if>    
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateCompanyAssociatedById" parameterType="CompanyAssociated" >
+    update z_company_associated
+    <set >
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="companyDistinguish != null" >
+        company_distinguish = #{companyDistinguish,jdbcType=INTEGER},
+      </if>
+      <if test="companyName != null" >
+        company_name = #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="legalPerson != null" >
+        legal_person = #{legalPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="legalMobile != null" >
+        legal_mobile = #{legalMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="cityId != null" >
+        city_id = #{cityId,jdbcType=INTEGER},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="introduction != null" >
+        introduction = #{introduction,jdbcType=VARCHAR},
+      </if>
+      <if test="bankName != null" >
+        bank_name = #{bankName,jdbcType=VARCHAR},
+      </if>
+      <if test="accountNo != null" >
+        account_no = #{accountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="licenseNumber != null" >
+        license_number = #{licenseNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        mobile = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="faxPhone != null" >
+        fax_phone = #{faxPhone,jdbcType=VARCHAR},
+      </if>     
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+        version = version + 1,
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+</mapper>

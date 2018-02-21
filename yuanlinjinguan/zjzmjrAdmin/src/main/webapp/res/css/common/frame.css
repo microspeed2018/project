@@ -1,0 +1,311 @@
+@charset "utf-8";
+/* CSS Document */
+#header {
+	height: 60px !important;
+	line-height: 60px;
+	background: #0092dc;
+}
+#header .logo {
+	width: 180px;
+	height: 60px;
+	line-height: 60px;
+	color: #fff;
+	float: left;
+	text-align: center;
+	font-size: 20px;
+}
+#header .tool {
+	float: right;
+	padding-right: 30px;
+}
+#header .tool li {
+	position: relative;
+	float: left;
+	height: 60px;
+	line-height: 60px;
+	color: #fff;
+	cursor: pointer;
+	align-items:center;
+	padding: 0 21px;
+	list-style: none;
+}
+#header .tool li label {
+	cursor: pointer;
+}
+#header .tool li:hover {
+	background: #34beed;
+}
+#header .tool li i {
+	width: 20px;
+}
+#header .tool li span {
+	line-height: 20px;
+	font-size: 16px;
+}
+#header .tool li em {
+	display: block;
+	position: absolute;
+	top: 13px;
+	left: 35px;
+	width: 15px;
+	height: 15px;
+	line-height: 15px;
+	text-align: center;
+	background: #f00;
+	color: #fff;
+	font-style: normal;
+	border-radius: 15px;
+	font-size: 12px;
+	font-family: "Arail";
+}
+#header .tool li i, #header .tool li span {
+	height: 20px;
+	display: block;
+	float: left;
+	margin-top: 20px;
+	padding: 0 3px;
+}
+#header .tool li #search {
+	background: url('../../images/search.svg') 0 0 no-repeat;
+}
+#header .tool li #client {
+	background: url('../../images/client.svg') 0 0 no-repeat;
+}
+#header .tool li #message {
+	background: url('../../images/message.svg') 0 0 no-repeat;
+}
+#header .tool li #deal {
+	background: url('../../images/deal.svg') 0 0 no-repeat;
+}
+#header .tool li #system {
+	background: url('../../images/system.svg') 0 0 no-repeat;
+}
+#header .tool li dl {
+	position: absolute;
+	top: 60px;
+	left: 0;
+	background: #34beed;
+	text-align: left;
+    width: 106px;
+    display: none;
+}
+#header .tool li dl dd {
+	line-height: 28px;
+	padding-left: 10px;
+}
+#header .tool li dl dd.curr {
+	background: #0092dc;
+}
+#header .tool li dl dd a {
+	color: #fff;
+	text-decoration: none;
+	padding-right: 20px;
+}
+#header .tool li dl dd:hover {
+	background: #0092dc;
+}
+#header .bar {
+	float: right;
+	height: 52px;
+	line-height: 52px;
+	margin: 4px;
+	padding: 0 20px 0 30px;
+	border-left: 1px solid #4bb0e3;
+}
+#header .bar a {
+	color: #fff;
+	float: left;
+	padding-left: 10px;
+	text-decoration: none;
+}
+#menu {
+	width:180px;
+	background: #383e4c;
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+#menu .nav ul {
+	clear: both;
+}
+#menu .nav #first li {
+	display: flex;
+	flex-direction: column;
+}
+#menu .nav #first li span {
+	display: flex;
+	align-items: center;
+	height: 40px;
+    width: 100%;
+    overflow: hidden;
+}
+#menu .nav #first li i {
+	width: 20px;
+	height: 20px;
+	margin: 10px;
+}
+#menu .nav #first li .icon-1 {
+	background: url('../../images/01.svg');
+}
+#menu .nav #first li .icon-2 {
+	background: url('../../images/02.svg');
+}
+#menu .nav #first li .icon-3 {
+	background: url('../../images/03.svg');
+}
+#menu .nav #first li .icon-1229 {
+	background: url('../../images/04.svg');
+}
+#menu .nav #first li .icon-5 {
+	background: url('../../images/05.svg');
+}
+#menu .nav #first li .icon-6 {
+	background: url('../../images/06.svg');
+}
+#menu .nav #first li .icon-1244 {
+	background: url('../../images/07.svg');
+}
+#menu .nav #first li .icon-8 {
+	background: url('../../images/08.svg');
+}
+#menu .nav #first li .icon-1230 {
+	background: url('../../images/09.svg');
+}
+#menu .nav #first li .icon-10 {
+	background: url('../../images/10.svg');
+}
+#menu .nav #first li .icon-1231 {
+	background: url('../../images/11.svg');
+}
+#menu .nav #first li .icon-12 {
+	background: url('../../images/12.svg');
+}
+#menu .nav #first span {
+	font-size: 16px;
+	color: #a8acc1;
+	padding-left: 10px;
+	line-height: 40px;
+	line-height: 40px;
+	display: block;
+	cursor: pointer;
+}
+#menu .nav #first span.curr {
+	position: relative;
+}
+#menu .nav #first span.curr .ink {
+	display: block;
+  	height: 60px;
+  	width: 60px;
+  	position: absolute;
+  	border-radius: 100%;
+    transform: scale(0);
+    background: radial-gradient(
+	  	rgba(255, 255, 255, 0.2) 0,
+	  	rgba(255, 255, 255, 0.3) 40%,
+	  	rgba(255, 255, 255, 0.4) 50%,
+	  	rgba(255, 255, 255, 0.5) 60%,
+	  	rgba(255, 255, 255, 0) 70%
+	  	);
+    animation: shuibo 0.25s linear;
+    top: -10px;
+}
+@keyframes shuibo {
+  100% {
+    opacity: 0.5;
+    transform: scale(8);
+  }
+}
+#menu .nav #first span.curr, #menu .nav #first span:hover {
+	background: #1e222d;
+}
+#menu .nav #first dl {
+	background: #1e222d;
+	display: none;
+}
+#menu .nav #first dd {
+	color: #fff;
+	padding-left: 40px;
+}
+#menu .nav #first dd a {
+	color: #999;
+	text-decoration: none;
+}
+#menu .nav #first dd a:hover, #menu .nav #first dd.curr a {
+	text-decoration: none;
+	color: #fff;
+}
+#menu .nav #first dd.curr {
+	background: url("/res/images/icon-2.jpg") no-repeat right center;
+}
+#menu .nav #second {
+	display: none;
+	position: absolute;
+}
+#menu .nav #second li {
+	position: relative;
+	margin: 15px 0 0 13px;
+	float: left;
+}
+#menu .nav #second dl {
+	position: absolute;
+	top: 0;
+	left: 83px;
+	width: 330px;
+	z-index: 2;
+	display: none;
+}
+#menu .nav #second dd span {
+	margin-right: 10px;
+}
+#menu .nav #second li dl span {
+	background: #8ec220;
+}
+#menu .nav #second li span {
+	width: 70px;
+	height: 40px;
+	line-height: 40px;
+	text-align: center;
+	background: #2ec4dd;
+	display: block;
+	float: left;
+	color: #fff;
+	cursor: pointer;
+}
+/* 1已做 2 必须 3 非必须 4 未做 */
+#menu .nav #second li span.status1 {
+	background: #8ec220;
+}
+#menu .nav #second li span.status2 {
+	background: #32beef;
+}
+#menu .nav #second li span.status3 {
+	background: #b7b2b6;
+}
+#menu .nav #second li span.status4 {
+	background: #000000;
+}
+#menu .toggle {
+	display: flex;
+	align-items: center;
+	padding: 15px 0;
+	color: #fff;
+	height: 24px;
+	cursor: pointer;
+	border-bottom: 1px solid #1e222d;
+}
+#menu .toggle em, #menu .toggle i {
+	height: 24px;
+	line-height: 24px;
+	display: inline-block;
+	float: left;
+}
+#menu .toggle em {
+	font-style: normal;
+	padding-left: 20px;
+	padding-right: 15px;
+}
+#menu .toggle i {
+	width: 18px;
+	height: 18px;
+	background: url("/res/images/icon-1.png");
+	background-size: 18px;
+}

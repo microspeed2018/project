@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>我的薪酬</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div id="payDetail" v-cloak>
+            <header class="header">
+                <img src="../../images/svg/left.svg" class="icon-40" @click='goBack' />
+                <span class="tit">我的薪酬</span>
+                <i></i>
+            </header>
+            <div class='payDetail'>
+                <div class='wrap'>
+                    <h4>
+                        <span>基本信息</span>
+                    </h4>
+                    <ul class='wrap-list'>
+                        <li>
+                            <div class='tit'>工号</div>
+                            <div class='con'>{{ datas.staffInfoId }}</div>
+                        </li>
+                        <li>
+                            <div class='tit'>姓名</div>
+                            <div class='con'>{{ datas.name }}</div>
+                        </li>
+                        <li>
+                            <div class='tit'>部门</div>
+                            <div class='con'>{{ datas.departmentName }}</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class='wrap'>
+                    <h4>
+                        <span>应发工资</span>
+                    </h4>
+
+                    <ul class='wrap-list'>
+                        <li>
+                            <div class='tit'>基本工资</div>
+                            <div class='con'>{{ datas.basePay | formatPay }}</div>
+                        </li>
+                        <li>
+                            <div class='tit'>岗位工资</div>
+                            <div class='con'>{{ datas.postPay | formatPay }}</div>
+                        </li>
+                        <li>
+                            <div class='tit'>绩效工资</div>
+                            <div class='con'>{{ datas.meritPay | formatPay }}</div>
+                        </li>
+                        <li>
+                            <div class='tit'>奖金提成</div>
+                            <div class='con'>{{ datas.bonusPay | formatPay }}</div>
+                        </li>
+                        <li>
+                            <div class='tit'>职称津贴</div>
+                            <div class='con'>{{ datas.professionalPay | formatPay }}</div>
+                        </li>
+                        <li>
+                            <div class='tit'>司龄津贴</div>
+                            <div class='con'>{{ datas.silingPay | formatPay }}</div>
+                        </li>
+                        <li>
+                            <div class='tit'>其他</div>
+                            <div class='con'>{{ datas.otherPay | formatPay }}</div>
+                        </li>
+                        <li>
+                            <div class='tit'>应发小计</div>
+                            <div class='con'>{{ datas.paySubtotal | formatPay }}</div>
+                        </li>
+
+                    </ul>
+                </div>
+                <div class='wrap'>
+                    <h4>
+                        <span>应扣工资</span>
+                    </h4>
+                    <ul class='wrap-list'>
+                        <li>
+                            <div class='tit'>缺勤扣款</div>
+                            <div class='con'>{{ datas.absenceDeduct | formatPay }}</div>
+                        </li>
+                        <li>
+                            <div class='tit'>社保</div>
+                            <div class='con'>{{ datas.socialFund | formatPay }}</div>
+                        </li>
+                        <li>
+                            <div class='tit'>公积金</div>
+                            <div class='con'>{{ datas.housingProvident | formatPay }}</div>
+                        </li>
+                        <li>
+                            <div class='tit'>其他</div>
+                            <div class='con'>{{ datas.otherDeduct | formatPay }}</div>
+                        </li>
+                        <li>
+                            <div class='tit'>应扣小计</div>
+                            <div class='con'>{{ datas.deductSubtotal | formatPay }}</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class='wrap'>
+                    <h4>
+                        <span>其他</span>
+                    </h4>
+                    <ul class='wrap-list'>
+                        <li>
+                            <div class='tit'>应税工资</div>
+                            <div class='con'>{{ datas.taxableWages | formatPay }}</div>
+                        </li>
+                        <li>
+                            <div class='tit'>代扣个税</div>
+                            <div class='con'>{{ datas.individualTax | formatPay }}</div>
+                        </li>
+                        <li>
+                            <div class='tit'>通讯补贴</div>
+                            <div class='con'>{{ datas.communicationSubsidy | formatPay }}</div>
+                        </li>
+                        <li>
+                            <div class='tit'>实发工资</div>
+                            <div class='con'>{{ datas.realWages | formatPay }}</div>
+                        </li>
+                        <li>
+                            <div class='tit'>备注</div>
+                            <div class='con'>
+                                <textarea :value='datas.memo' readonly></textarea>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class='wrap'>
+                    <input type="button" value='返回' class='btn btn-max btn-top' @click='goBack' />
+                </div>
+            </div>
+        </div>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../js/axios.min.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script>
+        // 校验app或wap
+        myInit(indexFun);
+        function indexFun() {
+            var home = new Vue({
+                el: "#payDetail",
+                data : {
+                    jobsDetail: JSON.parse(myGetLocalStorage("payDetail")),
+                    datas: {
+                        staffInfoId: ""
+                    }
+                },
+                methods: {
+                    setPage: function () {
+                        this.datas.staffInfoId = this.jobsDetail.staffInfoId
+                        this.datas.name = this.jobsDetail.name
+                        this.datas.departmentName = this.jobsDetail.departmentName
+                        this.datas.basePay = this.jobsDetail.basePay
+                        this.datas.postPay = this.jobsDetail.postPay
+                        this.datas.meritPay = this.jobsDetail.meritPay
+                        this.datas.bonusPay = this.jobsDetail.bonusPay
+                        this.datas.professionalPay = this.jobsDetail.professionalPay
+                        this.datas.silingPay = this.jobsDetail.silingPay
+                        this.datas.otherPay = this.jobsDetail.otherPay
+                        this.datas.paySubtotal = this.jobsDetail.paySubtotal
+                        this.datas.absenceDeduct = this.jobsDetail.absenceDeduct
+                        this.datas.socialFund = this.jobsDetail.socialFund
+                        this.datas.housingProvident = this.jobsDetail.housingProvident
+                        this.datas.otherDeduct = this.jobsDetail.otherDeduct
+                        this.datas.deductSubtotal = this.jobsDetail.deductSubtotal
+                        this.datas.taxableWages = this.jobsDetail.taxableWages
+                        this.datas.individualTax = this.jobsDetail.individualTax
+                        this.datas.communicationSubsidy = this.jobsDetail.communicationSubsidy
+                        this.datas.realWages = this.jobsDetail.realWages
+                        this.datas.memo = this.jobsDetail.memo
+                    },
+                    goBack: function () {
+                        myRemoveLocalStorage("payDetail");
+                        myOpenWindow('/tpl/pay/list.html', "list");
+                    }
+                },
+                filters: {
+                    formatPay: function(price) {
+                        if (price) {
+                            return formatCurrency(price);
+                        }
+                    }
+                },
+                mounted: function () {
+                    this.$nextTick(function () {
+                        mui.init();
+                        this.setPage();
+                    })
+                }
+            });
+        }
+    </script>
+</html>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.coredb.weixin.WeixinMenuMapper">
+	<sql id="submenuSelectSql">
+		s.id sid,s.name sname,s.type stype,s.menu_order sorder,s.click_key skey,s.url surl,s.media_id smedia_id,s.mid smid,s.content scontent
+	</sql>
+	<sql id="updateSql">
+		name=#{name},type=#{type},menu_order=#{order},click_key=#{key},url=#{url},content=#{content}
+	</sql>
+	<resultMap type="MenuForm" id="menuFormResult">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="type" property="type"/>
+		<result column="menu_order" property="order"/>
+		<result column="click_key" property="key"/>
+		<result column="url" property="url"/>
+		<result column="media_id" property="mediaId"/>
+		<result column="content" property="content"/>
+		<collection property="mid" column="smid" ofType="MenuForm">
+			<id column="sid" property="id"/>
+			<result column="sname" property="name"/>
+			<result column="stype" property="type"/>
+			<result column="sorder" property="order"/>
+			<result column="skey" property="key"/>
+			<result column="surl" property="url"/>
+			<result column="smedia_id" property="mediaId"/>
+			<result column="scontent" property="content"/>
+		</collection> 
+	</resultMap>
+	<select id="getMenuList" resultMap="menuFormResult">
+		select m.*,<include refid="submenuSelectSql"></include>
+		from t_weixin_menu m left join t_weixin_submenu s
+		on s.mid=m.id order by m.menu_order,s.menu_order
+	</select>
+	<update id="updateMenu" parameterType="MenuForm">
+		<!-- 子菜单 -->
+		<if test="pid!=null">
+			update t_weixin_submenu set <include refid="updateSql"></include>
+			where id=#{id}
+		</if> 
+		<!-- 父菜单 -->
+		<if test="pid==null">
+			update t_weixin_menu set <include refid="updateSql"></include>
+			where id=#{id}
+		</if>
+	</update>
+	<delete id="deleteMenu">
+		<!-- 子菜单 -->
+		<if test="pid!=null">
+			delete from t_weixin_submenu where id=#{id}
+		</if>
+		<!-- 父菜单 -->
+		<if test="pid==null">
+			delete from t_weixin_menu where id=#{id}
+		</if>
+	</delete>
+	<insert id="addMenu" parameterType="MenuForm" >
+		<!-- 子菜单 -->
+		<if test="pid!=null">
+			insert into t_weixin_submenu (name,type,menu_order,click_key,url,mid,content)
+			values (#{name},#{type},#{order},#{key},#{url},#{pid},#{content});
+		</if>
+		<!-- 父菜单 -->
+		<if test="pid==null">
+			insert into t_weixin_menu (name,type,menu_order,click_key,url,content)
+			values (#{name},#{type},#{order},#{key},#{url},#{content});
+		</if>
+	</insert>
+</mapper>

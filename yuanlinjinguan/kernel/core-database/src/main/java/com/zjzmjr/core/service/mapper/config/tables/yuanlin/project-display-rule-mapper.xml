@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.project.ProjectDisplayRuleMapper" >
+  <resultMap id="BaseResultMap" type="ProjectDisplayRule" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="time_order" property="timeOrder" jdbcType="INTEGER" />
+    <result column="project_leader" property="projectLeader" jdbcType="INTEGER" />
+    <result column="manage_person" property="managePerson" jdbcType="INTEGER" />
+    <result column="project_step" property="projectStep" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, company_id, user_id, time_order, project_leader, manage_person, project_step, 
+    status, create_time, create_user_id, update_time, update_user_id, version
+  </sql>
+  <select id="getProjectDisplayRuleByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from z_project_display_rule
+    where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+
+  <insert id="insertProjectDisplayRule" parameterType="ProjectDisplayRule" >
+    insert into z_project_display_rule
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="timeOrder != null" >
+        time_order,
+      </if>
+      <if test="projectLeader != null" >
+        project_leader,
+      </if>
+      <if test="managePerson != null" >
+        manage_person,
+      </if>
+      <if test="projectStep != null" >
+        project_step,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="timeOrder != null" >
+        #{timeOrder,jdbcType=INTEGER},
+      </if>
+      <if test="projectLeader != null" >
+        #{projectLeader,jdbcType=INTEGER},
+      </if>
+      <if test="managePerson != null" >
+        #{managePerson,jdbcType=INTEGER},
+      </if>
+      <if test="projectStep != null" >
+        #{projectStep,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateProjectDisplayRuleById" parameterType="ProjectDisplayRule" >
+    update z_project_display_rule
+    <set >
+        company_id = #{companyId,jdbcType=INTEGER},
+        user_id = #{userId,jdbcType=INTEGER},
+        time_order = #{timeOrder,jdbcType=INTEGER},
+        project_leader = #{projectLeader,jdbcType=INTEGER},
+        manage_person = #{managePerson,jdbcType=INTEGER},
+        project_step = #{projectStep,jdbcType=INTEGER},
+        status = #{status,jdbcType=INTEGER},
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+        version = version + 1,
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

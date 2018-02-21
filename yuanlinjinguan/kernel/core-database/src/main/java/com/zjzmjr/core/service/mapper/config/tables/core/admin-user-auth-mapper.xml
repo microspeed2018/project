@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.coredb.admin.AdminUserAuthDao">
+	<resultMap id="adminUserAuthResultMap" type="AdminUserAuth">
+	    <id property="id" column="id"/>
+		<result property="userId" column="user_id" />
+		<result property="authId" column="auth_id" />
+		<result property="time" column="create_time" />
+		<result property="version" column="version"/>
+	</resultMap>
+	
+	<select id="getAuthByUser" parameterType="int" resultMap="com.zjzmjr.core.service.mapper.dao.coredb.admin.AdminAuthDao.adminAuthResultMap" >
+		SELECT au.* FROM t_user_auth um INNER JOIN  t_auth au ON um.auth_id = au.id WHERE um.user_id=#{userId}
+	</select>
+	
+	<insert id="batchInsert" parameterType="list">
+		INSERT INTO t_user_auth (user_id,auth_id,create_time) VALUES
+		<foreach collection="list" open="" close="" separator="," item="item">
+			(#{item.userId},#{item.authId},#{item.time})
+		</foreach>
+	</insert>
+	
+	<delete id="deleteUserMenuByAuthId" parameterType="map">
+		DELETE FROM t_user_auth WHERE user_id =#{userId} AND auth_id IN
+			<foreach collection="authIds" open="(" close=")" separator="," item="item">
+				#{item}
+			</foreach>
+	</delete>
+	
+	<select id="getAuthUserIdByRoleId" parameterType="map" resultType="Integer" >
+		SELECT t.id FROM t_admin t
+		LEFT OUTER JOIN t_user_auth a on t.id=a.user_id
+		<choose>
+		  <when test="departmentId == 99">
+	          left outer join z_external_person zep on zep.user_id=t.id 
+	          where t.department=#{departmentId} and zep.personnel_nature=#{roleType}
+		  </when>
+		  <otherwise>
+		      WHERE 
+                t.job_id=#{roleType}
+		  </otherwise>
+		</choose>
+        GROUP BY t.id
+	</select>
+	
+	<delete id="deleteAuthByRoleId" parameterType="map">
+		DELETE FROM t_user_auth WHERE user_id in(
+			SELECT t.id FROM t_admin t
+	        <choose>
+	          <when test="departmentId == 99">
+	              left outer join z_external_person zep on zep.user_id=t.id 
+	              where t.department=#{departmentId} and zep.personnel_nature=#{roleType}
+	          </when>
+	          <otherwise>
+	              WHERE 
+	                t.job_id=#{roleType}
+	          </otherwise>
+	        </choose>
+		)
+	</delete>
+</mapper>

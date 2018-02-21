@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.coredb.menu.RoleMenuMapper" >
+  <resultMap id="BaseResultMap" type="RoleMenu" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="role_type" property="roleType" jdbcType="INTEGER" />
+    <result column="menu_id" property="menuId" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, company_id, role_type, menu_id, create_time, version, create_user_id, update_time, update_user_id
+  </sql>
+  <select id="getRoleMenuByRoleType" resultMap="com.zjzmjr.core.service.mapper.dao.coredb.menu.AdminMenuDao.adminMenuResultMap" parameterType="java.lang.Integer" >
+	SELECT menu.* FROM t_role_menu um INNER JOIN t_menu menu ON
+	um.menu_id=menu.id
+	WHERE
+	um.role_type = #{roleType,jdbcType=INTEGER}
+	ORDER BY menu.parent,menu.disporder ASC
+  </select>
+  <select id="getRoleMenuCount" resultType="java.lang.Integer" parameterType="RoleMenuQuery">
+  	select count(id)
+  	from t_role_menu
+  	<include refid="where_clause"></include>
+  </select>
+  <select id="getRoleMenuByCondition" parameterType="RoleMenuQuery" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />
+    from t_role_menu
+    <include refid="where_clause"></include>
+    <choose>
+		<when test="orderBy != null and orderBy!=''">
+			order by #{orderBy}
+		</when>
+		<otherwise>
+			order by id DESC
+		</otherwise>
+	</choose>
+	limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+  <sql id="where_clause">
+  	<where>
+	  	<trim prefixOverrides="and">
+	  		<if test="roleType != null">
+	  			and role_type = #{roleType,jdbcType=INTEGER}
+	  		</if>
+	  		<if test="menuId != null">
+	  			and menu_id = #{menuId,jdbcType=INTEGER}
+	  		</if>
+	  	</trim>
+  	</where>
+  </sql>
+  <delete id="deleteRoleMenuById" parameterType="java.lang.Integer" >
+    delete from t_role_menu
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+	 
+	<delete id="deleteRoleMenuByMenuIds" parameterType="map">
+		DELETE FROM t_role_menu WHERE role_type=#{roleType} AND menu_id IN
+			<foreach collection="menuIds" open="(" close=")" separator="," item="item">
+				#{item}
+			</foreach>
+	</delete>
+	
+    <select id="getMenuUserIdByRoleId" parameterType="map" resultType="Integer" >
+        SELECT DISTINCT t.id FROM t_admin t
+        LEFT OUTER JOIN t_user_menu a on t.id=a.user_id
+        <choose>
+          <when test="departmentId == 99">
+              left outer join z_external_person zep on zep.user_id=t.id 
+              where t.department=#{departmentId} and zep.personnel_nature=#{roleType}
+          </when>
+          <otherwise>
+              WHERE 
+                t.job_id=#{roleType}
+          </otherwise>
+        </choose>
+    </select>
+    
+	<insert id="batchInsertRoleMenu" parameterType="list">
+		INSERT INTO t_role_menu (company_id,role_type,menu_id,create_time,create_user_id,update_time,update_user_id) VALUES
+		<foreach collection="list" open="" close="" separator="," item="item">
+			(#{item.companyId},#{item.roleType},#{item.menuId},#{item.createTime},#{item.createUserId},#{item.createTime},#{item.createUserId})
+		</foreach>
+	</insert>
+	 
+  <insert id="insertRoleMenu" parameterType="RoleMenu" >
+    insert into t_role_menu
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="roleType != null" >
+        role_type,
+      </if>
+      <if test="menuId != null" >
+        menu_id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="roleType != null" >
+        #{roleType,jdbcType=INTEGER},
+      </if>
+      <if test="menuId != null" >
+        #{menuId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateRoleMenuById" parameterType="RoleMenu" >
+    update t_role_menu
+    <set >
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="roleType != null" >
+        role_type = #{roleType,jdbcType=INTEGER},
+      </if>
+      <if test="menuId != null" >
+        menu_id = #{menuId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=INTEGER},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

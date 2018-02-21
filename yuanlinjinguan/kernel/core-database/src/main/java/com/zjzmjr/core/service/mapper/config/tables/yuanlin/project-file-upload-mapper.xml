@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.project.ProjectFileUploadMapper" >
+  <resultMap id="BaseResultMap" type="ProjectFileUpload" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="project_id" property="projectId" jdbcType="INTEGER" />
+    <result column="admin_id" property="adminId" jdbcType="INTEGER" />
+    <result column="file_id" property="fileId" jdbcType="INTEGER" />
+    <result column="file_name" property="fileName" jdbcType="VARCHAR" />
+    <result column="file_address" property="fileAddress" jdbcType="VARCHAR" />
+    <result column="source_type" property="sourceType" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap type="ProjectFileInfo" id="ProjectFileResultMap" extends="BaseResultMap">
+    <association property="file" column="file_id" javaType="ProjectFile">
+        <id column="project_file_id" property="id" jdbcType="INTEGER" />
+	    <result column="name" property="name" jdbcType="VARCHAR" />
+    </association>
+    <association property="project" column="project_id" javaType="GardenProject">
+        <id column="project_id" property="id" jdbcType="INTEGER" />
+	    <result column="project_name" property="name" jdbcType="VARCHAR" />
+        <result column="project_no" property="projectNo" jdbcType="VARCHAR" />
+    </association>
+    <association property="user" column="create_user_id" javaType="Admin">
+        <id property="id" column="user_id" />
+        <result property="name" column="user_name" />
+    </association>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, company_id, project_id, admin_id, file_id, file_name, file_address, source_type, create_time, 
+    create_user_id, update_time, update_user_id, version
+  </sql>
+  <select id="getFileUploadById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from z_file_upload
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getFileUploadCount" resultType="java.lang.Integer" parameterType="ProjectFileQuery">
+    select COUNT(zfu.id)
+    from z_file_upload zfu
+    left outer join z_file zf on zf.id=zfu.file_id and zf.company_id=zfu.company_id
+    <include refid="where_clause"></include>
+  </select>
+  <select id="getFileUploadByCondition" resultMap="ProjectFileResultMap" parameterType="ProjectFileQuery">
+    select zfu.id, zfu.company_id, zfu.project_id, zfu.file_id, zfu.file_name, 
+        zfu.file_address
+        , zfu.source_type, zfu.create_time, zfu.create_user_id, zfu.update_time, zfu.update_user_id, zfu.version
+        , zf.id project_file_id, zf.name, zp.name project_name, zp.project_no, ta.id user_id, ta.name user_name
+    from z_file_upload zfu
+    left outer join z_file zf on zf.id=zfu.file_id and zf.company_id=zfu.company_id
+    left outer join z_project zp on zfu.project_id=zp.id and zp.company_id=zfu.company_id
+    left outer join t_admin ta on ta.id=zfu.create_user_id
+    <include refid="where_clause"></include>
+    <!-- GROUP_CONCAT(zfu.file_address) file_address
+    GROUP BY zfu.company_id, zfu.project_id, zfu.file_id -->
+     <choose>
+        <when test="orderBy != null and orderBy!=''">
+            order by #{orderBy}
+        </when>
+        <otherwise>
+            order by zfu.id DESC
+        </otherwise>
+    </choose>
+    limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+  <sql id="where_clause">
+    <where>
+        <trim prefixOverrides="and">
+          <if test="id != null" >
+            zfu.id = #{id,jdbcType=INTEGER}
+          </if>
+	      <if test="companyId != null" >
+	        and zfu.company_id = #{companyId,jdbcType=INTEGER}
+	      </if>
+	      <if test="projectId != null" >
+	        and zfu.project_id = #{projectId,jdbcType=INTEGER}
+	      </if>
+	      <if test="adminId != null" >
+	        and zfu.admin_id = #{adminId,jdbcType=INTEGER}
+	      </if>
+	      <if test="fileId != null" >
+	        and zfu.file_id = #{fileId,jdbcType=INTEGER}
+	      </if>
+	      <if test="basicId != null" >
+	        and zf.basic_id = #{basicId,jdbcType=INTEGER}
+	      </if>
+	      <if test="fileIdLst != null">
+	        and zfu.file_id in 
+	           <foreach collection="fileIdLst" open="(" separator="," close=")" item="item">
+	               #{item}
+	           </foreach>
+	      </if>
+	      <if test="fileName != null">
+	        and zfu.file_name like CONCAT('%',#{fileName,jdbcType=VARCHAR},'%')
+	      </if>
+	      <if test="uploadDateStart != null">
+	        and DATE_FORMAT(zfu.create_time , '%Y%m%d') >= DATE_FORMAT(#{uploadDateStart,jdbcType=TIMESTAMP} , '%Y%m%d')
+	      </if>
+          <if test="uploadDateEnd != null">
+              <![CDATA[
+              and DATE_FORMAT(zfu.create_time , '%Y%m%d') <= DATE_FORMAT(#{uploadDateEnd,jdbcType=TIMESTAMP} , '%Y%m%d')
+              ]]>
+          </if>
+        </trim>
+    </where>
+  </sql>
+  <select id="getFileByBasic" resultMap="ProjectFileResultMap" parameterType="ProjectFileQuery">
+  	 select zfu.id, zfu.company_id, zfu.project_id, zfu.admin_id, zfu.file_id, zfu.file_name, zfu.file_address
+        , zfu.source_type, zf.id project_file_id, zf.name
+     from z_file_upload zfu
+     left outer join z_file zf on zf.id = zfu.file_id and zf.company_id=zfu.company_id
+     left outer join t_basic tb on tb.id = zf.basic_id
+     where  tb.category_id= #{categoryId,jdbcType=INTEGER} and tb.attribute_id = #{attributeId,jdbcType=INTEGER}
+     and zf.name = #{fileName,jdbcType=VARCHAR} and zf.status=#{status,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getStaffFile" resultMap="BaseResultMap" parameterType="ProjectFileQuery">
+    select <include refid="Base_Column_List" />
+    from z_file_upload
+    where admin_id = #{adminId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteFileUploadById" parameterType="java.lang.Integer" >
+    delete from z_file_upload
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insertFileUpload" parameterType="ProjectFileUpload"  useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+    insert into z_file_upload
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="adminId != null" >
+        admin_id,
+      </if>
+      <if test="projectId != null" >
+        project_id,
+      </if>
+      <if test="fileId != null" >
+        file_id,
+      </if>
+      <if test="fileName != null" >
+        file_name,
+      </if>
+      <if test="fileAddress != null" >
+        file_address,
+      </if>
+      <if test="sourceType != null" >
+        source_type,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="projectId != null" >
+        #{projectId,jdbcType=INTEGER},
+      </if>
+      <if test="adminId != null" >
+        #{adminId,jdbcType=INTEGER},
+      </if>
+      <if test="fileId != null" >
+        #{fileId,jdbcType=INTEGER},
+      </if>
+      <if test="fileName != null" >
+        #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileAddress != null" >
+        #{fileAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceType != null" >
+        #{sourceType,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateFileUploadById" parameterType="ProjectFileUpload" >
+    update z_file_upload
+    <set >
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="projectId != null" >
+        project_id = #{projectId,jdbcType=INTEGER},
+      </if>
+      <if test="adminId != null" >
+        admin_id = #{projectId,jdbcType=INTEGER},
+      </if>
+      <if test="fileId != null" >
+        file_id = #{fileId,jdbcType=INTEGER},
+      </if>
+      <if test="fileName != null" >
+        file_name = #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileAddress != null" >
+        file_address = #{fileAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceType != null" >
+        source_type = #{sourceType,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+        version = version + 1,
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.project.ReportConditionMapper" >
+  <resultMap id="BaseResultMap" type="ReportCondition" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="time_start" property="timeStart" jdbcType="VARCHAR" />
+    <result column="time_end" property="timeEnd" jdbcType="VARCHAR" />
+    <result column="project_leader" property="projectLeader" jdbcType="VARCHAR" />
+    <result column="manage_person" property="managePerson" jdbcType="VARCHAR" />
+    <result column="project_step" property="projectStep" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="disp_field" property="dispField" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, company_id, user_id, time_start, time_end, project_leader, manage_person, project_step, 
+    status, disp_field, create_time, create_user_id, update_time, update_user_id, version
+  </sql>
+  <select id="getReportConditionByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from z_report_condition
+    where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteReportConditionByUserId" parameterType="java.lang.Integer" >
+    delete from z_report_condition
+    where user_id = #{userId,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertReportCondition" parameterType="ReportCondition" >
+    insert into z_report_condition
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="timeStart != null" >
+        time_start,
+      </if>
+      <if test="timeEnd != null" >
+        time_end,
+      </if>
+      <if test="projectLeader != null" >
+        project_leader,
+      </if>
+      <if test="managePerson != null" >
+        manage_person,
+      </if>
+      <if test="projectStep != null" >
+        project_step,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="dispField != null" >
+        disp_field,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="timeStart != null" >
+        #{timeStart,jdbcType=VARCHAR},
+      </if>
+      <if test="timeEnd != null" >
+        #{timeEnd,jdbcType=VARCHAR},
+      </if>
+      <if test="projectLeader != null" >
+        #{projectLeader,jdbcType=VARCHAR},
+      </if>
+      <if test="managePerson != null" >
+        #{managePerson,jdbcType=VARCHAR},
+      </if>
+      <if test="projectStep != null" >
+        #{projectStep,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="dispField != null" >
+        #{dispField,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateReportConditionById" parameterType="ReportCondition" >
+    update z_report_condition
+    <set >
+        company_id = #{companyId,jdbcType=INTEGER},
+        user_id = #{userId,jdbcType=INTEGER},
+        time_start = #{timeStart,jdbcType=VARCHAR},
+        time_end = #{timeEnd,jdbcType=VARCHAR},
+        project_leader = #{projectLeader,jdbcType=VARCHAR},
+        manage_person = #{managePerson,jdbcType=VARCHAR},
+        project_step = #{projectStep,jdbcType=VARCHAR},
+        status = #{status,jdbcType=INTEGER},
+        disp_field = #{dispField,jdbcType=VARCHAR},
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+        version = version + 1,
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

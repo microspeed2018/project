@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.coredb.message.MessageMapper" >
+  <resultMap id="BaseResultMap" type="Message" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="context" property="context" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="message_date" property="messageDate" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap type="MessageInfo" id="MessageInfoResultMap" extends="BaseResultMap">
+  	<result column="send_user_name" property="sendUserName" jdbcType="VARCHAR" />
+    <association property="admin" resultMap="AdminResultMap"/>
+  </resultMap>
+  
+  <resultMap type="Admin" id="AdminResultMap">
+  	<id column="user_id" property="id" jdbcType="INTEGER" />
+  	<result column="user_name" property="name" jdbcType="VARCHAR"/>
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, company_id, user_id, title,type, context, address, status, 
+    create_time, create_user_id, update_time, update_user_id, version
+  </sql>
+  <select id="getMessageById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_message
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+   <select id="getMessagecount" parameterType="MessageQuery" resultType="java.lang.Integer" >
+    select count(tm.id) 
+    from t_message tm
+	left outer join t_admin ta on ta.id = tm.user_id
+	left outer join t_admin sta on sta.id = tm.create_user_id 
+	<include refid="where_clause"></include>
+  </select>
+  
+  <select id="getMessageByCondition" resultMap="MessageInfoResultMap" parameterType="MessageQuery">
+	  select tm.*, ta.name user_name, sta.name send_user_name,date_format(tm.create_time,'%Y/%m/%d %H:%i') message_date
+	  from t_message tm
+	  left outer join t_admin ta on ta.id = tm.user_id
+	  left outer join t_admin sta on sta.id = tm.create_user_id
+	  <include refid="where_clause"></include>
+	  <choose>
+		<when test="orderBy != null and orderBy!=''">
+			order by #{orderBy}
+		</when>
+		<otherwise>
+			order by tm.id DESC
+		</otherwise>
+	  </choose>
+	  <if test="pageBean != null">
+		  limit #{pageBean.offset},#{pageBean.pageSize}
+	  </if>
+  </select>
+  
+  <sql id="where_clause">
+  	<where>
+  		<trim prefixOverrides="and">
+  		  <if test="userId != null">
+  		  	and tm.user_id = #{userId,jdbcType=INTEGER}
+  		  </if>
+		  <if test="type != null">
+			and tm.type = #{type,jdbcType=INTEGER}
+		  </if>
+		  <if test="companyId != null">
+		  	and tm.company_id = #{companyId,jdbcType=INTEGER}
+		  </if>
+		  <if test="userName != null and userName != ''">
+			and ta.name like '%' #{userName,jdbcType=VARCHAR} '%'
+		  </if>
+		  <if test="sendUserName != null and sendUserName != ''">
+			and sta.name like '%' #{sendUserName,jdbcType=VARCHAR} '%'
+		  </if>
+		  <if test="title != null and title != ''">
+			and tm.title like '%' #{title,jdbcType=VARCHAR} '%'
+		  </if>
+          <if test="context != null and context != ''">
+			and tm.context like '%' #{context,jdbcType=VARCHAR} '%'
+		  </if>
+		  <if test="status != null">
+			and tm.status = #{status,jdbcType=INTEGER}
+		  </if>
+		  <if test="createTime != null">
+			and DATE_FORMAT(tm.create_time,'%Y%m%d') >= DATE_FORMAT(#{createTime,jdbcType=TIMESTAMP},'%Y%m%d') 
+		  </if>
+		  <if test="lastTime != null">
+		    <![CDATA[
+			and DATE_FORMAT(tm.create_time,'%Y%m%d') <= DATE_FORMAT(#{lastTime,jdbcType=TIMESTAMP},'%Y%m%d') 
+			]]>
+		  </if>
+  		</trim>
+  	</where>
+  </sql>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_message
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+   <insert id="insertBatch" parameterType="java.util.List">
+  	insert into t_message (company_id, user_id, title, type, context, address, status, 
+    create_time, create_user_id, update_time, update_user_id) VALUES
+    <foreach collection="list" open="" close="" separator="," item="item">
+    	(#{item.companyId,jdbcType=INTEGER}, #{item.userId,jdbcType=INTEGER}, 
+      #{item.title,jdbcType=VARCHAR}, #{item.type,jdbcType=INTEGER}, #{item.context,jdbcType=VARCHAR}, 
+      #{item.address,jdbcType=VARCHAR}, #{item.status,jdbcType=INTEGER}, #{item.createTime,jdbcType=TIMESTAMP},
+      #{item.createUserId,jdbcType=INTEGER}, #{item.updateTime,jdbcType=TIMESTAMP}, #{item.updateUserId,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+  
+  <insert id="insertMessage" parameterType="Message" >
+    insert into t_message
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="context != null" >
+        context,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="context != null" >
+        #{context,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateMessage" parameterType="Message" >
+    update t_message
+    <set >
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="context != null" >
+        context = #{context,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+        version = version + 1,
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+</mapper>

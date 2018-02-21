@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>审核合同修改</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+    </head>
+    <body>
+        <header class="header">
+            <img src="../../images/svg/left.svg" class="icon-40" id="goback"  />
+            <span class="tit">审核合同修改</span>
+            <i></i>
+        </header>
+        <div class='wrap'>
+            <table class='examine-table'>
+                <thead>
+                    <tr>
+                        <th>合同修改内容</th>
+                        <th>原数据</th>
+                        <th>现数据</th>
+                    </tr>
+                </thead>
+                <tbody>
+                   <tr id="contractCapitalTr">
+                        <td align="center">合同金额</td>
+                        <td align="center"></td>
+                        <td align="center"></td>
+                   </tr>
+                   <tr id="signDateTr">
+                        <td align="center">签约日期</td>
+                        <td align="center"></td>
+                        <td align="center"></td>
+                   </tr>
+                   <tr id="contractMemoTr">
+                        <td align="center">合同备注</td>
+                        <td align="center"></td>
+                        <td align="center"></td>
+                   </tr>
+                   <tr id="paymentTr">
+                        <td align="center">付款方式/金额<br>(万元)</td>
+                        <td align="center"></td>
+                        <td align="center"></td>
+                   </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class='wrap'>
+            <input type="button" value='通过' class='btn btn-max btn-top' id="true" />
+        </div>
+        <div class='wrap'>
+            <input type="button" value='不通过' class='btn btn-max' id="false" />
+        </div>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/jquery.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script>
+        (function($, doc) {
+            $.init();
+
+            // 校验app或wap
+            myInit(indexFun);
+            function indexFun() {
+                // 历史url
+                var historyUrl = myGetLocalStorage("curr");
+                var obj = {};
+                // goback
+                doc.querySelector("#goback").addEventListener("click", function () {
+                    myOpenWindow("/tpl/examine/manageAudit.html", 'manageAudit');
+                });
+                var productId = myGetLocalStorage("productId");
+                if (productId) {
+                    getInfoFirst();
+                }
+                function getInfoFirst() {
+                    $.ajax(global.apiURL + '/contract/user/contractList.htm', {
+                        data : {
+                            projectId : productId,
+                            status : 1
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                getInfoSecond(data.data[0])
+                            } else {
+                                myToast(data.resultMsg);
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+                function getInfoSecond( firstData) {
+                    $.ajax(global.apiURL + '/contract/user/contractList.htm', {
+                        data : {
+                            projectId : productId,
+                            status : 0
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                console.log(firstData)
+                                console.log(data.data)
+                                var secondData = data.data[0];
+                                obj.step = secondData.project.step;
+                                obj.status = secondData.status;
+                                if (firstData.contractCapital != secondData.contractCapital) {
+                                    jQuery("#contractCapitalTr").show();
+                                    jQuery("#contractCapitalTr").find("td").eq(1).html(firstData.contractCapital);
+                                    jQuery("#contractCapitalTr").find("td").eq(2).html(secondData.contractCapital);
+                                }
+                                if (firstData.signDate != secondData.signDate) {
+                                    jQuery("#signDateTr").show();
+                                    jQuery("#signDateTr").find("td").eq(1).html(firstData.signDate);
+                                    jQuery("#signDateTr").find("td").eq(2).html(secondData.signDate);
+                                }
+                                if (firstData.contractMemo != secondData.contractMemo) {
+                                    jQuery("#contractMemoTr").show();
+                                    jQuery("#contractMemoTr").find("td").eq(1).html(firstData.contractMemo);
+                                    jQuery("#contractMemoTr").find("td").eq(2).html(secondData.contractMemo);
+                                }
+                                if (firstData.contractPayment != secondData.contractPayment) {
+                                    jQuery("#paymentTr").show();
+                                    var firstDom = "";
+                                    var secondDom = "";
+                                    for (var i = 0; i < firstData.contractPayment.length; i++) {
+                                        firstDom += "<span>"+ firstData.contractPayment[i].paymentPaymentModeName +"/"+ firstData.contractPayment[i].paymentAmount +"</span><br>"
+                                    }
+                                    for (var i = 0; i < secondData.contractPayment.length; i++) {
+                                        console.log()
+                                        secondDom += "<span>"+ secondData.contractPayment[i].paymentPaymentModeName +"/"+ secondData.contractPayment[i].paymentAmount +"</span><br>"
+                                    }
+                                    jQuery("#paymentTr").find("td").eq(1).html(firstDom);
+                                    jQuery("#paymentTr").find("td").eq(2).html(secondDom);
+                                }
+
+                            } else {
+                                myToast(data.resultMsg);
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+
+                doc.querySelector("#true").addEventListener("tap", function () {
+                    myLoading();
+                    $.ajax(global.apiURL + '/manageAudit/user/updateManageAudit.htm', {
+                        data : {
+                            projectId : productId,
+                            step : obj.step,
+                            status: obj.status ,
+                            type: 51,
+                            memo: ""
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                myOpenWindow("manageAudit.html", "manageAudit");
+                            } else {
+                                //myToast(data.resultMsg);
+                            }
+                            myLoadingOver();
+                        },
+                        error : function() {
+                            myLoadingOver();
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                });
+                doc.querySelector("#false").addEventListener("tap", function () {
+                    var btnArray = ['返回', '提交'];
+                    mui.prompt('请输入不通过理由', '', '提示', btnArray, function(e) {
+                        if (e.index == 1) {
+                            obj.memo = e.value;
+                            myLoading();
+                            $.ajax(global.apiURL + '/manageAudit/user/updateManageAudit.htm', {
+                                data : {
+                                    projectId : productId,
+                                    step : obj.step,
+                                    status: obj.status ,
+                                    type: 51,
+                                    memo: obj.memo
+                                },
+                                dataType : 'json',
+                                type : 'post',
+                                success : function(data){
+                                    if (data.success) {
+                                        myOpenWindow("manageAudit.html", "manageAudit");
+                                    } else {
+                                        //myToast(data.resultMsg);
+                                    }
+                                    myLoadingOver();
+                                },
+                                error : function() {
+                                    myLoadingOver();
+                                    myToast("服务器正忙，请稍后重试！");
+                                }
+                            });
+                        }
+                    })
+                });
+            }
+        }(mui, document));
+    </script>
+</html>

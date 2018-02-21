@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html style='height: 100%;'>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>欢迎页面</title>
+	</head>
+    <style type="text/css">
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        html {
+        	height: 100%;
+        }
+        body {
+        	height: 100%;
+  			min-height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url("../res/images/cb-1.jpg");
+            background-size: cover;
+        }
+        .box {
+        	width: 700px;
+        	height: 400px;
+        	background: rgba(255, 255, 255, .9);
+        	display: flex;
+        	flex-direction: column;
+        	justify-content: center;
+            align-items: center;
+            border: 4px solid #bc606b;
+            box-shadow: 0 0 0 10px #fff;
+        }
+        .box img {
+        	width: 50px;
+        	height: 70px;
+        }
+        .box h1 {
+        	font-size: 38px;
+        	text-align: center;
+        	padding: 30px 50px;
+        	font-weight: normal;
+        }
+        .box span {
+        	color: #fff;
+        	font-size: 24px;
+        	width: 260px;
+        	height: 80px;
+        	line-height: 80px;
+        	text-align: center;
+        	border-radius: 5px;
+        	border: 4px solid #ea7f7b;
+        	background: #e2524a;
+        	display: block;
+        	cursor: pointer;
+        }
+    </style>
+	<body>
+       <div class='box'>
+
+       		<img src='../res/images/123.jpg'>
+       		<h1>欢迎登录诚邦设计管理系统，请完善您的个人信息</h1>
+       		<span id='detailInfo' onclick='detailInfo()'>填写个人信息</span>
+
+       </div>
+	</body>
+    <script type="text/javascript">
+        var viewH = document.body.scrollHeight;
+        //document.querySelector("html").style.height = viewH + "px";
+        //document.querySelector("img").style.height = viewH + "px";
+        function detailInfo() {
+        	window.location.href = '/staff/user/index.htm';
+        }
+    </script>
+</html>

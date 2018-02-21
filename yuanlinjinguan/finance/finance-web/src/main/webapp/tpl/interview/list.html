@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <title>面试设定</title>
+    <link href="../../css/mui.min.css" rel="stylesheet" />
+    <link href="../../css/base.css" rel="stylesheet" />
+    <style type="text/css">
+    	.input {
+    		text-align: left;
+    		padding-left: 37px !important;
+    		background: url("/images/icon/search.png") 10px center no-repeat !important;
+    	}
+    </style>
+</head>
+<body>
+    <div class='interview' id="interview" v-cloak>
+        <header class='header'>
+            <img src="../../images/svg/left.svg" class="icon-40" id="goback" @click='back' />
+            <span class='tit'>{{ title }}</span> <i></i>
+        </header>
+        <div class='wrap'>
+            <input type="text" placeholder="搜索面试人员姓名或岗位" class='input' v-on:input='getList(search)' v-model='search' />
+            <ul class='interview' v-if='lists.length'>
+                <li v-for='(item, index) in lists'>
+                    <p>
+                        <span>{{ item.talent.name }}</span>
+                        <span>第{{ item.round }}轮面试</span>
+                        <span>{{ item.recruitment.positionName }}</span>
+                    </p>
+                    <p>
+                        <span><a style='color: #666;' :href='"tel:" + item.talent.mobile'>{{ item.talent.mobile }}</a></span>
+                        <span>{{ item.createTime.time | formatDate }}</span>
+                        <span :class='"active" + item.result'>{{ item.result | resultFilter }}<em style="float: right;margin-right:20px;color:#151515;border:1px solid #151515" @click='setter(item, "set")' v-if='item.result == 1'>下轮设置</em></span>
+                    </p>
+                    <p> <em @click='resume(item)'>查看简历</em>
+                        <em @click='setter(item, "info")'>面试信息</em>
+                        <em @click='result(item)'>结果评审</em>
+                    </p>
+                </li>
+            </ul>
+            <div class='nullData' v-else>没有需要您作为面试官的面试</div>
+        </div>
+    </div>
+</body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../js/axios.min.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script type="text/javascript">
+        // 校验app或wap
+        myInit(indexFun);
+        function indexFun() {
+            var interview = new Vue({
+                el: "#interview",
+                data: {
+                    title: "面试设定",
+                    search: "",
+                    lists : []
+                },
+                methods: {
+                    back: function () {
+                        myOpenWindow("/tpl/home/home.html", 'home');
+                    },
+                    getList: function (name) {
+                        var that = this
+                        myLoading();
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + '/interview/user/getInterviewInfo.htm',
+                            params: {
+                                posNameOrInterview: name
+                            }
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                that.lists = datas.rows
+                            } else {
+                                if (datas.code == 405) {
+                                    againLogin(that.getList, []);
+                                } else if (datas.code == 'record_not_exsist') {
+                                    that.lists = []
+                                } else {
+                                    myToast(datas.resultMsg);
+                                }
+                            }
+                            myLoadingOver();
+                        }).catch(function (error) {
+                            myLoadingOver();
+                        })
+                    },
+                    setter: function (item, type) {
+                        mySetLocalStorage("setterType", type);
+                        mySetLocalStorage("setter", item);
+                        myOpenWindow("setter.html", 'setter');
+                    },
+                    result: function (item) {
+                        mySetLocalStorage("setter", item);
+                        myOpenWindow("result.html",'result');
+                    },
+                    resume: function (item) {
+                        zjzm.historyUrl("/tpl/interview/list.html");
+                        mySetLocalStorage("interviewFlag", true);
+                        myOpenWindow("/tpl/resume/index.html?mobile=" + item.talent.mobile,'list');
+                    }
+                },
+                mounted: function () {
+                    this.$nextTick(function () {
+                        mui.init();
+                        this.getList()
+                    });
+                },
+                filters: {
+                    formatDate: function(date) {
+                        if (date) return zjzm.getDay(date, 'yyyy-MM-dd hh:mm')
+                    },
+                    resultFilter: function(code) {
+                        var status = '';
+                        switch (code) {
+                            case 0:
+                                status = "未进行";
+                                break;
+                            case 1:
+                                status = "通过";
+                                break;
+                            case 2:
+                                status = "录取";
+                                break;
+                            case 3:
+                                status = "不通过";
+                                break;
+                            case 9:
+                                status = "未参加";
+                                break;
+                            default:
+                                break;
+                        }
+                        return status;
+                    }
+                }
+            });
+        }
+    </script>
+</html>

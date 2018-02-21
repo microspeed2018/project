@@ -1,0 +1,508 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.talent.TalentMapper" >
+  <resultMap id="BaseResultMap" type="Talent" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="identity_no" property="identityNo" jdbcType="VARCHAR" />
+    <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+    <result column="recruitment_id" property="recruitmentId" jdbcType="INTEGER" />
+    <result column="come_date" property="comeDate" jdbcType="VARCHAR" />
+    <result column="expected_income" property="expectedIncome" jdbcType="VARCHAR" />
+    <result column="nation" property="nation" jdbcType="VARCHAR" />
+    <result column="origin" property="origin" jdbcType="VARCHAR" />
+    <result column="marital_status" property="maritalStatus" jdbcType="INTEGER" />
+    <result column="fertility_status" property="fertilityStatus" jdbcType="INTEGER" />
+    <result column="driving_license_type" property="drivingLicenseType" jdbcType="VARCHAR" />
+    <result column="political_status" property="politicalStatus" jdbcType="INTEGER" />
+    <result column="qualification" property="qualification" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="mail" property="mail" jdbcType="VARCHAR" />
+    <result column="emergency_person" property="emergencyPerson" jdbcType="VARCHAR" />
+    <result column="emergency_mobile" property="emergencyMobile" jdbcType="VARCHAR" />
+    <result column="have_acquaintance" property="haveAcquaintance" jdbcType="INTEGER" />
+    <result column="acquaintance_name" property="acquaintanceName" jdbcType="VARCHAR" />
+    <result column="acquaintance_department" property="acquaintanceDepartment" jdbcType="VARCHAR" />
+    <result column="acquaintance_relation" property="acquaintanceRelation" jdbcType="VARCHAR" />
+    <result column="have_criminal" property="haveCriminal" jdbcType="INTEGER" />
+    <result column="have_fired" property="haveFired" jdbcType="INTEGER" />
+    <result column="have_diseases" property="haveDiseases" jdbcType="INTEGER" />
+    <result column="have_competition" property="haveCompetition" jdbcType="INTEGER" />
+    <result column="signature" property="signature" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap type="TalentInfo" id="TalentInfoResultMap" extends="BaseResultMap">
+	<result column="political_name" property="politicalName" jdbcType="VARCHAR" />
+	<result column="marital_name" property="maritalName" jdbcType="VARCHAR" />
+	<result column="fertility_name" property="fertilityName" jdbcType="VARCHAR" />
+    <association property="recruitment" resultMap="RecruitmentResultMap" column="recruitment_id" javaType="Recruitment" />
+  	<collection property="talentEducation" resultMap="TalentEducationResultMap" column="talent_id" ofType="TalentEducation"/>
+  	<collection property="talentJob" resultMap="TalentJobResultMap" column="talent_id" ofType="TalentJob"/>
+  	<collection property="talentFamily" resultMap="TalentFamilyResultMap" column="talent_id" ofType="TalentFamily"/>
+  	<collection property="talentDocument" resultMap="TalentDocumentResultMap" column="talent_id" ofType="TalentDocument"/>
+  </resultMap>
+  <resultMap type="Recruitment" id="RecruitmentResultMap">
+  	<id column="recruitment_id" property="id" jdbcType="INTEGER" />
+    <result column="recruitment_department_id" property="departmentId" jdbcType="INTEGER" />
+    <result column="position_name" property="positionName" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap type="TalentEducation" id="TalentEducationResultMap">
+  	<id column="education_id" property="id" jdbcType="INTEGER" />
+    <result column="education_company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="education_talent_id" property="talentId" jdbcType="INTEGER" />
+    <result column="education_start_date" property="startDate" jdbcType="VARCHAR" />
+    <result column="education_end_date" property="endDate" jdbcType="VARCHAR" />
+    <result column="school_name" property="schoolName" jdbcType="VARCHAR" />
+    <result column="professional" property="professional" jdbcType="VARCHAR" />
+    <result column="certificate" property="certificate" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap type="TalentJob" id="TalentJobResultMap">
+    <id column="job_id" property="id" jdbcType="INTEGER" />
+    <result column="job_company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="job_talent_id" property="talentId" jdbcType="INTEGER" />
+    <result column="job_start_date" property="startDate" jdbcType="VARCHAR" />
+    <result column="job_end_date" property="endDate" jdbcType="VARCHAR" />
+    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    <result column="job_post" property="post" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="leaving_reason" property="leavingReason" jdbcType="VARCHAR" />
+    <result column="reterence" property="reterence" jdbcType="VARCHAR" />
+    <result column="reterence_tel" property="reterenceTel" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap type="TalentFamily" id="TalentFamilyResultMap">
+  	<id column="family_id" property="id" jdbcType="INTEGER" />
+    <result column="family_company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="family_talent_id" property="talentId" jdbcType="INTEGER" />
+    <result column="family_name" property="name" jdbcType="VARCHAR" />
+    <result column="relation" property="relation" jdbcType="VARCHAR" />
+    <result column="company" property="company" jdbcType="VARCHAR" />
+    <result column="family_post" property="post" jdbcType="VARCHAR" />
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap type="TalentDocument" id="TalentDocumentResultMap">
+  	<id column="document_id" property="id" jdbcType="INTEGER" />
+    <result column="document_company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="document_talent_id" property="talentId" jdbcType="INTEGER" />
+    <result column="document_name" property="documentName" jdbcType="VARCHAR" />
+    <result column="document_explain" property="documentExplain" jdbcType="VARCHAR" />
+    <result column="save_name" property="saveName" jdbcType="VARCHAR" />
+    <result column="save_address" property="saveAddress" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, company_id, name, identity_no, mobile, recruitment_id, come_date, expected_income, 
+    nation, origin, marital_status, fertility_status, driving_license_type, political_status, 
+    qualification, address, mail, emergency_person, emergency_mobile, have_acquaintance, 
+    acquaintance_name, acquaintance_department, acquaintance_relation, have_criminal, 
+    have_fired, have_diseases, have_competition, signature, create_time, create_user_id, 
+    update_time, update_user_id, version
+  </sql>
+  <select id="getTalentByCondition" resultMap="TalentInfoResultMap" parameterType="TalentQuery" >
+    select zt.*,zr.department_id recruitment_department_id,zr.position_name
+    from z_talent zt
+    left outer join z_recruitment zr on zr.id = zt.recruitment_id
+    <include refid="where_clause"></include>
+    <choose>
+        <when test="orderBy != null and orderBy!=''">
+            order by #{orderBy}
+        </when>
+        <otherwise>
+            order by zt.create_time desc
+        </otherwise>
+    </choose>    
+    limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+  <select id="getTalentInfoCount" resultType="java.lang.Integer" parameterType="TalentQuery" >
+    select Count(zt.id)
+    from z_talent zt
+    left outer join z_recruitment zr on zr.id = zt.recruitment_id
+    <include refid="where_clause"></include>
+  </select>
+  <select id="getTalentInfo" resultMap="TalentInfoResultMap" parameterType="TalentQuery" >
+    select zt.*, 
+    zte.id education_id,zte.company_id education_company_id,zte.talent_id education_talent_id,zte.start_date education_start_date,
+    zte.end_date education_end_date,zte.school_name,zte.professional,zte.certificate,
+    ztj.id job_id,ztj.company_id job_company_id,ztj.talent_id job_talent_id,ztj.start_date job_start_date,ztj.end_date job_end_date,
+    ztj.company_name , ztj.post job_post, ztj.leaving_reason, ztj.reterence, ztj.reterence_tel,ztj.description,
+    ztf.id family_id ,ztf.company_id family_company_id,ztf.talent_id family_talent_id,ztf.name family_name,ztf.relation,ztf.company,
+    ztf.post family_post,ztf.telephone,
+    ztd.id document_id ,ztd.company_id document_company_id,ztd.talent_id document_talent_id,ztd.document_name,ztd.document_explain,
+    ztd.save_name,ztd.save_address,zr.department_id recruitment_department_id,zr.position_name,tbm.attribute_name marital_name,
+    tbp.attribute_name political_name, tbf.attribute_name fertility_name
+    from z_talent zt
+    left outer join z_talent_job ztj on ztj.talent_id=zt.id
+    left outer join z_talent_education zte on zte.talent_id = zt.id
+    left outer join z_talent_family ztf on ztf.talent_id = zt.id
+    left outer join z_talent_document ztd on ztd.talent_id = zt.id
+    left outer join z_recruitment zr on zr.id = zt.recruitment_id
+    left outer join t_basic tbm on zt.marital_status = tbm.id
+    left outer join t_basic tbp on zt.political_status = tbp.id
+    left outer join t_basic tbf on zt.fertility_status = tbf.id
+    <include refid="where_clause"></include>
+    <choose>
+        <when test="orderBy != null and orderBy!=''">
+            order by #{orderBy}
+        </when>
+        <otherwise>
+            order by zt.create_time desc
+        </otherwise>
+    </choose>    
+  </select>
+  
+  <sql id="where_clause">
+    <where>
+        <trim prefixOverrides="and">
+	      <if test="talentId != null" >
+	         zt.id = #{talentId,jdbcType=INTEGER}
+	      </if>
+	      <if test="companyId != null" >
+	         and zt.company_id = #{companyId,jdbcType=INTEGER}
+	      </if>
+	      <if test="name != null" >
+	         and zt.name like CONCAT('%', #{name,jdbcType=VARCHAR}, '%')
+	      </if>
+	      <if test="identityNo != null" >
+	         and zt.identity_no = #{identityNo,jdbcType=VARCHAR}
+	      </if>
+	      <if test="mobile != null" >
+	         and zt.mobile = #{mobile,jdbcType=VARCHAR}
+	      </if>
+	      <if test="recruitmentId != null" >
+	         and zt.recruitment_id = #{recruitmentId,jdbcType=INTEGER}
+	      </if>
+	      <if test="expectedIncome != null" >
+	         and zt.expected_income = #{expectedIncome,jdbcType=VARCHAR}
+	      </if>
+	      <if test="comeDate != null" >
+	         and zt.come_date = #{comeDate,jdbcType=VARCHAR}
+	      </if>
+	      <if test="qualification != null" >
+	         and zt.qualification = #{qualification,jdbcType=VARCHAR}
+	      </if>
+	      <if test="createTimeStart != null">
+          <![CDATA[
+	        and DATE_FORMAT(zt.create_time, '%Y%m%d') >= #{createTimeStart,jdbcType=VARCHAR}
+	      ]]>
+	      </if>
+	      <if test="createTimeEnd != null">
+          <![CDATA[
+	        and DATE_FORMAT(zt.create_time, '%Y%m%d') <= #{createTimeEnd,jdbcType=VARCHAR}
+	      ]]>
+	      </if>
+        </trim>
+    </where>
+  </sql>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from z_talent
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insertTalent" parameterType="Talent" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+    insert into z_talent
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="identityNo != null" >
+        identity_no,
+      </if>
+      <if test="mobile != null" >
+        mobile,
+      </if>
+      <if test="recruitmentId != null" >
+        recruitment_id,
+      </if>
+      <if test="comeDate != null" >
+        come_date,
+      </if>
+      <if test="expectedIncome != null" >
+        expected_income,
+      </if>
+      <if test="nation != null" >
+        nation,
+      </if>
+      <if test="origin != null" >
+        origin,
+      </if>
+      <if test="maritalStatus != null" >
+        marital_status,
+      </if>
+      <if test="fertilityStatus != null" >
+        fertility_status,
+      </if>
+      <if test="drivingLicenseType != null" >
+        driving_license_type,
+      </if>
+      <if test="politicalStatus != null" >
+        political_status,
+      </if>
+      <if test="qualification != null" >
+        qualification,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="mail != null" >
+        mail,
+      </if>
+      <if test="emergencyPerson != null" >
+        emergency_person,
+      </if>
+      <if test="emergencyMobile != null" >
+        emergency_mobile,
+      </if>
+      <if test="haveAcquaintance != null" >
+        have_acquaintance,
+      </if>
+      <if test="acquaintanceName != null" >
+        acquaintance_name,
+      </if>
+      <if test="acquaintanceDepartment != null" >
+        acquaintance_department,
+      </if>
+      <if test="acquaintanceRelation != null" >
+        acquaintance_relation,
+      </if>
+      <if test="haveCriminal != null" >
+        have_criminal,
+      </if>
+      <if test="haveFired != null" >
+        have_fired,
+      </if>
+      <if test="haveDiseases != null" >
+        have_diseases,
+      </if>
+      <if test="haveCompetition != null" >
+        have_competition,
+      </if>
+      <if test="signature != null" >
+        signature,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="identityNo != null" >
+        #{identityNo,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="recruitmentId != null" >
+        #{recruitmentId,jdbcType=INTEGER},
+      </if>
+      <if test="comeDate != null" >
+        #{comeDate,jdbcType=VARCHAR},
+      </if>
+      <if test="expectedIncome != null" >
+        #{expectedIncome,jdbcType=VARCHAR},
+      </if>
+      <if test="nation != null" >
+        #{nation,jdbcType=VARCHAR},
+      </if>
+      <if test="origin != null" >
+        #{origin,jdbcType=VARCHAR},
+      </if>
+      <if test="maritalStatus != null" >
+        #{maritalStatus,jdbcType=INTEGER},
+      </if>
+      <if test="fertilityStatus != null" >
+        #{fertilityStatus,jdbcType=INTEGER},
+      </if>
+      <if test="drivingLicenseType != null" >
+        #{drivingLicenseType,jdbcType=VARCHAR},
+      </if>
+      <if test="politicalStatus != null" >
+        #{politicalStatus,jdbcType=INTEGER},
+      </if>
+      <if test="qualification != null" >
+        #{qualification,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="mail != null" >
+        #{mail,jdbcType=VARCHAR},
+      </if>
+      <if test="emergencyPerson != null" >
+        #{emergencyPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="emergencyMobile != null" >
+        #{emergencyMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="haveAcquaintance != null" >
+        #{haveAcquaintance,jdbcType=INTEGER},
+      </if>
+      <if test="acquaintanceName != null" >
+        #{acquaintanceName,jdbcType=VARCHAR},
+      </if>
+      <if test="acquaintanceDepartment != null" >
+        #{acquaintanceDepartment,jdbcType=VARCHAR},
+      </if>
+      <if test="acquaintanceRelation != null" >
+        #{acquaintanceRelation,jdbcType=VARCHAR},
+      </if>
+      <if test="haveCriminal != null" >
+        #{haveCriminal,jdbcType=INTEGER},
+      </if>
+      <if test="haveFired != null" >
+        #{haveFired,jdbcType=INTEGER},
+      </if>
+      <if test="haveDiseases != null" >
+        #{haveDiseases,jdbcType=INTEGER},
+      </if>
+      <if test="haveCompetition != null" >
+        #{haveCompetition,jdbcType=INTEGER},
+      </if>
+      <if test="signature != null" >
+        #{signature,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateTalent" parameterType="Talent" >
+    update z_talent
+    <set >
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="identityNo != null" >
+        identity_no = #{identityNo,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        mobile = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="recruitmentId != null" >
+        recruitment_id = #{recruitmentId,jdbcType=INTEGER},
+      </if>
+      <if test="comeDate != null" >
+        come_date = #{comeDate,jdbcType=VARCHAR},
+      </if>
+      <if test="expectedIncome != null" >
+        expected_income = #{expectedIncome,jdbcType=VARCHAR},
+      </if>
+      <if test="nation != null" >
+        nation = #{nation,jdbcType=VARCHAR},
+      </if>
+      <if test="origin != null" >
+        origin = #{origin,jdbcType=VARCHAR},
+      </if>
+      <if test="maritalStatus != null" >
+        marital_status = #{maritalStatus,jdbcType=INTEGER},
+      </if>
+      <if test="fertilityStatus != null" >
+        fertility_status = #{fertilityStatus,jdbcType=INTEGER},
+      </if>
+      <if test="drivingLicenseType != null" >
+        driving_license_type = #{drivingLicenseType,jdbcType=VARCHAR},
+      </if>
+      <if test="politicalStatus != null" >
+        political_status = #{politicalStatus,jdbcType=INTEGER},
+      </if>
+      <if test="qualification != null" >
+        qualification = #{qualification,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="mail != null" >
+        mail = #{mail,jdbcType=VARCHAR},
+      </if>
+      <if test="emergencyPerson != null" >
+        emergency_person = #{emergencyPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="emergencyMobile != null" >
+        emergency_mobile = #{emergencyMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="haveAcquaintance != null" >
+        have_acquaintance = #{haveAcquaintance,jdbcType=INTEGER},
+      </if>
+      <if test="acquaintanceName != null" >
+        acquaintance_name = #{acquaintanceName,jdbcType=VARCHAR},
+      </if>
+      <if test="acquaintanceDepartment != null" >
+        acquaintance_department = #{acquaintanceDepartment,jdbcType=VARCHAR},
+      </if>
+      <if test="acquaintanceRelation != null" >
+        acquaintance_relation = #{acquaintanceRelation,jdbcType=VARCHAR},
+      </if>
+      <if test="haveCriminal != null" >
+        have_criminal = #{haveCriminal,jdbcType=INTEGER},
+      </if>
+      <if test="haveFired != null" >
+        have_fired = #{haveFired,jdbcType=INTEGER},
+      </if>
+      <if test="haveDiseases != null" >
+        have_diseases = #{haveDiseases,jdbcType=INTEGER},
+      </if>
+      <if test="haveCompetition != null" >
+        have_competition = #{haveCompetition,jdbcType=INTEGER},
+      </if>
+      <if test="signature != null" >
+        signature = #{signature,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+        version = version + 1
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

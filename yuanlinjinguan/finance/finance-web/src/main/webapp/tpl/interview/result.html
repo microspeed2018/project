@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>结果评审</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+        <style type="text/css">
+            .mui-checkbox.mui-left label, .mui-radio.mui-left label {
+                padding-right: 3px !important;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="interview" v-cloak>
+            <header class='header'>
+                <img src="../../images/svg/left.svg" class="icon-40" id="goback" @click='back' />
+                <span class='tit'>{{ title }}</span>
+                <i></i>
+            </header>
+            <div class='wrap'>
+                <ul class='wrap-list'>
+                    <li v-for='item in tempArr' @click='temp(item + 1)'>
+                        <a style="width: 100%; text-align: center;">第{{ item + 1 }}轮评审结果</a>
+                    </li>
+                </ul>
+            </div>
+            <div class='wrap'>
+                <ul class='wrap-list'>
+                    <li>
+                        <div class="tit">
+                            <b style="color: #333;">笔试得分</b>
+                        </div>
+                        <div class="con">
+                            <input type="tel" class="input" v-model='writtenScore' placeholder="请输入得分" id='writtenScore' v-on:input='setWrittenScore' />
+                        </div>
+                    </li>
+                    <li>
+                        <div class="tit">
+                            <b style="color: #333;">面试得分</b>
+                        </div>
+                        <div class="con">
+                            <input type="tel" class="input" v-model='interviewScore' placeholder="自动计算值" disabled />
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class='wrap'>
+                <ul class='wrap-list'>
+                    <li>
+                        <div class="tit">
+
+                        </div>
+                        <div class="con">
+                            <p><span class='tips'>*</span>10分制，表现优秀9-10分，良好7-8分，达标6-7分，不达标6分以下</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="tit">
+                            <b>基本信息</b>
+                        </div>
+                        <div class="con">
+                            <input type="tel" class="input" v-model='baseInfo' placeholder="自动计算值" disabled />
+                        </div>
+                    </li>
+                    <li>
+                        <div class="tit">
+                            形象气质
+                        </div>
+                        <div class="con">
+                            <input type="tel" class="input" v-model='temperament' placeholder="请输入得分" v-on:input='setBase' id='temperament' />
+                        </div>
+                    </li>
+                    <li>
+                        <div class="tit">
+                            阅历匹配
+                        </div>
+                        <div class="con">
+                            <input type="tel" class="input" v-model='experience' placeholder="请输入得分" v-on:input='setBase' id='experience' />
+                        </div>
+                    </li>
+                    <li>
+                        <div class="tit">
+                            职务专业
+                        </div>
+                        <div class="con">
+                            <input type="tel" class="input" v-model='specialty' placeholder="请输入得分" v-on:input='setBase' id='specialty'  />
+                        </div>
+                    </li>
+                    <li>
+                        <div class="tit">
+                            求职意愿
+                        </div>
+                        <div class="con">
+                            <input type="tel" class="input" v-model='intention' placeholder="请输入得分" v-on:input='setBase' id='intention' />
+                        </div>
+                    </li>
+                    <li>
+                        <div class="tit">
+                            工作稳定性
+                        </div>
+                        <div class="con">
+                            <input type="tel" class="input" v-model='stability' placeholder="请输入得分" v-on:input='setBase' id='stability' />
+                        </div>
+                    </li>
+                    <li>
+                        <div class="tit">
+                            <b>关键胜任力</b>
+                        </div>
+                        <div class="con">
+                            <input type="tel" class="input" v-model='bestInfo' placeholder="自动计算值" disabled />
+                        </div>
+                    </li>
+                    <li>
+                        <div class="tit">
+                            关注细节
+                        </div>
+                        <div class="con">
+                            <input type="tel" class="input" v-model='details' placeholder="请输入得分" v-on:input='setBest' id='details' />
+                        </div>
+                    </li>
+                    <li>
+                        <div class="tit">
+                            执行力
+                        </div>
+                        <div class="con">
+                            <input type="tel" class="input" v-model='executive' placeholder="请输入得分" v-on:input='setBest' id='executive'  />
+                        </div>
+                    </li>
+                    <li>
+                        <div class="tit">
+                            工作效率
+                        </div>
+                        <div class="con">
+                            <input type="tel" class="input" v-model='efficiency' placeholder="请输入得分" v-on:input='setBest' id='efficiency' />
+                        </div>
+                    </li>
+                    <li>
+                        <div class="tit">
+                            人际关系
+                        </div>
+                        <div class="con">
+                            <input type="tel" class="input" v-model='relationship' placeholder="请输入得分" v-on:input='setBest' id='relationship' />
+                        </div>
+                    </li>
+                    <li>
+                        <div class="tit">
+                            沟通表达力
+                        </div>
+                        <div class="con">
+                            <input type="tel" class="input" v-model='communication' placeholder="请输入得分" v-on:input='setBest' id='communication' />
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class='wrap'>
+                <ul class='wrap-list'>
+                    <li>
+                        <div class="tit">
+                            评语
+                        </div>
+                        <div class="con">
+                            <textarea placeholder="请输入评语" v-model='comment'></textarea>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class='wrap'>
+                <ul class='wrap-list'>
+                    <li>
+                        <div class="tit">
+                            面试结果
+                        </div>
+                        <div class="con" id='result'>
+                            <div class="mui-input-row mui-radio mui-left" v-for='item in resultArr' @click='setrResult'>
+                                <label>{{ item.name }}</label>
+                                <input type="radio" name="result" :value=item.value :checked='item.type' />
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class='wrap'>
+                <input type="button" value='返回' class='btn btn-max' @click='back' v-if='disabledFlag' />
+                <input type="button" value='提交' class='btn btn-max' @click='submit' v-else />
+            </div>
+            <div class="interview-add-box" v-if='again.flag'>
+                <div>
+                    <div class='header'>
+                        <img src="../../images/svg/left.svg" class="icon-40" @click='closeAddBox' />
+                        <span class='tit'>{{ again.title }}</span>
+                        <i></i>
+                    </div>
+                    <ul class='wrap-list'>
+                        <li>
+                            <div class="tit">
+                                <b style="color: #333;">笔试得分</b>
+                            </div>
+                            <div class="con">
+                                <input type="tel" class="input" v-model='again.writtenScore' style="font-size:0.6rem" readonly />
+                            </div>
+                        </li>
+                    <li>
+                        <div class="tit">
+                            <b style="color: #333;">面试得分</b>
+                        </div>
+                        <div class="con">
+                            <input type="tel" class="input" v-model='again.faceScore' style="font-size:0.6rem" readonly />
+                        </div>
+                    </li>
+                    <li>
+                        <div class="tit">
+                            <b>基本信息</b>
+                        </div>
+                        <div class="con">
+                            <input type="tel" class="input" v-model='again.baseInfo' readonly />
+                        </div>
+                    </li>
+                        <li>
+                            <div class="tit">
+                                形象气质
+                            </div>
+                            <div class="con">
+                                <input type="tel" class="input" v-model='again.temperament' readonly />
+                            </div>
+                        </li>
+                        <li>
+                            <div class="tit">
+                                阅历匹配
+                            </div>
+                            <div class="con">
+                                <input type="tel" class="input" v-model='again.experience' readonly />
+                            </div>
+                        </li>
+                        <li>
+                            <div class="tit">
+                                职务专业
+                            </div>
+                            <div class="con">
+                                <input type="tel" class="input" v-model='again.specialty'  readonly />
+                            </div>
+                        </li>
+                        <li>
+                            <div class="tit">
+                                求职意愿
+                            </div>
+                            <div class="con">
+                                <input type="tel" class="input" v-model='again.intention' readonly />
+                            </div>
+                        </li>
+                        <li>
+                            <div class="tit">
+                                工作稳定性
+                            </div>
+                            <div class="con">
+                                <input type="tel" class="input" v-model='again.stability' readonly />
+                            </div>
+                        </li>
+                    <li>
+                        <div class="tit">
+                            <b>关键胜任力</b>
+                        </div>
+                        <div class="con">
+                            <input type="tel" class="input" v-model='again.bestInfo' readonly />
+                        </div>
+                    </li>
+                        <li>
+                            <div class="tit">
+                                关注细节
+                            </div>
+                            <div class="con">
+                                <input type="tel" class="input" v-model='again.details' readonly />
+                            </div>
+                        </li>
+                        <li>
+                            <div class="tit">
+                                执行力
+                            </div>
+                            <div class="con">
+                                <input type="tel" class="input" v-model='again.executive' readonly />
+                            </div>
+                        </li>
+                        <li>
+                            <div class="tit">
+                                工作效率
+                            </div>
+                            <div class="con">
+                                <input type="tel" class="input" v-model='again.efficiency' readonly />
+                            </div>
+                        </li>
+                        <li>
+                            <div class="tit">
+                                人际关系
+                            </div>
+                            <div class="con">
+                                <input type="tel" class="input" v-model='again.relationship' readonly />
+                            </div>
+                        </li>
+                        <li>
+                            <div class="tit">
+                                沟通表达力
+                            </div>
+                            <div class="con">
+                                <input type="tel" class="input" v-model='again.communication' readonly />
+                            </div>
+                        </li>
+                        <li>
+                            <div class="tit">
+                                评语
+                            </div>
+                            <div class="con">
+                                <textarea placeholder="请输入评语" v-model='again.comment' readonly></textarea>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="tit">
+                                面试结果
+                            </div>
+                            <div class="con" id='result'>
+                                <div class="mui-input-row mui-radio mui-left" v-for='item in again.resultArr' @click='setrResult'>
+                                    <label>{{ item.name }}</label>
+                                    <input type="radio" name="result" disabled :value=item.value :checked='item.type' />
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <input type="button" value='返回' class='btn btn-max btn-top' @click='closeAddBox' />
+                </div>
+            </div>
+        </div>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../js/axios.min.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script type="text/javascript">
+        // 校验app或wap
+        myInit(indexFun);
+        function indexFun() {
+            var interview = new Vue({
+                el: "#interview",
+                data: {
+                    title: "结果评审",
+                    id: "",
+                    talentId: "",
+                    writtenScore: '',
+                    interviewScore: '',
+                    baseInfo: '',
+                    temperament: '',
+                    experience: '',
+                    specialty: '',
+                    intention: '',
+                    stability: '',
+                    bestInfo: '',
+                    details: '',
+                    executive: '',
+                    efficiency: '',
+                    relationship: '',
+                    communication: '',
+                    comment: '',
+                    result: '',
+                    round: "",
+                    recruitmentId: "",
+                    resultArr: [
+                        {value: 1, name: "通过", type: false},
+                        {value: 2, name: "录取", type: false},
+                        {value: 3, name: "不通过", type: true},
+                        {value: 9, name: "未参加", type: false},
+                    ],
+                    disabledFlag: false,
+                    tempArr: [],
+                    again: {
+                        flag: false,
+                        title: "",
+                        writtenScore: "",
+                        temperament: "",
+                        experience: "",
+                        specialty: "",
+                        intention: "",
+                        stability: "",
+                        details: "",
+                        executive: "",
+                        efficiency: "",
+                        relationship: "",
+                        communication: "",
+                        comment: "",
+                        resultArr: [
+                            {value: 1, name: "通过", type: false},
+                            {value: 2, name: "录取", type: false},
+                            {value: 3, name: "不通过", type: true},
+                            {value: 9, name: "未参加", type: false},
+                        ]
+                    }
+                },
+                methods: {
+                    back: function () {
+                        myRemoveLocalStorage("setter");
+                        myOpenWindow("list.html", 'list');
+                    },
+                    temp: function (round) {
+                        var that = this
+                        myLoading();
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + "/interview/user/getInterviewCondition.htm",
+                            params: {
+                                talentId: that.talentId,
+                                recruitmentId: that.recruitmentId,
+                                round: round
+                            }
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                that.again.flag = true
+                                that.again.title = '第'+ round +'轮评审结果'
+                                that.again.writtenScore = datas.data[0].writtenScore
+                                that.again.temperament = datas.data[0].temperament
+                                that.again.experience = datas.data[0].experience
+                                that.again.specialty = datas.data[0].specialty
+                                that.again.intention = datas.data[0].intention
+                                that.again.stability = datas.data[0].stability
+                                that.again.details = datas.data[0].details
+                                that.again.executive = datas.data[0].executive
+                                that.again.efficiency = datas.data[0].efficiency
+                                that.again.relationship = datas.data[0].relationship
+                                that.again.communication = datas.data[0].communication
+                                that.again.baseInfo = datas.data[0].temperament 
+                                					+ datas.data[0].experience
+                                					+ datas.data[0].specialty
+                                					+ datas.data[0].intention
+                                					+ datas.data[0].stability
+                                that.again.bestInfo = datas.data[0].details 
+                                					+ datas.data[0].executive
+                                					+ datas.data[0].efficiency
+                                					+ datas.data[0].relationship
+                                					+ datas.data[0].communication
+                                that.again.faceScore = that.again.baseInfo + that.again.bestInfo
+                                that.again.comment = datas.data[0].comment
+                                if (datas.data[0].result == 1) {
+                                    that.again.resultArr[0].type = true
+                                    that.again.resultArr[1].type = false
+                                    that.again.resultArr[2].type = false
+                                    that.again.resultArr[3].type = false
+                                }
+                                if (datas.data[0].result == 2) {
+                                    that.again.resultArr[0].type = false
+                                    that.again.resultArr[1].type = true
+                                    that.again.resultArr[2].type = false
+                                    that.again.resultArr[3].type = false
+                                }
+                                if (datas.data[0].result == 3) {
+                                    that.again.resultArr[0].type = false
+                                    that.again.resultArr[1].type = false
+                                    that.again.resultArr[2].type = true
+                                    that.again.resultArr[3].type = false
+                                }
+                                if (datas.data[0].result == 9) {
+                                    that.again.resultArr[0].type = false
+                                    that.again.resultArr[1].type = false
+                                    that.again.resultArr[2].type = false
+                                    that.again.resultArr[3].type = true
+                                }
+                            } else {
+                                myToast(datas.resultMsg);
+                            }
+                            myLoadingOver();
+                        }).catch(function (error) {
+                            myLoadingOver();
+                        })
+                    },
+                    initPage: function () {
+                        var setter = JSON.parse(myGetLocalStorage("setter"));
+                        var user = JSON.parse(myGetLocalStorage("user"));
+                        if (setter) {
+                            this.id = setter.id
+                            this.talentId = setter.talent.id
+                            this.round = setter.round
+                            for (var i = 0; i < this.round - 1; i++) {
+                                this.tempArr.push(i);
+                            }
+                            this.recruitmentId = setter.recruitmentId
+                            if (setter.writtenScore) this.writtenScore = setter.writtenScore
+                            if (setter.interviewScore) this.interviewScore = setter.interviewScore
+                            if (setter.temperament) this.temperament = setter.temperament
+                            if (setter.experience) this.experience = setter.experience
+                            if (setter.specialty) this.specialty = setter.specialty
+                            if (setter.intention) this.intention = setter.intention
+                            if (setter.stability) this.stability = setter.stability
+                            if (setter.details) this.details = setter.details
+                            if (setter.executive) this.executive = setter.executive
+                            if (setter.efficiency) this.efficiency = setter.efficiency
+                            if (setter.relationship) this.relationship = setter.relationship
+                            if (setter.communication) this.communication = setter.communication
+                            if (setter.comment) this.comment = setter.comment
+                            if (setter.result) this.result = setter.result
+                                console.log(setter.result)
+                            if (setter.result == 1) {
+                                this.resultArr[0].type = true
+                                this.resultArr[1].type = false
+                                this.resultArr[2].type = false
+                                this.resultArr[3].type = false
+                            }
+                            if (setter.result == 2) {
+                                this.resultArr[0].type = false
+                                this.resultArr[1].type = true
+                                this.resultArr[2].type = false
+                                this.resultArr[3].type = false
+                            }
+                            if (setter.result == 3) {
+                                this.resultArr[0].type = false
+                                this.resultArr[1].type = false
+                                this.resultArr[2].type = true
+                                this.resultArr[3].type = false
+                            }
+                            if (setter.result == 9) {
+                                this.resultArr[0].type = false
+                                this.resultArr[1].type = false
+                                this.resultArr[2].type = false
+                                this.resultArr[3].type = true
+                            }
+                            //if (setter.result != 0 || user.userId != setter.userId) {
+                            if ( user.userId != setter.interviewer) {
+                                this.disabledFlag = true
+                                var inputs = document.querySelectorAll("input[type='tel']");
+                                for (var i = 0; i < inputs.length; i++) {
+                                    inputs[i].setAttribute("readonly", true);
+                                }
+                                var radios = document.querySelectorAll("input[type='radio']");
+                                for (var i = 0; i < radios.length; i++) {
+                                    radios[i].setAttribute("disabled", true);
+                                }
+                                var textareas = document.querySelectorAll("textarea");
+                                for (var i = 0; i < textareas.length; i++) {
+                                    textareas[i].setAttribute("readonly", true);
+                                }
+                            }
+                        }
+                    },
+                    closeAddBox: function () {
+                        this.again.flag = false
+                    },
+                    setWrittenScore: function (e) {
+                        if (e.target.value > 100) {
+                            myToast("满分为100分")
+                            this[e.target.id] = 100
+                        }
+                    },
+                    setBase: function (e) {
+                        if (e.target.value > 10) {
+                            myToast("满分为10分")
+                            this[e.target.id] = 10
+                        }
+                        this.baseInfo = Number(this.temperament) + Number(this.experience) + Number(this.specialty) + Number(this.intention) + Number(this.stability)
+                        this.interviewScore = Number(this.baseInfo) + Number(this.bestInfo)
+
+                        console.log(this.resultArr)
+                    },
+                    setBest: function (e) {
+                        if (e.target.value > 10) {
+                            myToast("满分为10分")
+                            this[e.target.id] = 10
+                        }
+                        this.bestInfo = Number(this.details) + Number(this.executive) + Number(this.efficiency) + Number(this.relationship) + Number(this.communication)
+                        this.interviewScore = Number(this.baseInfo) + Number(this.bestInfo)
+                    },
+                    setrResult: function (e) {
+                        this.result = e.target.defaultValue
+                        for (var i = 0; i < this.resultArr.length; i++) {
+                            this.resultArr[i].type = false
+                        }
+                        if (this.result == 1) {
+                            this.resultArr[0].type = true
+                        }
+                        if (this.result == 2) {
+                            this.resultArr[1].type = true
+                        }
+                        if (this.result == 3) {
+                            this.resultArr[2].type = true
+                        }
+                        if (this.result == 9) {
+                            this.resultArr[3].type = true
+                        }
+                    },
+                    submit: function () {
+                        var that = this
+                        if (!that.writtenScore) {
+                            myToast("请输入笔试得分");
+                        } else if (!that.temperament) {
+                            myToast("请输入形象气质得分");
+                        } else if (!that.experience) {
+                            myToast("请输入阅历匹配得分");
+                        } else if (!that.specialty) {
+                            myToast("请输入职务专业得分");
+                        } else if (!that.intention) {
+                            myToast("请输入求职意愿得分");
+                        } else if (!that.stability) {
+                            myToast("请输入工作稳定性得分");
+                        } else if (!that.details) {
+                            myToast("请输入关注细节得分");
+                        } else if (!that.executive) {
+                            myToast("请输入执行力得分");
+                        } else if (!that.efficiency) {
+                            myToast("请输入工作效率得分");
+                        } else if (!that.relationship) {
+                            myToast("请输入人际关系得分");
+                        } else if (!that.communication) {
+                            myToast("请输入沟通表达力得分");
+                        } else if (!that.comment) {
+                            myToast("请输入评语");
+                        } else {
+                            myLoading();
+                            axios({
+                                method: 'post',
+                                url: global.apiURL + "/interview/user/setInterviewResult.htm",
+                                params: {
+                                    id: that.id,
+                                    talentId: that.talentId,
+                                    recruitmentId: that.recruitmentId,
+                                    interviewer: that.interviewer,
+                                    writtenScore: that.writtenScore,
+                                    interviewScore: that.interviewScore,
+                                    temperament: that.temperament,
+                                    experience: that.experience,
+                                    specialty: that.specialty,
+                                    intention: that.intention,
+                                    stability: that.stability,
+                                    details: that.details,
+                                    efficiency: that.efficiency,
+                                    executive: that.executive,
+                                    relationship: that.relationship,
+                                    comment: that.comment,
+                                    result: that.result,
+                                    communication: that.communication,
+                                    round: that.round
+                                }
+                            }).then(function (response) {
+                                var datas = response.data;
+                                if (datas.success) {
+                                    if (that.result == 1) {
+                                        mui.alert("本轮面试的结果为通过，请设定下一轮的面试设置。", function (){
+                                            myRemoveLocalStorage("setter");
+                                            myOpenWindow("list.html", "list");
+                                        });
+                                    } else {
+                                        myRemoveLocalStorage("setter");
+                                        myOpenWindow("list.html", "list");
+                                    }
+                                } else {
+                                    myToast(datas.resultMsg);
+                                }
+                                myLoadingOver();
+                            }).catch(function (error) {
+                                myLoadingOver();
+                            })
+                        }
+                    }
+                },
+                mounted: function () {
+                    this.$nextTick(function () {
+                        mui.init();
+                        this.initPage()
+                    });
+                },
+                filters: {
+
+                }
+            });
+        }
+    </script>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>注册</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+    </head>
+    <body>
+        <header class='header'>
+            <i></i>
+            <span class='tit'>注册</span>
+            <b id="login">登录</b>
+        </header>
+        <div class='wrap login-wrap'>
+            <dl>
+                <dd>
+                    <input type="text" placeholder="请输入手机号码" class="input input-max" maxlength="11" id="mobile" />
+                </dd>
+                <dd>
+                    <input type="password" placeholder="请输入登录密码" maxlength="20" class="input input-max" id="pwd" />
+                </dd>
+                <dd>
+                    <input type="password" placeholder="请再次输入登录密码" maxlength="20" class="input input-max" id="pwd-again" />
+                </dd>
+                <dd class='validate-box' style="display: block;">
+                    <input type="text" placeholder="请输入验证码" class="input input-max" id="validate-code" />
+                    <button type="button" class='validate-btn' id='getCode' style="background: #dd062c; color: #fff; border: 0; left: 8.5rem;">获取验证码</button>
+                </dd>
+            </dl>
+        </div>
+        <div class='wrap'>
+            <input type="button" value='注册' class='btn btn-max btn-top' id="submit" />
+        </div>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script>
+        (function($, doc) {
+            $.init();
+
+            // 校验app或wap
+            myInit(indexFun);
+            function indexFun() {
+                // 历史url
+                zjzm.historyUrl("/tpl/login/login.html");
+
+                doc.querySelector("#login").addEventListener("tap", function () {
+                    myOpenWindow("/tpl/login/login.html", 'login');
+                });
+
+                doc.querySelector("#getCode").addEventListener("tap", function () {
+                    var mobile = doc.querySelector("#mobile").value;
+                    var that = this;
+                    if (!zjzm.mobileValidate(mobile)) {
+                        myToast("请输入正确的手机号");
+                    } else {
+                        $.ajax(global.apiURL + '/register/sendcode.htm', {
+                            data : {
+                                mobile : mobile
+                            },
+                            dataType : 'json',
+                            type : 'post',
+                            timeout : 10000,
+                            success : function(data){
+                                if (data.success) {
+                                    zjzm.countDown(that, 60);
+                                } else {
+                                    myToast(data.resultMsg);
+                                }
+                            },
+                            error : function() {
+                                myToast("服务器正忙，请稍后重试！");
+                            }
+                        });
+                    }
+                });
+
+                doc.querySelector("#submit").addEventListener("tap", function () {
+                    var mobile = doc.querySelector("#mobile").value;
+                    var checkcode = doc.querySelector("#validate-code").value;
+                    var password = doc.querySelector("#pwd").value;
+                    var passwords = doc.querySelector("#pwd-again").value;
+                    if (!zjzm.mobileValidate(mobile)) {
+                        myToast("请输入正确的手机号");
+                    } else if(!password) {
+                        myToast("请输入密码");
+                    } else if(!passwords) {
+                        myToast("请再次输入密码");
+                    } else if(password != passwords) {
+                        myToast("两次密码不同");
+                    } else if(!checkcode) {
+                        myToast("请输入验证码");
+                    } else {
+                        $.ajax(global.apiURL + '/register/register.htm', {
+                            data : {
+                                mobile: mobile,
+                                checkcode: checkcode,
+                                password: password,
+                                accStatus: 1,
+                                department: 99,
+                                personnelNature: 89,
+                                companyId: 1,
+                                status: 1
+                            },
+                            dataType : 'json',
+                            type : 'post',
+                            timeout : 10000,
+                            success : function(data){
+                                if (data.success) {
+                                    myOpenWindow("/tpl/home/home.html", 'home');
+                                    //var datas = data.data;
+                                    //setUserInfo(datas)
+                                } else {
+                                    myToast(data.resultMsg);
+                                }
+                            },
+                            error : function() {
+                                myToast("服务器正忙，请稍后重试！");
+                            }
+                        });
+                    }
+                });
+                function setUserInfo(datas) {
+                    $.ajax(global.apiURL + '/user/staffLogin.htm', {
+                        data : {},
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                var data = data.data;
+                                var company = data[0].company;
+                                if (!company) {
+                                    company = data[0].companyName;
+                                }
+                                mySetLocalStorage("user", {
+                                    "springtoken"       : datas.springtoken,
+                                    "nickname"          : datas.userName,
+                                    "mobile"            : data[0].userInfo.username,
+                                    "name"              : data[0].userInfo.name,
+                                    "jobId"             : data[0].userInfo.jobId,
+                                    "personnelNature"   : data[0].personnelNature,
+                                    "userId"            : data[0].userId,
+                                    "company"           : company,
+                                    "imageAddress"      : data[0].userInfo.imageAddress
+                                });
+                                myOpenWindow('/tpl/product/list.html', 'list');
+                            } else {
+                                myToast(data.resultMsg);
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+            }
+        }(mui, document));
+    </script>
+</html>

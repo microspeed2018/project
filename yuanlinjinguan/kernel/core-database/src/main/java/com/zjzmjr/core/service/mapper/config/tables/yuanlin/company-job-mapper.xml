@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.company.CompanyJobMapper" >
+  <resultMap id="BaseResultMap" type="CompanyJob" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="department_id" property="departmentId" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="CompanyDepartmentJobResultMap" type="CompanyDepartmentJob" extends="BaseResultMap">
+    <collection property="companyDepartment" column="department_id" resultMap="CompanyDepartmentResultMap"/>    
+  </resultMap> 
+  <resultMap id="CompanyDepartmentResultMap" type="CompanyDepartment">
+    <result column="department_name" property="name" jdbcType="VARCHAR" />
+    <result column="department_status" property="status" jdbcType="INTEGER" />    
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, company_id, department_id, name, status, create_time, create_user_id, update_time, 
+    update_user_id, version
+  </sql>
+  <select id="getDepartmentJobInfoCount" resultType="java.lang.Integer" parameterType="CompanyDepartmentQuery">
+      select count(distinct zj.id)
+      from z_job zj
+      left outer join z_department zd on find_in_set(zd.id,zj.department_id) 
+     <include refid="where_clause"></include>
+  </select>
+  <select id="getDepartmentJobInfo" resultMap="CompanyDepartmentJobResultMap" parameterType="CompanyDepartmentQuery" >
+     select zj.*, zd.name department_name,zd.status department_status 
+     from z_job zj
+     left outer join z_department zd on find_in_set(zd.id,zj.department_id) 
+     <include refid="where_clause"></include>
+     <choose>
+        <when test="orderBy != null and orderBy!=''">
+            order by #{orderBy}
+        </when>
+        <otherwise>
+            order by zj.id
+        </otherwise>
+     </choose>
+    limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+  <select id="getInnerOuterDepartmentCount" resultType="java.lang.Integer" parameterType="CompanyDepartmentQuery">
+    select count(t.id)
+    from (
+     select zj.*, zd.name department_name,zd.status department_status 
+     from z_job zj
+     left outer join z_department zd on find_in_set(zd.id,zj.department_id) 
+     <include refid="where_clause"></include>
+     union
+     select tb.id, tb.company_id, 99 department_id, tb.attribute_name name, 1 status, tb.create_time, tb.create_user_id, tb.update_time, 
+            tb.update_user_id, tb.version, '外部人员' department_name, 1 department_status 
+     from t_basic tb
+     where tb.category_id = 12 and tb.company_id = #{companyId,jdbcType=INTEGER}
+    ) t
+  </select>
+  <select id="getInnerOuterDepartmentInfo" resultMap="CompanyDepartmentJobResultMap" parameterType="CompanyDepartmentQuery">
+     select zj.*, zd.name department_name,zd.status department_status 
+     from z_job zj
+     left outer join z_department zd on find_in_set(zd.id,zj.department_id) 
+     <include refid="where_clause"></include>
+     union
+     select tb.id, tb.company_id, 99 department_id, tb.attribute_name name, 1 status, tb.create_time, tb.create_user_id, tb.update_time, 
+            tb.update_user_id, tb.version, '外部人员' department_name, 1 department_status 
+     from t_basic tb
+     where tb.category_id = 12 and tb.company_id = #{companyId,jdbcType=INTEGER}
+     <choose>
+        <when test="orderBy != null and orderBy!=''">
+            order by #{orderBy}
+        </when>
+        <otherwise>
+            order by id
+        </otherwise>
+     </choose>
+    limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+  <select id="getCompanyJobByCondition" resultMap="BaseResultMap" parameterType="CompanyDepartmentQuery">
+    select <include refid="Base_Column_List" />
+    from z_job zj
+    <include refid="where_clause"></include>
+  </select>
+  <sql id="where_clause">
+   <where>
+        <trim prefixOverrides="and">
+            <if test="id != null">
+                zj.id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="companyId != null">
+                and zj.company_id = #{companyId,jdbcType=INTEGER}
+            </if>
+            <if test="name != null">
+                and zj.name like CONCAT('%', #{name,jdbcType=VARCHAR} , '%') 
+            </if>
+            <if test="departmentId != null and departmentId != ''">
+                and find_in_set(#{departmentId,jdbcType=VARCHAR},zj.department_id)
+            </if>
+            <if test="status != null">
+                and zj.status = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="createTimeStart != null">
+                and DATE_FORMAT(zj.create_time,'%Y%m%d') >= #{createTimeStart,jdbcType=TIMESTAMP}
+            </if>
+            <if test="createTimeEnd != null">
+                <![CDATA[
+                    and DATE_FORMAT(zj.create_time,'%Y%m%d') <= #{createTimeEnd,jdbcType=TIMESTAMP}
+                ]]>
+            </if>
+            <if test="departmentStatus!= null">
+                and zd.status = #{departmentStatus,jdbcType=INTEGER}
+            </if>
+        </trim>
+    </where>
+  </sql>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from z_job
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insertCompanyJob" parameterType="CompanyJob" >
+    insert into z_job
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="departmentId != null" >
+        department_id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="departmentId != null" >
+        #{departmentId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateCompanyJobById" parameterType="CompanyJob" >
+    update z_job
+    <set >
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="departmentId != null" >
+        department_id = #{departmentId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+        version = version + 1
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

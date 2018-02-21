@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.coredb.area.AreaMapper" >
+  <resultMap id="BaseResultMap" type="Area" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="prov_code" property="provCode" jdbcType="VARCHAR" />
+    <result column="city_code" property="cityCode" jdbcType="VARCHAR" />
+    <result column="dist_code" property="distCode" jdbcType="VARCHAR" />
+    <result column="area_name" property="areaName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="prov_name" property="provName" jdbcType="VARCHAR" />
+    <result column="city_name" property="cityName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, prov_code, city_code, dist_code, area_name, create_time, create_user_id, update_time, 
+    update_user_id, version
+  </sql>
+  
+  <select id="selectLoanProv" resultMap="BaseResultMap" parameterType="Area">
+    select t2.prov_code, t3.area_name from t_loan_area t1 
+    inner join t_area t2 
+    on t1.area_id = t2.id
+    inner join t_area t3
+    on t3.prov_code = t2.prov_code
+    and t3.city_code = '00'
+    and t3.dist_code = '00'
+    group by t2.prov_code, t3.area_name
+  </select>
+  
+  <select id="selectLoanDist" resultMap="BaseResultMap" parameterType="java.lang.String">
+  select t1.id,substring(t1.area_name,char_length(t2.area_name)+1) area_name  
+  from t_area t1 ,t_area t2,t_loan_area t3
+  where
+  t1.prov_code=#{provCode,jdbcType=VARCHAR}
+  and t2.prov_code = t1.prov_code
+  and t2.city_code = '00'
+  and t2.dist_code = '00'
+  and t1.id =t3.area_id
+  </select>
+ 
+  <select id="selectInsuranceProv" resultMap="BaseResultMap" parameterType="Area">
+    select t2.prov_code, t3.area_name from t_insured_area t1 
+    inner join t_area t2 
+    on t1.area_id = t2.id
+    inner join t_area t3
+    on t3.prov_code = t2.prov_code
+    and t3.city_code = '00'
+    and t3.dist_code = '00'
+    group by t2.prov_code, t3.area_name
+  </select>
+  
+  <select id="selectInsuranceDist" resultMap="BaseResultMap" parameterType="java.lang.String">
+  select t1.id,substring(t1.area_name,char_length(t2.area_name)+1) area_name
+  from t_area t1 ,t_area t2,t_insured_area t3
+  where
+  t1.prov_code=#{provCode,jdbcType=VARCHAR}
+  and t2.prov_code = t1.prov_code
+  and t2.city_code = '00'
+  and t2.dist_code = '00'
+  and t1.id =t3.area_id
+  </select>
+ 
+  <select id="selectAllProv" resultMap="BaseResultMap" parameterType="Area">
+  select prov_code,area_name,id from t_area where city_code='00' and dist_code='00' group by prov_code,area_name
+  </select>
+  
+  <select id="selectAllDist" resultMap="BaseResultMap" parameterType="java.lang.String">
+   select t1.id ,substring(
+		t1.area_name,
+		char_length(t2.area_name) + 1
+	) area_name
+  from t_area t1 LEFT OUTER JOIN t_area t2
+  on t2.prov_code = t1.prov_code
+  and t2.city_code='00'
+  and t2.dist_code='00'
+  where t1.prov_code=#{provCode,jdbcType=VARCHAR}
+  AND t1.city_code > '00'
+  AND t1.dist_code = '00'
+  </select>
+  
+  <select id="getAllDist" resultMap="BaseResultMap" parameterType="java.lang.String">
+  select t1.id,substring(t1.area_name,char_length(t2.area_name)+1) area_name
+  from t_area t1 ,t_area t2
+  where
+  t1.prov_code=#{provCode,jdbcType=VARCHAR}
+  and t2.prov_code = t1.prov_code
+  and t1.city_code  > '00'
+  group by id
+  </select>
+  
+  <select id="getCity" resultMap="BaseResultMap" parameterType="java.lang.String">
+  select t1.id,t1.city_code,substring(t1.area_name,char_length(t2.area_name)+1) area_name
+  from t_area t1 ,t_area t2
+  where
+  t1.prov_code=#{provCode,jdbcType=VARCHAR}
+  and t2.prov_code = t1.prov_code
+  and t1.dist_code = '00'
+  group by city_code
+  </select>
+  
+  <select id="getDist" resultMap="BaseResultMap" parameterType="Area">
+SELECT
+	t1.id,
+	substring(
+		t1.area_name,
+		char_length(t2.area_name) + 1
+	) area_name,t1.dist_code
+FROM
+	t_area t1
+LEFT OUTER JOIN t_area t2 ON t1.prov_code = t2.prov_code
+AND t1.city_code = t2.city_code
+AND t2.dist_code = '00'
+WHERE
+	t1.prov_code = #{provCode,jdbcType=VARCHAR}
+AND t1.city_code = #{cityCode,jdbcType=VARCHAR}
+
+
+  </select>
+  
+  <select id="getCityDist" resultMap="BaseResultMap" parameterType="java.lang.String">
+  select t1.id,substring(t1.area_name,char_length(t2.area_name)+1) area_name,t1.dist_code,t1.city_code
+  from t_area t1 ,t_area t2
+  where
+  t1.prov_code=#{provCode,jdbcType=VARCHAR}
+  and t2.prov_code = t1.prov_code
+  group by id
+  </select>
+  
+  <select id="getLoanCity"  resultMap="BaseResultMap" parameterType="Area">
+    select substring(t2.area_name,char_length(t5.area_name)+1) area_name,t2.city_code,t2.id id
+    from t_area t5, t_area t2
+    inner join (
+      select t1.*
+      from t_area t1 
+      inner join t_loan_area t3  on t1.id =t3.area_id
+      where t1.prov_code=#{provCode,jdbcType=VARCHAR}
+      <if test="cityCode != null">
+      	and t1.city_code = #{cityCode,jdbcType=VARCHAR}
+      </if>
+    ) t4  on t4.city_code = t2.city_code
+    where t2.prov_code=#{provCode,jdbcType=VARCHAR}
+    and t2.dist_code = 00
+    and t5.prov_code=t2.prov_code
+    and t5.city_code=00
+    group by t5.id,t2.id
+  </select>
+  
+  <select id="getLoanDist" resultMap="BaseResultMap" parameterType="Area">
+    select substring(t4.area_name,char_length(t2.area_name)+1) area_name,t4.id id
+    from t_area t2
+    inner join (
+       select t1.*
+       from t_area t1 
+       inner join t_loan_area t3  on t1.id =t3.area_id
+       where t1.prov_code= #{provCode,jdbcType=VARCHAR}
+       and t1.city_code = #{cityCode,jdbcType=VARCHAR}
+       <if test="distCode != null">
+      	and t1.dist_code = #{distCode,jdbcType=VARCHAR}
+       </if>
+    ) t4  on t4.city_code = t2.city_code
+    where t2.prov_code=#{provCode,jdbcType=VARCHAR}
+    and t2.dist_code = 00
+  </select>
+  
+  <select id="getAllAreaCount" resultType="java.lang.Integer" parameterType="AreaQuery">
+    select Count(ta.id) from t_area ta
+    <include refid="where_clause"></include>
+  </select>
+  
+  <select id="getAllArea" resultMap="BaseResultMap" parameterType="AreaQuery">
+    select ta.* from t_area ta
+    <include refid="where_clause"></include>
+		limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+  <sql id="where_clause">
+	<where>
+	   <trim prefix="" prefixOverrides="and">
+	      <if test="provCode != null">
+			and ta.prov_code = #{provCode,jdbcType=VARCHAR}
+		  </if>
+		  <if test="cityCode != null">
+			and ta.city_code = #{cityCode,jdbcType=VARCHAR}
+		  </if>
+		  <if test="areaName != null">
+			and ta.area_name like CONCAT('%', #{areaName}, '%')
+		  </if>
+          <if test="id != null">
+			and ta.id =#{id,jdbcType=INTEGER}
+		  </if>
+		  <if test="distCode != null">
+			and ta.dist_code = #{distCode,jdbcType=VARCHAR}
+		  </if>
+      </trim>
+    </where>
+  </sql>
+  
+  <!-- 查询所有地区 -->
+  <select id="getAllNameArea" resultMap="BaseResultMap" parameterType="AreaQuery">
+    SELECT
+	t5.area_id id,
+	t5.prov_code,
+	t5.prov_name,
+	t5.city_code,
+	t5.city_name,
+	t5.dist_code,
+	t5.dist_name area_name
+    FROM
+	(
+		SELECT
+			t1.id area_id,
+			t3.prov_code,
+			t3.area_name prov_name,
+			t4.city_code,
+			substring(
+				t4.area_name,
+				char_length(t3.area_name) + 1
+			) city_name,
+			t1.dist_code,
+			substring(
+				t1.area_name,
+				char_length(t4.area_name) + 1
+			) dist_name
+		FROM
+			t_area t1
+		INNER JOIN t_area t3 ON t1.prov_code = t3.prov_code
+		AND t3.city_code = '00'
+		AND t3.dist_code = '00'
+		INNER JOIN t_area t4 ON t1.prov_code = t4.prov_code
+		AND t1.city_code = t4.city_code
+		AND t4.dist_code = '00'
+		WHERE
+			t1.prov_code != 11
+		AND t1.prov_code != 12
+		AND t1.prov_code != 31
+		AND t1.prov_code != 50
+		GROUP BY
+			t1.id
+		UNION ALL
+			SELECT
+				t1.id area_id,
+				t1.prov_code,
+				t3.area_name prov_name,
+				t1.city_code,
+				t3.area_name city_name,
+				t1.dist_code,
+				substring(
+					t1.area_name,
+					char_length(t3.area_name) + 1
+				) dist_name
+			FROM
+				t_area t1
+			INNER JOIN t_area t3 ON t1.prov_code = t3.prov_code
+			AND t3.city_code = '00'
+			AND t3.dist_code = '00'
+			WHERE
+				t1.prov_code = 11
+			OR t1.prov_code = 12
+			OR t1.prov_code = 31
+			OR t1.prov_code = 50
+			GROUP BY
+				t1.id
+	) t5
+    ORDER BY
+    t5.area_id,
+	t5.prov_code,
+	t5.city_code,
+	t5.dist_code
+  </select>
+  <insert id="insertArea" parameterType="Area" >
+    insert into t_area
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="provCode != null" >
+        prov_code,
+      </if>
+      <if test="cityCode != null" >
+        city_code,
+      </if>
+      <if test="distCode != null" >
+        dist_code,
+      </if>
+      <if test="areaName != null" >
+        area_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="provCode != null" >
+        #{provCode,jdbcType=VARCHAR},
+      </if>
+      <if test="cityCode != null" >
+        #{cityCode,jdbcType=VARCHAR},
+      </if>
+      <if test="distCode != null" >
+        #{distCode,jdbcType=VARCHAR},
+      </if>
+      <if test="areaName != null" >
+        #{areaName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateArea" parameterType="Area" >
+    update t_area
+    <set >
+      <if test="provCode != null" >
+        prov_code = #{provCode,jdbcType=VARCHAR},
+      </if>
+      <if test="cityCode != null" >
+        city_code = #{cityCode,jdbcType=VARCHAR},
+      </if>
+      <if test="distCode != null" >
+        dist_code = #{distCode,jdbcType=VARCHAR},
+      </if>
+      <if test="areaName != null" >
+        area_name = #{areaName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+        version = version + 1,
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+</mapper>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>找回登录密码</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+    </head>
+    <body>
+        <header class='header'>
+            <img src="../../images/svg/left.svg" class="icon-40" id="goback"  />
+            <span class='tit'>找回登录密码</span>
+            <i></i>
+        </header>
+        <div class='wrap login-wrap'>
+            <dl>
+                <dd>
+                    <input type="password" placeholder="请输入新密码" maxlength="20" class="input input-max" id="new-pwd"  />
+                </dd>
+                <dd>
+                    <input type="password" placeholder="请再次输入密码" maxlength="20" class="input input-max" id="new-pwd-again"  />
+                </dd>
+            </dl>
+        </div>
+        <div class='wrap'>
+            <input type="button" value='确认' id="submit" class='btn btn-max btn-top btn-top' />
+        </div>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script>
+        (function($, doc) {
+            $.init();
+
+            // 校验app或wap
+            myInit(indexFun);
+            function indexFun() {
+                // 历史url
+                var historyUrl = myGetLocalStorage("curr");
+                // goback
+                doc.querySelector("#goback").addEventListener("click", function () {
+                    myOpenWindow(historyUrl, '');
+                    zjzm.historyUrl("/tpl/pwd/setter-pwd.html");
+                });
+
+                doc.querySelector("#submit").addEventListener("tap", function () {
+                    var oldPwd = doc.querySelector("#old-pwd").value;
+                    var newPwd = doc.querySelector("#new-pwd").value;
+                    var newPwdAgain = doc.querySelector("#new-pwd-again").value;
+
+                    if (!oldPwd) {
+                        myToast("请输入原密码");
+                    } else if (!newPwd) {
+                        myToast("请输入新密码");
+                    } else if (!newPwdAgain) {
+                        myToast("请再次输入密码");
+                    } else if (newPwd != newPwdAgain) {
+                        myToast("两次的密码不一致");
+                    } else {
+                        myLoading();
+                        $.ajax(global.apiURL + '/user/changePassword.htm', {
+                            data : {
+                                oldPassword: oldPwd,
+                                newPassword: newPwd,
+                                renewPassword : newPwdAgain
+                            },
+                            dataType : 'json',
+                            type : 'post',
+                            timeout : 10000,
+                            success : function(data){
+                                if (data.success) {
+                                    myClearStorage();
+                                    myOpenWindow('/tpl/login/login.html', 'home');
+                                } else {
+                                    myToast(data.resultMsg);
+                                }
+                                myLoadingOver();
+                            },
+                            error : function(xhr, type , errorThrown) {
+                                myLoadingOver();
+                                myToast("服务器正忙，请稍后重试！");
+                            }
+                        });
+                    }
+                });
+            }
+        }(mui, document));
+    </script>
+</html>

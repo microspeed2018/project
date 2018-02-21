@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.coredb.app.AppReleaseMapper" >
+  <resultMap id="BaseResultMap" type="AppRelease" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="product" property="product" jdbcType="INTEGER" />
+    <result column="device" property="device" jdbcType="INTEGER" />
+    <result column="app_version" property="appVersion" jdbcType="VARCHAR" />
+    <result column="build_version" property="buildVersion" jdbcType="VARCHAR" />
+    <result column="download_url" property="downloadUrl" jdbcType="VARCHAR" />
+    <result column="app_comment" property="appComment" jdbcType="VARCHAR" />
+    <result column="force_update" property="forceUpdate" jdbcType="INTEGER" />
+    <result column="pkg_size" property="pkgSize" jdbcType="DECIMAL" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, product, device, app_version, build_version, download_url, app_comment, force_update, 
+    pkg_size, create_time, create_user_id, update_time, update_user_id, version
+  </sql>
+  
+  <select id="getAppReleaseCount" parameterType="AppReleaseQuery" resultType="java.lang.Integer">
+  	select count(id)
+  	from t_app_release
+  	<where>
+  		<trim prefixOverrides="and">
+  			<if test="device != null">
+  				device = #{device,jdbcType=INTEGER}
+  			</if>
+  			<if test="appVersion != null">
+  				app_version = #{appVersion,jdbcType=VARCHAR}
+  			</if>
+  			<if test="createTime != null">
+				and create_time >= #{createTime} 
+		    </if>
+		    <if test="lastTime != null">
+		    	<![CDATA[
+				and create_time <= #{lastTime}
+			  	]]>
+		    </if>
+  		</trim>
+  	</where>
+  </select>
+  
+  <select id="getAppReleases" parameterType="AppReleaseQuery" resultMap="BaseResultMap">
+  	select 
+  	<include refid="Base_Column_List"/>
+  	from t_app_release
+  	<where>
+  		<trim prefixOverrides="and">
+  			<if test="device != null">
+  				device = #{device,jdbcType=INTEGER}
+  			</if>
+  			<if test="appVersion != null">
+  				app_version = #{appVersion,jdbcType=VARCHAR}
+  			</if>
+  			<if test="createTime != null">
+				and create_time >= #{createTime} 
+		    </if>
+		    <if test="lastTime != null">
+		    	<![CDATA[
+				and create_time <= #{lastTime}
+			  	]]>
+		    </if>
+  		</trim>
+  	</where>
+  	order by create_time desc
+  	limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+  
+  <select id="getAppReleaseById" resultMap="BaseResultMap" parameterType="AppReleaseQuery" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_app_release
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="deleteById" parameterType="java.lang.Integer" >
+    delete from t_app_release
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertAppRelease" parameterType="AppRelease" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+    insert into t_app_release
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="product != null" >
+        product,
+      </if>
+      <if test="device != null" >
+        device,
+      </if>
+      <if test="appVersion != null" >
+        app_version,
+      </if>
+      <if test="buildVersion != null" >
+        build_version,
+      </if>
+      <if test="downloadUrl != null" >
+        download_url,
+      </if>
+      <if test="appComment != null" >
+        app_comment,
+      </if>
+      <if test="forceUpdate != null" >
+        force_update,
+      </if>
+      <if test="pkgSize != null" >
+        pkg_size,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="product != null" >
+        #{product,jdbcType=INTEGER},
+      </if>
+      <if test="device != null" >
+        #{device,jdbcType=INTEGER},
+      </if>
+      <if test="appVersion != null" >
+        #{appVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="buildVersion != null" >
+        #{buildVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="downloadUrl != null" >
+        #{downloadUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="appComment != null" >
+        #{appComment,jdbcType=VARCHAR},
+      </if>
+      <if test="forceUpdate != null" >
+        #{forceUpdate,jdbcType=INTEGER},
+      </if>
+      <if test="pkgSize != null" >
+        #{pkgSize,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateById" parameterType="AppRelease" >
+    update t_app_release
+    <set >
+      <if test="product != null" >
+        product = #{product,jdbcType=INTEGER},
+      </if>
+      <if test="device != null" >
+        device = #{device,jdbcType=INTEGER},
+      </if>
+      <if test="appVersion != null" >
+        app_version = #{appVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="buildVersion != null" >
+        build_version = #{buildVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="downloadUrl != null" >
+        download_url = #{downloadUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="appComment != null" >
+        app_comment = #{appComment,jdbcType=VARCHAR},
+      </if>
+      <if test="forceUpdate != null" >
+        force_update = #{forceUpdate,jdbcType=INTEGER},
+      </if>
+      <if test="pkgSize != null" >
+        pkg_size = #{pkgSize,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+        version = version + 1
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+</mapper>

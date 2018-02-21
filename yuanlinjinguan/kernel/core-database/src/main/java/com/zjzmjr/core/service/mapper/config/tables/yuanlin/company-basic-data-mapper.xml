@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.company.CompanyBasicInfoMapper" >
+  <resultMap id="BaseResultMap" type="BasicData" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="category_id" property="categoryId" jdbcType="INTEGER" />
+    <result column="category_name" property="categoryName" jdbcType="VARCHAR" />
+    <result column="attribute_id" property="attributeId" jdbcType="INTEGER" />
+    <result column="attribute_name" property="attributeName" jdbcType="VARCHAR" />
+    <result column="abbreviate" property="abbreviate" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="loan_limit_num" property="loanLimitNum" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, company_id, category_id, category_name, attribute_id, attribute_name, abbreviate, create_time, create_user_id, 
+    update_time, update_user_id, version
+  </sql>
+  
+  <select id="getBasicCount" parameterType="BasicDataQuery" resultType="java.lang.Integer">
+  	select count(id)
+  	from t_basic
+  	<where>
+    	<trim prefixOverrides="and">
+		      <if test="companyId != null">
+		        company_id = #{companyId,jdbcType=INTEGER}
+		      </if>
+    		<if test="categoryId != null">
+    			and category_id = #{categoryId,jdbcType=INTEGER}
+    		</if>
+    		<if test="categoryName != null">
+    			and category_name like CONCAT('%',#{categoryName,jdbcType=VARCHAR},'%')
+    		</if>
+    		<if test="attributeId != null">
+    			and attribute_id = #{attributeId,jdbcType=INTEGER}
+    		</if>
+    		<if test="attributeName != null">
+    			and attribute_name like CONCAT ('%',#{attributeName,jdbcType=VARCHAR},'%')
+    		</if>
+    	</trim>
+    </where>
+  </select>
+  
+  <select id="getBasic" resultMap="BaseResultMap" parameterType="BasicDataQuery" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_basic
+    <where>
+    	<trim prefixOverrides="and">
+		      <if test="companyId != null">
+		        company_id = #{companyId,jdbcType=INTEGER}
+		      </if>
+    		<if test="categoryId != null">
+    			and category_id = #{categoryId,jdbcType=INTEGER}
+    		</if>
+    		<if test="categoryName != null">
+    			and category_name like CONCAT('%',#{categoryName,jdbcType=VARCHAR},'%')
+    		</if>
+    		<if test="attributeId != null">
+    			and attribute_id = #{attributeId,jdbcType=INTEGER}
+    		</if>
+    		<if test="attributeIdLst != null">
+    			and attribute_id in 
+    			<foreach collection="attributeIdLst" open="(" close=")" separator="," item="item">
+  					#{item}
+  				</foreach>
+    		</if>
+    		<if test="attributeName != null">
+    			and attribute_name like CONCAT ('%',#{attributeName,jdbcType=VARCHAR},'%')
+    		</if>
+    		<if test="categoryIdLst != null">
+    			and category_id in 
+    			<foreach collection="categoryIdLst" open="(" close=")" separator="," item="item">
+  					#{item}
+  				</foreach>
+    		</if>
+    	</trim>
+    </where>
+    order by category_id, attribute_id
+    limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+  
+  <select id="getBasicById" resultMap="BaseResultMap" parameterType="BasicDataQuery">
+  	select
+  	<include refid="Base_Column_List" />
+  	from t_basic
+  	where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getCategorys" resultMap="BaseResultMap">
+  	select 
+  	category_id, category_name , max(attribute_id) 
+  	from  t_basic 
+  	group by category_id
+  	order by category_id
+  </select>
+  
+  <select id="getAllBasic" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_basic
+  </select>
+  
+  <delete id="deleteById" parameterType="java.lang.Integer" >
+    delete from t_basic
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+ 
+  <insert id="insertBasic" parameterType="BasicData" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+    insert into t_basic
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+        category_id,
+      <if test="categoryName != null" >
+        category_name,
+      </if>
+        attribute_id,
+      <if test="attributeName != null" >
+        attribute_name,
+      </if>
+      <if test="abbreviate != null" >
+        abbreviate,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <choose>
+      	<when test="categoryId != null">
+      		#{categoryId,jdbcType=INTEGER},
+      	</when>
+      	<otherwise>
+      		(select IFNULL(MAX(tb.category_id)+1,1) FROM t_basic tb ),
+      	</otherwise>
+      </choose>
+      <if test="categoryName != null" >
+        #{categoryName,jdbcType=VARCHAR},
+      </if>
+      <choose>
+      	<when test="attributeId != null">
+      		#{attributeId,jdbcType=INTEGER},
+      	</when>
+      	<otherwise>
+      		(select IFNULL(MAX(tb.attribute_id)+1,1) FROM t_basic tb WHERE tb.category_id = #{categoryId,jdbcType=INTEGER}),
+      	</otherwise>
+      </choose>
+      <if test="attributeId != null" >
+        #{attributeId,jdbcType=INTEGER},
+      </if>
+      <if test="attributeName != null" >
+        #{attributeName,jdbcType=VARCHAR},
+      </if>
+      <if test="abbreviate != null" >
+        #{abbreviate,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateById" parameterType="BasicData" >
+    update t_basic
+    <set >
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+	  <if test="categoryId != null">
+	  	category_id = #{categoryId,jdbcType=INTEGER},
+	  </if>
+      <if test="categoryName != null" >
+        category_name = #{categoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="attributeId != null" >
+        attribute_id = #{attributeId,jdbcType=INTEGER},
+      </if>
+      <if test="attributeName != null" >
+        attribute_name = #{attributeName,jdbcType=VARCHAR},
+      </if>
+      <if test="abbreviate != null" >
+        abbreviate = #{abbreviate,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+        version = version + 1,
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+</mapper>

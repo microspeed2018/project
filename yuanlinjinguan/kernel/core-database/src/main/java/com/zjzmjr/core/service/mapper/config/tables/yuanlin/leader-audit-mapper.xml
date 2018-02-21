@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.audit.LeaderAuditMapper" >
+  <resultMap id="BaseResultMap" type="LeaderAudit" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="project_id" property="projectId" jdbcType="INTEGER" />
+    <result column="applicant" property="applicant" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="payment_mode" property="paymentMode" jdbcType="INTEGER" />
+    <result column="amount" property="amount" jdbcType="DECIMAL" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap type="GardenProjectLeaderAudit" id="GardenProjectLeaderAuditResultMap" extends="BaseResultMap">
+    <result column="payment_mode_name" property="paymentModeName" jdbcType="VARCHAR" />
+    <result column="project_leader_name" property="projectLeaderName" jdbcType="VARCHAR" />
+    <association property="gardenProject" column="project_id" javaType="GardenProject" resultMap="GardenProjectResultMap"/>
+    <association property="admin" column="user_id" javaType="Admin" resultMap="AdminResultMap"/>
+    <association property="basicData" column="type" javaType="BasicData" resultMap="CompanyBasicInfoResultMap"/>
+  </resultMap>  
+  <resultMap type="GardenProject" id="GardenProjectResultMap">
+    <id column="project_id" property="id" jdbcType="INTEGER" />
+    <result column="project_company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="project_no" property="projectNo" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="introducer" property="introducer" jdbcType="INTEGER" />
+    <result column="city" property="city" jdbcType="INTEGER" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="design_area" property="designArea" jdbcType="INTEGER" />
+    <result column="investment_mount" property="investmentMount" jdbcType="DECIMAL" />
+    <result column="nature" property="nature" jdbcType="INTEGER" />
+    <result column="category" property="category" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="management_department" property="managementDepartment" jdbcType="INTEGER" />
+    <result column="introduction" property="introduction" jdbcType="VARCHAR" />
+    <result column="intentional_cooperation" property="intentionalCooperation" jdbcType="INTEGER" />
+    <result column="need_technical" property="needTechnical" jdbcType="INTEGER" />
+    <result column="pre_requirements" property="preRequirements" jdbcType="VARCHAR" />
+    <result column="contract_award_company" property="contractAwardCompany" jdbcType="INTEGER" />
+    <result column="have_scheme" property="haveScheme" jdbcType="INTEGER" />
+    <result column="have_development" property="haveDevelopment" jdbcType="INTEGER" />
+    <result column="have_drawing" property="haveDrawing" jdbcType="INTEGER" />
+    <result column="have_planning" property="havePlanning" jdbcType="INTEGER" />
+    <result column="management_personnel" property="managementPersonnel" jdbcType="INTEGER" />
+    <result column="project_leader" property="projectLeader" jdbcType="INTEGER" />
+    <result column="is_major_project" property="isMajorProject" jdbcType="INTEGER" />
+    <result column="bidding_deadline" property="biddingDeadline" jdbcType="VARCHAR" />
+    <result column="bidding_memo" property="biddingMemo" jdbcType="VARCHAR" />
+    <result column="bidding_documents_producer" property="biddingDocumentsProducer" jdbcType="INTEGER" />
+    <result column="registration_results" property="registrationResults" jdbcType="INTEGER" />
+    <result column="registration_results_memo" property="registrationResultsMemo" jdbcType="VARCHAR" />
+    <result column="have_technical" property="haveTechnical" jdbcType="INTEGER" />
+    <result column="margin_deadline" property="marginDeadline" jdbcType="VARCHAR" />
+    <result column="tender_deadline" property="tenderDeadline" jdbcType="VARCHAR" />
+    <result column="bidding_documents_memo" property="biddingDocumentsMemo" jdbcType="VARCHAR" />
+    <result column="bail" property="bail" jdbcType="DECIMAL" />
+    <result column="latest_remittance_date" property="latestRemittanceDate" jdbcType="VARCHAR" />
+    <result column="remittance_company" property="remittanceCompany" jdbcType="VARCHAR" />
+    <result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+    <result column="account_no" property="accountNo" jdbcType="VARCHAR" />
+    <result column="bail_memo" property="bailMemo" jdbcType="VARCHAR" />
+    <result column="business_producer" property="businessProducer" jdbcType="INTEGER" />
+    <result column="tender_offer" property="tenderOffer" jdbcType="DECIMAL" />
+    <result column="is_win_bidding" property="isWinBidding" jdbcType="INTEGER" />
+    <result column="nopass_reason" property="nopassReason" jdbcType="VARCHAR" />
+    <result column="step" property="step" jdbcType="INTEGER" />
+    <result column="sub_step" property="subStep" jdbcType="INTEGER" />
+    <result column="sub_step2" property="subStep2" jdbcType="INTEGER" />
+    <result column="project_status" property="status" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap type="Admin" id="AdminResultMap">
+    <id column="admin_id" property="id" jdbcType="INTEGER" />
+    <result property="username" column="username" jdbcType="VARCHAR" />
+	<result property="name" column="admin_name" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap type="BasicData" id="CompanyBasicInfoResultMap">
+    <id column="basic_id" property="id" jdbcType="INTEGER" />
+    <result column="category_id" property="categoryId" jdbcType="INTEGER" />
+    <result column="category_name" property="categoryName" jdbcType="VARCHAR" />
+    <result column="attribute_id" property="attributeId" jdbcType="INTEGER" />
+    <result column="attribute_name" property="attributeName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, company_id, project_id, applicant, type, amount, payment_mode, status, memo, create_time, create_user_id, 
+    update_time, update_user_id, version
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from z_leader_audit
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="getProjectLeaderAuditCount" resultType="java.lang.Integer" parameterType="GardenProjectAuditQuery" >
+    select Count(zla.id) from z_leader_audit zla
+    left outer join z_project zp on zla.project_id = zp.id  
+    left outer join t_admin ta on ta.id = zla.applicant
+    left outer join t_basic tb on tb.id = zla.type
+    left outer join t_basic tbt on tbt.id = zla.payment_mode
+    <include refid="where_clause"></include>
+  </select>
+  <select id="getProjectLeaderAudit" resultMap="GardenProjectLeaderAuditResultMap" parameterType="GardenProjectAuditQuery">
+    select zla.*,zp.*,zp.status project_status,ta.name admin_name,tb.attribute_name , tbt.attribute_name payment_mode_name,tal.name project_leader_name 
+     from z_leader_audit zla
+    left outer join z_project zp on zla.project_id = zp.id   
+    left outer join t_admin ta on ta.id = zla.applicant
+    left outer join t_basic tb on tb.id = zla.type
+    left outer join t_basic tbt on tbt.id = zla.payment_mode   
+    left outer join t_admin tal on tal.id = zp.project_leader
+    <include refid="where_clause"></include>
+    <choose>
+        <when test="orderBy != null and orderBy!=''">
+            order by #{orderBy}
+        </when>
+        <otherwise>
+            order by zla.create_time DESC
+        </otherwise>
+    </choose>
+    limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+  <sql id="where_clause">
+   <where>
+        <trim prefixOverrides="and">
+            <if test="id != null">
+                zla.id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="companyId != null">
+                and zla.company_id = #{companyId,jdbcType=INTEGER}
+            </if>
+            <if test="projectNo != null">
+                and zp.project_no like CONCAT(#{projectNo,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="projectLst != null">
+	            and zla.project_id in 
+	               <foreach collection="projectLst" open="(" close=")" separator="," item="item">
+	                 #{item}
+	              </foreach>
+	        </if>
+            <if test="projectId != null">
+                and zla.project_id = #{projectId,jdbcType=INTEGER}
+            </if>
+            <if test="name != null">
+                and zp.name like CONCAT(#{name,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="adminName != null">
+                and ta.name like CONCAT(#{adminName,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="type != null">
+                and zla.type = #{type,jdbcType=INTEGER}
+            </if>
+            <if test="status != null">
+                and zla.status = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="createTimeStart != null">
+                and DATE_FORMAT(zla.create_time,'%Y%m%d') >= #{createTimeStart,jdbcType=TIMESTAMP}
+            </if>
+            <if test="createTimeEnd != null">
+                <![CDATA[
+                    and DATE_FORMAT(zla.create_time,'%Y%m%d') <= #{createTimeEnd,jdbcType=TIMESTAMP}
+                ]]>
+            </if>
+            <if test="verifyTimeStart != null">
+                and DATE_FORMAT(zla.update_time,'%Y%m%d') >= #{verifyTimeStart,jdbcType=TIMESTAMP}
+            </if>
+            <if test="verifyTimeEnd != null">
+                <![CDATA[
+                    and DATE_FORMAT(zla.update_time,'%Y%m%d') <= #{verifyTimeEnd,jdbcType=TIMESTAMP}
+                ]]>
+            </if>
+        </trim>
+    </where>
+  </sql>  
+  <insert id="insertLeaderAudit" parameterType="LeaderAudit" >
+    insert into z_leader_audit
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="projectId != null" >
+        project_id,
+      </if>
+      <if test="applicant != null" >
+        applicant,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="amount != null" >
+        amount,
+      </if>
+      <if test="paymentMode != null" >
+        payment_mode,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="memo != null" >
+        memo,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="projectId != null" >
+        #{projectId,jdbcType=INTEGER},
+      </if>
+      <if test="applicant != null" >
+        #{applicant,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="amount != null" >
+        #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="paymentMode != null" >
+        #{paymentMode,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="memo != null" >
+        #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateLeaderAuditById" parameterType="LeaderAudit" >
+    update z_leader_audit
+    <set >
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="projectId != null" >
+        project_id = #{projectId,jdbcType=INTEGER},
+      </if>
+      <if test="applicant != null" >
+        applicant = #{applicant,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="amount != null" >
+        amount = #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="paymentMode != null" >
+        payment_mode = #{paymentMode,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="memo != null" >
+        memo = #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+        version = version + 1
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

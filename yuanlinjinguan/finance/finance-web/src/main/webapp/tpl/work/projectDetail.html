@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>汇报</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+    </head>
+    <body>
+        <header class='header'>
+            <img src="../../images/svg/left.svg" class="icon-40" id="goback"  />
+            <span class='tit'>汇报</span>
+            <i></i>
+        </header>
+        <div class="work-detail-user">
+            <i id="prev">⇠</i>
+            <p>
+                <span id="name"></span>
+                <span id="time"></span>
+            </p>
+            <i id="next" class='disable'>⇢</i>
+        </div>
+        <div class='wrap bg'>
+            <ul class="mail-list">
+                <li>
+                    <div class="tit">
+                        <span class="bg-9" id="Identification"></span>
+                    </div>
+                    <div class="con">
+                        <p>
+                            <span class="name" id='name-user'></span>
+                            <span class="mobile" id='mobile-user'></span>
+                        </p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class='wrap bg' style="margin-top: 0;">
+            <h2>工作记录</h2>
+            <div class="work-detail-con">
+                <textarea readonly id='content'></textarea>
+            </div>
+        </div>
+        <div class='wrap bg'>
+            <h2>工作照片</h2>
+            <div class="work-detail-con">
+                <ul></ul>
+            </div>
+        </div>
+        <div class='wrap'>
+            <ul class='wrap-list'>
+                <li>
+                    <div class='tit'>
+                        工作地点
+                    </div>
+                    <div class='con' id="address"></div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        工作分类
+                    </div>
+                    <div class='con' id="type"></div>
+                </li>
+                <!-- <li>
+                    <div class='tit'>
+                        汇报人
+                    </div>
+                    <div class='con' id="project"></div>
+                </li> -->
+            </ul>
+        </div>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/mui.zoom.js"></script>
+    <script src="../../js/mui.previewimage.js"></script>
+    <script src="../../js/jquery.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script>
+        (function($, doc) {
+            $.init();
+            $.previewImage();
+
+            // 校验app或wap
+            myInit(indexFun);
+            function indexFun() {
+                // goback
+                doc.querySelector("#goback").addEventListener("click", function () {
+                    myOpenWindow("/tpl/product/step-tab.html", 'step-tab');
+                });
+
+                var productId = JSON.parse(myGetLocalStorage("productId"));
+                var userId;
+                var page = 1;
+                var total;
+                if (productId) {
+                    getDetail(page);
+                }
+
+                // 上/下页
+                jQuery("#prev").on("click", function() {
+                    if (page < total) {
+                        page++;
+                        getDetail(page)
+                        jQuery("#next").removeClass("disable")
+                    } else {
+                        jQuery(this).addClass('disable')
+
+                    }
+                });
+                jQuery("#next").on("click", function() {
+                    if (page > 1) {
+                        page--;
+                        getDetail(page)
+                        jQuery("#prev").removeClass("disable")
+                    } else {
+                        jQuery(this).addClass('disable')
+
+                    }
+                });
+
+                // 获取工作详情
+                function getDetail(page) {
+                    myLoading();
+                    $.ajax(global.apiURL + '/company/user/0/workReport.htm', {
+                        data : {
+                            projectId: productId,
+                            rows: 1,
+                            page: page
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        timeout : 10000,
+                        success : function(data){
+                            if (data.success) {
+                                total = data.total;
+                                if (total == 1) {
+                                    jQuery("#prev").addClass("disable");
+                                }
+                                createInfo(data.data[0]);
+                            } else {
+                                //myToast(data.resultMsg);
+                            }
+                            myLoadingOver();
+                        },
+                        error : function() {
+                            myLoadingOver();
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+
+                function createInfo(data) {
+                    jQuery("#name").html(data.project.name)
+                    jQuery("#time").html(zjzm.getDay(data.updateTime.time, 'yyyy-MM-dd hh:mm'))
+                    jQuery("#content").val(data.workContent)
+                    if (data.address) {
+                        jQuery("#address").html(data.address)
+                    } else {
+                        jQuery("#address").html("");
+                    }
+                    if (data.basic && data.basic.attributeName) {
+                        jQuery("#type").html(data.basic.attributeName)
+                    } else {
+                        jQuery("#type").html("")
+                    }
+                    // if (data.user.name) {
+                    //     jQuery("#project").html(data.user.name)
+                    // } else {
+                    //     jQuery("#project").html("")
+                    // }
+                    var arr = [];
+                    arr = data.workProof.split(",");
+                    var dom = "",
+                        box = jQuery(".work-detail-con ul");
+                    for (var i = 0; i < arr.length; i++) {
+                        dom += "<li>"+
+                            "<img src='"+ arr[i] +"' data-preview-src='"+ arr[i] +"' data-preview-group='1'>"+
+                        "</li>";
+                    }
+                    box.html(dom);
+
+                    // 加入人物信息
+                    if (data.user) {
+                        jQuery("#name-user").html(data.user.name);
+                        jQuery("#mobile-user").html(data.user.mobile);
+                        if (data.user.imageAddress) {
+                            jQuery("#Identification").html("<img src='"+ data.user.imageAddress +"' />");
+                        } else {
+                            var name = data.user.name.substring(data.user.name.length - 2, data.user.name.length);
+                            jQuery("#Identification").html(name);
+                        }
+                    }
+                }
+            }
+        }(mui, document));
+    </script>
+</html>

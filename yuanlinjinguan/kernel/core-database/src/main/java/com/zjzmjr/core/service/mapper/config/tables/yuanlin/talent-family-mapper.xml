@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.talent.TalentFamilyMapper" >
+  <resultMap id="BaseResultMap" type="TalentFamily" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="talent_id" property="talentId" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="relation" property="relation" jdbcType="VARCHAR" />
+    <result column="company" property="company" jdbcType="VARCHAR" />
+    <result column="post" property="post" jdbcType="VARCHAR" />
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, company_id, talent_id, name, relation, company, post, telephone, create_time, 
+    create_user_id, update_time, update_user_id, version
+  </sql>
+  <select id="getTalentFamilyByCondition" resultMap="BaseResultMap" parameterType="TalentFamilyQuery" >
+    select 
+    <include refid="Base_Column_List" />
+    from z_talent_family
+    <where>
+    	<trim prefixOverrides="and">
+    		<if test="id != null" >
+    		   id = #{id,jdbcType=INTEGER}
+    		</if>
+    		<if test="talentId != null" >
+    		   and talent_id = #{talentId,jdbcType=INTEGER}
+    		</if>
+    		<if test="companyId != null" >
+    		   and company_id = #{companyId,jdbcType=INTEGER}
+    		</if>
+    	</trim>
+    </where>
+  </select>
+  <delete id="deleteTalentFamily" parameterType="java.lang.Integer" >
+    delete from z_talent_family
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insertTalentFamily" parameterType="TalentFamily" >
+    insert into z_talent_family
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="talentId != null" >
+        talent_id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="relation != null" >
+        relation,
+      </if>
+      <if test="company != null" >
+        company,
+      </if>
+      <if test="post != null" >
+        post,
+      </if>
+      <if test="telephone != null" >
+        telephone,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="talentId != null" >
+        #{talentId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="relation != null" >
+        #{relation,jdbcType=VARCHAR},
+      </if>
+      <if test="company != null" >
+        #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="post != null" >
+        #{post,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null" >
+        #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateTalentFamily" parameterType="TalentFamily" >
+    update z_talent_family
+    <set >
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="talentId != null" >
+        talent_id = #{talentId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="relation != null" >
+        relation = #{relation,jdbcType=VARCHAR},
+      </if>
+      <if test="company != null" >
+        company = #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="post != null" >
+        post = #{post,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null" >
+        telephone = #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+        version = version + 1
+    </set>
+     <where>
+    	<trim prefixOverrides="and">
+    		<if test="id != null" >
+    		   id = #{id,jdbcType=INTEGER}
+    		</if>
+    		<if test="talentFamilyIds != null" >
+    		   and id in (${talentFamilyIds})
+    		</if>
+    	</trim>
+    </where>
+  </update>
+</mapper>

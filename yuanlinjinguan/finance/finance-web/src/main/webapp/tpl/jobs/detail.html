@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>招聘详情</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div id="jobsDetailBox" v-cloak>
+            <header class="header">
+                <img src="../../images/svg/left.svg" class="icon-40" @click='goBack' />
+                <span class="tit">招聘详情</span>
+                <i></i>
+            </header>
+            <div class='jobsDetail'>
+                <div class='wrap'>
+                    <h2>{{ datas.positionName }}</h2>
+                    <ul>
+                        <li>
+                            <span>工作地点：{{ datas.address }}</span>
+                            <span v-if='datas.companyDepartment'>招聘部门：{{ datas.companyDepartment.name }}</span>
+                        </li>
+                        <li>
+                            <span>年龄：{{ datas.age }}</span>
+                            <span>工作经验 ：{{ datas.experience }}</span>
+                        </li>
+                        <li>
+                            <span>学历：{{ datas.education }}</span>
+                            <span>招聘人数：{{ datas.numbers }}</span>
+                        </li>
+                        <li>
+                            <span>薪资待遇：{{ datas.salary }}</span>
+                            <span v-if='datas.createTime'>发布日期：{{ datas.createTime.time | formatDate }}</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class='wrap' v-if='datas.postDuties'>
+                    <h2>岗位职责</h2>
+                    <div v-html='datas.postDuties'></div>
+                </div>
+                <div class='wrap' v-if='datas.qualification'>
+                    <h2>任职资格</h2>
+                    <div v-html='datas.qualification'></div>
+                </div>
+                <div class='wrap' v-if='datas.isValid == 1'>
+                    <input type="button" value='申请' class='btn btn-max btn-top' @click='submit' />
+                </div>
+                <div v-else>
+                    <div class='wrap' v-if='datas.isValid == 0 || datas.isValid == 2'>
+                        <input type="button" value='返回' class='btn btn-max btn-top' @click='goBack' />
+                    </div>
+                    <div class='wrap' v-else>
+                        <input type="button" value='已申请' class='btn btn-max btn-top' @click='submit' disabled />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../js/axios.min.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script>
+        // 校验app或wap
+        myInit(indexFun);
+        function indexFun() {
+            var jobsDetailBox = new Vue({
+                el: "#jobsDetailBox",
+                data : {
+                    jobsDetail: JSON.parse(myGetLocalStorage("jobsDetail")),
+                    datas: {
+                        address: "",
+                        isValid: ''
+                    },
+                    mobile: JSON.parse(myGetLocalStorage("user")),
+                    recruitmentId: ''
+                },
+                methods: {
+                    setPage: function () {
+                        this.datas.positionName = this.jobsDetail.positionName
+                        this.datas.address = this.jobsDetail.address
+                        this.datas.department = this.jobsDetail.department
+                        this.datas.age = this.jobsDetail.age
+                        this.datas.experience = this.jobsDetail.experience
+                        this.datas.education = this.jobsDetail.education
+                        this.datas.numbers = this.jobsDetail.numbers
+                        this.datas.salary = this.jobsDetail.salary
+                        this.datas.createTime = this.jobsDetail.createTime
+                        this.datas.recruitmentId = this.jobsDetail.id
+                        if (this.datas.createTime) {
+                            this.datas.createTime.time = this.jobsDetail.createTime.time
+                        }
+                        this.datas.postDuties = this.jobsDetail.postDuties
+                        this.datas.qualification = this.jobsDetail.qualification
+                        this.datas.isValid = this.jobsDetail.isValid
+                        this.recruitmentId = this.jobsDetail.id
+                    },
+                    goBack: function () {
+                        myRemoveLocalStorage("jobsDetailBox");
+                        myOpenWindow('/tpl/jobs/list.html', "list");
+                    },
+                    getInfo: function () {
+                        var that = this
+                        myLoading();
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + '/talent/user/getTalentByCondition.htm',
+                            params: {
+                                mobile: that.mobile,
+                                company: 1
+                            }
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                if (that.recruitmentId == datas.data[0].recruitmentId) {
+                                    that.datas.isValid = 3
+                                }
+                            }
+                            myLoadingOver();
+                        }).catch(function (error) {
+                            myLoadingOver();
+                        })
+                    },
+                    submit: function () {
+                        var that = this
+                        if (that.mobile) {
+                            myLoading();
+                            axios({
+                                method: 'post',
+                                url: global.apiURL + '/talent/getTalentByCondition.htm',
+                                params: {
+                                    mobile: that.mobile,
+                                    company: 1
+                                }
+                            }).then(function (response) {
+                                var datas = response.data;
+                                if (datas.success) {
+                                    if (that.recruitmentId != datas.data[0].recruitmentId) {
+                                        myConfirm("您已申请了别的职位，是否将申请职位切换为本职位？", apply1);
+                                        function apply1() {
+                                            mySetLocalStorage("applyJobs", {
+                                                'positionName': that.datas.positionName,
+                                                'recruitmentId': that.datas.recruitmentId
+                                            })
+                                            myOpenWindow('/tpl/resume/index.html', "index");
+                                            zjzm.historyUrl("/tpl/jobs/detail.html");
+                                        }
+                                    } else {
+                                        myConfirm("您确定要申请改岗位吗", apply);
+                                        function apply() {
+                                            myToast('您已成功申请该岗位');
+                                        }
+                                    }
+                                } else {
+                                    if (datas.code == 'record_not_exsist') {
+                                        myConfirm("请先录入您的个人简历", apply2);
+                                        function apply2() {
+                                            mySetLocalStorage("applyJobs", {
+                                                'positionName': that.datas.positionName,
+                                                'recruitmentId': that.datas.recruitmentId
+                                            })
+                                            myOpenWindow('/tpl/resume/index.html', "index");
+                                            zjzm.historyUrl("/tpl/jobs/detail.html");
+                                        }
+                                    } else {
+                                        myToast(datas.resultMsg);
+                                    }
+                                }
+                                myLoadingOver();
+                            }).catch(function (error) {
+                                myLoadingOver();
+                                //myToast(error);
+                            })
+                        } else {
+                            myConfirm("请先录入您的个人简历", apply3);
+                            function apply3() {
+                                mySetLocalStorage("applyJobs", {
+                                    'positionName': that.datas.positionName,
+                                    'recruitmentId': that.datas.recruitmentId
+                                })
+                                myOpenWindow('/tpl/resume/index.html', "index");
+                                zjzm.historyUrl("/tpl/jobs/detail.html");
+                            }
+                        }
+                    }
+                },
+                filters: {
+                    formatDate: function(time) {
+                        return zjzm.getDay(time, 'yyyy/MM/dd');
+                    }
+                },
+                mounted: function () {
+                    this.$nextTick(function () {
+                        mui.init();
+                        this.setPage();
+                        if(this.mobile)this.getInfo()
+                    })
+                }
+            });
+        }
+    </script>
+</html>

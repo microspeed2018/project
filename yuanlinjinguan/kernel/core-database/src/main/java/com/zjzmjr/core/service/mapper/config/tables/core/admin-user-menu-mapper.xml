@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.coredb.menu.AdminUserMenuDao">
+
+	<select id="getMenuByUser" resultMap="com.zjzmjr.core.service.mapper.dao.coredb.menu.AdminMenuDao.adminMenuResultMap"
+		parameterType="map">
+		SELECT menu.* FROM t_user_menu um INNER JOIN t_menu menu ON
+		um.menu_id=menu.id
+		WHERE
+		um.user_id=#{userId}		
+		<if test="parentId != null">
+			AND menu.parent=#{parentId}
+		</if>
+		<if test="project != null">
+			AND menu.project = #{project}
+		</if>	
+		ORDER BY menu.parent,menu.disporder ASC
+	</select>
+
+	<delete id="deleteByMenuIds" parameterType="list">
+		DELETE FROM t_user_menu WHERE menu_id
+		IN
+		<foreach collection="list" open="(" close=")" separator="," item="item">#{item}</foreach>
+	</delete>
+
+	<insert id="batchInsert" parameterType="list">
+		INSERT INTO t_user_menu (user_id,menu_id,create_time) VALUES
+		<foreach collection="list" open="" close="" separator="," item="item">
+			(#{item.userId},#{item.menuId},#{item.time})
+		</foreach>
+	</insert>
+
+	<update id="update" parameterType="map">
+		UPDATE t_user_menu
+		<set>
+			<if test="userId != null">
+				user_id=#{userId},
+			</if>
+			<if test="menuId != null">
+				menu_id=#{menuId},
+			</if>
+			<if test="time != null">
+				create_time=#{time},
+			</if>
+		</set>
+		<where>
+			id=#{id}
+			<if test="version != null">
+				AND version=#{version}
+			</if>
+		</where>
+	</update>
+
+	<delete id="deleteByMenuId" parameterType="int">
+		DELETE FROM t_user_menu WHERE menu_id=#{menuId}
+	</delete>
+	
+	<delete id="deleteUserMenuByMenuId" parameterType="map">
+		DELETE FROM t_user_menu WHERE user_id=#{userId} 
+		<if test="menuIds != null">
+          AND menu_id IN
+            <foreach collection="menuIds" open="(" close=")" separator="," item="item">
+                #{item}
+            </foreach>
+		</if>
+	</delete>
+</mapper>

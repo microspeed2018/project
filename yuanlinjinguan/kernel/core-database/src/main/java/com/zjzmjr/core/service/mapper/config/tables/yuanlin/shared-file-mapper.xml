@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.file.SharedFileMapper" >
+  <resultMap id="BaseResultMap" type="SharedFile" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="shared_staff" property="sharedStaff" jdbcType="INTEGER" />
+    <result column="file_name" property="fileName" jdbcType="VARCHAR" />
+    <result column="file_explain" property="fileExplain" jdbcType="VARCHAR" />
+    <result column="save_name" property="saveName" jdbcType="VARCHAR" />
+    <result column="save_address" property="saveAddress" jdbcType="VARCHAR" />
+    <result column="source_type" property="sourceType" jdbcType="INTEGER" />
+    <result column="is_message" property="isMessage" jdbcType="INTEGER" />
+    <result column="is_sms" property="isSms" jdbcType="INTEGER" />
+    <result column="is_top" property="isTop" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <resultMap type="SharedFileInfo" id="InfoResultMap" extends="BaseResultMap">
+  	<association property="admin" resultMap="AdminResultMap"></association>
+  </resultMap>
+  
+  <resultMap type="Admin" id="AdminResultMap">
+  	<id column="shared_staff" property="id" jdbcType="INTEGER"/>
+  	<result column="name" property="name" jdbcType="VARCHAR" />
+  	<result column="image_address" property="imageAddress" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, company_id, shared_staff, file_name, file_explain, save_name, save_address, source_type, 
+    is_message, is_sms, is_top, create_time, create_user_id, update_time, update_user_id, 
+    version
+  </sql>
+  
+   <select id="getSharedFileById" resultMap="InfoResultMap" parameterType="java.lang.Integer" >
+    select 
+    sf.id, sf.company_id, sf.shared_staff, sf.file_name, sf.file_explain, sf.save_name, sf.save_address, sf.source_type, 
+    sf.is_message, sf.is_sms, sf.is_top, sf.create_time, sf.create_user_id, sf.update_time, sf.update_user_id,
+    sf.version, ta.name, ta.image_address
+    from z_shared_file sf
+	left outer join t_admin ta on ta.id = sf.shared_staff
+    where sf.id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+  <select id="getSharedFileCount" resultType="java.lang.Integer" parameterType="SharedFileQuery" >
+    select 
+    count(sf.id)
+    from z_shared_file sf
+	left outer join t_admin ta on ta.id = sf.shared_staff
+    <include refid="where_clause"/>
+  </select>
+  
+  <select id="getSharedFile" resultMap="InfoResultMap" parameterType="SharedFileQuery" >
+    select 
+    sf.id, sf.company_id, sf.shared_staff, sf.file_name, sf.file_explain, sf.save_name, sf.save_address, sf.source_type, 
+    sf.is_message, sf.is_sms, sf.is_top, sf.create_time, sf.create_user_id, sf.update_time, sf.update_user_id,
+    sf.version, ta.name, ta.image_address
+    from z_shared_file sf
+	left outer join t_admin ta on ta.id = sf.shared_staff
+    <include refid="where_clause"/>
+  	<choose>
+        <when test="orderBy != null and orderBy!=''">
+            order by #{orderBy}
+        </when>
+        <otherwise>
+		  	order by sf.is_top desc, sf.create_time desc
+        </otherwise>
+    </choose>
+    limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+  
+  <sql id="where_clause">
+  	<where>
+  		<trim prefixOverrides="and">
+  			<if test="sharedStaff != null">
+  				and sf.shared_staff = #{sharedStaff,jdbcType=INTEGER}
+  			</if>
+  			<if test="companyId != null">
+  				and sf.company_id = #{companyId,jdbcType=INTEGER}
+  			</if>
+  			<if test="sourceType != null">
+  				and sf.sourceType = #{source_type,jdbcType=INTEGER}
+  			</if>
+  			<if test="fileName != null and fileName != ''">
+  				and sf.file_name like CONCAT('%',#{fileName,jdbcType=VARCHAR},'%')
+  			</if>
+  			<if test="name != null and name != ''">
+  				and ta.name like CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+  			</if>
+  			<if test="isMessage != null">
+  				and sf.is_message = #{isMessage,jdbcType=INTEGER}
+  			</if>
+  			<if test="isSms != null">
+  				and sf.is_sms = #{isSms,jdbcType=INTEGER}
+  			</if>
+  			<if test="isTop != null">
+  				and sf.is_top = #{isTop,jdbcType=INTEGER}
+  			</if>
+  			<if test="startDate != null and startDate != ''">
+  				and sf.create_time >= str_to_date(#{startDate,jdbcType=VARCHAR},'%Y%m%d')
+  			</if>
+  			<if test="endDate != null and endDate != ''">
+  				<![CDATA[
+	  				and sf.create_time <= str_to_date(#{endDate,jdbcType=VARCHAR},'%Y%m%d')
+  				]]>
+  			</if>
+  		</trim>
+  	</where>
+  </sql>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from z_shared_file
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="batchInsert" parameterType="java.util.List" >
+    insert into z_shared_file (company_id, shared_staff, 
+      file_name, file_explain, save_name, 
+      save_address, source_type, is_message, 
+      is_sms, is_top, create_time, 
+      create_user_id)
+    values 
+    <foreach collection="list" item="item" separator="," index="index">
+    	(#{item.companyId,jdbcType=INTEGER}, #{item.sharedStaff,jdbcType=INTEGER}, 
+      #{item.fileName,jdbcType=VARCHAR}, #{item.fileExplain,jdbcType=VARCHAR}, #{item.saveName,jdbcType=VARCHAR}, 
+      #{item.saveAddress,jdbcType=VARCHAR}, #{item.sourceType,jdbcType=INTEGER}, #{item.isMessage,jdbcType=INTEGER}, 
+      #{item.isSms,jdbcType=INTEGER}, #{item.isTop,jdbcType=INTEGER}, #{item.createTime,jdbcType=TIMESTAMP}, 
+      #{item.createUserId,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+  
+  <insert id="insertSharedFile" parameterType="SharedFile" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+    insert into z_shared_file
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="sharedStaff != null" >
+        shared_staff,
+      </if>
+      <if test="fileName != null" >
+        file_name,
+      </if>
+      <if test="fileExplain != null" >
+        file_explain,
+      </if>
+      <if test="saveName != null" >
+        save_name,
+      </if>
+      <if test="saveAddress != null" >
+        save_address,
+      </if>
+      <if test="sourceType != null" >
+        source_type,
+      </if>
+      <if test="isMessage != null" >
+        is_message,
+      </if>
+      <if test="isSms != null" >
+        is_sms,
+      </if>
+      <if test="isTop != null" >
+        is_top,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="sharedStaff != null" >
+        #{sharedStaff,jdbcType=INTEGER},
+      </if>
+      <if test="fileName != null" >
+        #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileExplain != null" >
+        #{fileExplain,jdbcType=VARCHAR},
+      </if>
+      <if test="saveName != null" >
+        #{saveName,jdbcType=VARCHAR},
+      </if>
+      <if test="saveAddress != null" >
+        #{saveAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceType != null" >
+        #{sourceType,jdbcType=INTEGER},
+      </if>
+      <if test="isMessage != null" >
+        #{isMessage,jdbcType=INTEGER},
+      </if>
+      <if test="isSms != null" >
+        #{isSms,jdbcType=INTEGER},
+      </if>
+      <if test="isTop != null" >
+        #{isTop,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateById" parameterType="SharedFile" >
+    update z_shared_file
+    <set >
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="sharedStaff != null" >
+        shared_staff = #{sharedStaff,jdbcType=INTEGER},
+      </if>
+      <if test="fileName != null" >
+        file_name = #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileExplain != null" >
+        file_explain = #{fileExplain,jdbcType=VARCHAR},
+      </if>
+      <if test="saveName != null" >
+        save_name = #{saveName,jdbcType=VARCHAR},
+      </if>
+      <if test="saveAddress != null" >
+        save_address = #{saveAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceType != null" >
+        source_type = #{sourceType,jdbcType=INTEGER},
+      </if>
+      <if test="isMessage != null" >
+        is_message = #{isMessage,jdbcType=INTEGER},
+      </if>
+      <if test="isSms != null" >
+        is_sms = #{isSms,jdbcType=INTEGER},
+      </if>
+      <if test="isTop != null" >
+        is_top = #{isTop,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+        version = version + 1,
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

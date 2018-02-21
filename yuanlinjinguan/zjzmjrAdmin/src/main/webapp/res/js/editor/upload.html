@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+  	<base target="_self">
+    <title>上传图片</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+    body{margin:0; padding:0; background: #EEEEEE;}
+    td{height:40px; line-height:40px;}
+    #textUrl{border: 1px solid #DDDDDD; height:30px; padding:0 10px;}
+    </style>
+    <script type="text/javascript" src="../jquery/jquery-1.8.0.min.js"></script>
+	<script type="text/javascript">
+	var uploadImgPath = "http://res.cbylsj.com/home/";
+	$.post("/notice/notice.htm",
+			{action:"getResUrl"},
+			function(data){
+				alert(data.url);
+					uploadImgPath=data.url;
+			},
+			"json");
+	
+	function up(){
+		if(document.getElementById('choose').value=="0"){
+			var textUrlVal = document.getElementById('textUrl').value;
+			if(window.ActiveXObject){
+				window.returnValue=textUrlVal;
+			}else{
+				if(window.opener) {  
+					window.opener.setImgInfo(textUrlVal);
+				}  
+			}
+			window.close();
+		}else{
+			var url=document.getElementById('fileUrl').value;
+			if(''==url){
+				alert('请选择上传图片');
+				return false;
+			}
+			if(!isImg(url)){
+				alert("上传文件不是图片");
+				return false;
+			}
+			document.forms['upForm'].submit();
+			document.getElementById('submitBtn').value="上传中";
+			document.getElementById('submitBtn').disabled="disabled";
+		}
+	}
+	function t1(){
+		document.getElementById('textUrl').disabled="";
+		document.getElementById('fileUrl').disabled="disabled";
+		document.getElementById('choose').value="0";
+	}
+	function t2(){
+		document.getElementById('textUrl').disabled="disabled";
+		document.getElementById('fileUrl').disabled="";
+		document.getElementById('choose').value="1";
+	}
+	window.onload=function(){
+		document.getElementsByName('imgs')[0].click();
+	}
+	function isImg(filename){
+		var imgs = ['.png','.bmp','.jpg','.jpeg','.gif'];
+		for(var i=0;i<imgs.length;i++){
+			filename = filename.substring(filename.lastIndexOf('.'))
+			if(filename.toLowerCase()==imgs[i])
+				return true;
+		}
+		return false;
+	}
+	function callback(name,msg){
+		if(name==""){
+			alert(msg);
+			document.getElementById('submitBtn').disabled="";
+			document.getElementById('submitBtn').value="确定";
+		}else{
+			var textUrlVal;
+			if(name.indexOf('\\')!=-1){
+				textUrlVal=uploadImgPath+name.substring(name.lastIndexOf('\\')+1);
+			}else{
+				textUrlVal=uploadImgPath+name;
+			}
+
+			if(window.ActiveXObject){
+				window.returnValue=textUrlVal;
+			}else{
+				if(window.opener) {  
+					window.opener.setImgInfo(textUrlVal);
+				}  
+			}
+			window.close();
+		}
+	}
+	</script>
+  </head>
+  
+  <body>
+    <form name="upForm" action="/lowdown/editImgUpLoad.htm" method="post" enctype="multipart/form-data" target="upLoadImgFrame">
+    	<input id="choose" type="hidden" value="0">
+    	<table width="100%">
+    		<tr>
+    			<td><input type="radio" name="imgs" onclick="t1();"></td>
+    			<td><input type="text" id="textUrl" name="textUrl" value="http://" style="width:400px;"></td>
+    		</tr>
+    		<tr>
+    			<td><input type="radio" name="imgs" onclick="t2();"></td>
+    			<td><input type="file" id="fileUrl" name="file"></td>
+    		</tr>
+    		<tr>
+    			<td colspan="2" align="center"><input id="submitBtn" type="button" value="确定" onclick="up();"></td>
+    		</tr>
+    	</table>
+    </form>
+    <iframe name="upLoadImgFrame" style="height:0;width:0;border:0;display:block;"></iframe>
+  </body>
+</html>

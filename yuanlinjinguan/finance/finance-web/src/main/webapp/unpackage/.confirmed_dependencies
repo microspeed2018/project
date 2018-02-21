@@ -1,0 +1,1278 @@
+{
+  "tpl/password/reset-login-pwd.html": {
+    "href": "tpl/password/reset-login-pwd.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "index.html",
+      "tpl/login/login.html",
+      "tpl/password/find-login-pwd.html"
+    ],
+    "priority": 0
+  },
+  "tpl/password/find-login-pwd.html": {
+    "href": "tpl/password/find-login-pwd.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "tpl/password/reset-login-pwd.html",
+      "tpl/login/login.html"
+    ],
+    "priority": 0
+  },
+  "tpl/single/message.html": {
+    "href": "tpl/single/message.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/email.png"
+    ],
+    "refer": [
+      "index.html",
+      "tpl/loan/loan-list.html",
+      "tpl/myuser/my-user.html",
+      "tpl/insurance/insurance-list.html",
+      "tpl/single/message.html"
+    ],
+    "priority": 0
+  },
+  "tpl/insurance/insurance-success-doctor.html": {
+    "href": "tpl/insurance/insurance-success-doctor.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js"
+    ],
+    "refer": [
+      "tpl/insurance/insurance-list.html"
+    ],
+    "priority": 0
+  },
+  "tpl/insurance/insurance-select-doctor.html": {
+    "href": "tpl/insurance/insurance-select-doctor.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/mui.picker.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/mui.picker.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "tpl/insurance/insurance-detail.html",
+      "tpl/insurance/insurance-success-doctor.html"
+    ],
+    "priority": 0
+  },
+  "tpl/car/car-update.html": {
+    "href": "tpl/car/car-update.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/mui.picker.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/mui.picker.min.js",
+      "js/mui.zoom.js",
+      "js/mui.previewimage.js",
+      "js/jquery.js",
+      "js/common.min.js",
+      "images/example/pic-1.png",
+      "images/icon/question.svg",
+      "images/pic/1x1.png",
+      "images/example/pic-2.png",
+      "images/example/pic-3.png",
+      "images/example/pic-4.png",
+      "images/example/pic-5.png"
+    ],
+    "refer": [
+      "tpl/car/car.html"
+    ],
+    "priority": 0
+  },
+  "tpl/car/car.html": {
+    "href": "tpl/car/car.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "tpl/myuser/my-user.html",
+      "tpl/car/car-update.html"
+    ],
+    "priority": 0
+  },
+  "tpl/insurance/insurance-detail.html": {
+    "href": "tpl/insurance/insurance-detail.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "tpl/bind/bind-IDcard.html",
+      "tpl/insurance/insurance-select-doctor.html",
+      "tpl/insurance/insurance-list.html",
+      "tpl/car/car.html"
+    ],
+    "priority": 0
+  },
+  "tpl/insurance/insurance-list.html": {
+    "href": "tpl/insurance/insurance-list.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/jweixin-1.0.0.js",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/email.png",
+      "images/menu/insurance-h.svg",
+      "images/menu/my.svg"
+    ],
+    "refer": [
+      "index.html",
+      "tpl/loan/loan-list.html",
+      "tpl/myuser/my-user.html",
+      "tpl/single/message.html",
+      "tpl/insurance/insurance-list.html",
+      "tpl/insurance/insurance-detail.html"
+    ],
+    "priority": 0
+  },
+  "tpl/loan/loan-success.html": {
+    "href": "tpl/loan/loan-success.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js"
+    ],
+    "refer": [
+      "tpl/loan/loan-list.html"
+    ],
+    "priority": 0
+  },
+  "tpl/loan/loan-apply.html": {
+    "href": "tpl/loan/loan-apply.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/mui.picker.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/mui.zoom.js",
+      "js/mui.previewimage.js",
+      "js/jquery.js",
+      "js/ajaxfileupload.js",
+      "js/common.min.js",
+      "images/pic/1x1.png",
+      "images/icon/go-back.png",
+      "images/example/pic-7.jpg",
+      "images/icon/question.svg"
+    ],
+    "refer": [
+      "tpl/loan/loan-success.html",
+      "tpl/login/login.html",
+      "tpl/loan/loan-detail.html"
+    ],
+    "priority": 0
+  },
+  "tpl/loan/loan-detail.html": {
+    "href": "tpl/loan/loan-detail.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png",
+      "images/icon/flow.png",
+      "images/icon/condition.png",
+      "images/icon/EQ.png",
+      "images/icon/explain.png"
+    ],
+    "refer": [
+      "tpl/bind/bind-IDcard.html",
+      "tpl/loan/loan-apply.html",
+      "tpl/loan/loan-list.html"
+    ],
+    "priority": 0
+  },
+  "tpl/loan/loan-list.html": {
+    "href": "tpl/loan/loan-list.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/jweixin-1.0.0.js",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/email.png",
+      "images/icon/status-f.png",
+      "images/menu/loan-h.svg",
+      "images/icon/status-s.png",
+      "images/menu/home.svg",
+      "images/menu/my.svg",
+      "images/menu/insurance.svg"
+    ],
+    "refer": [
+      "index.html",
+      "tpl/myuser/my-user.html",
+      "tpl/insurance/insurance-list.html",
+      "tpl/single/message.html",
+      "tpl/loan/loan-list.html",
+      "tpl/loan/loan-detail.html"
+    ],
+    "priority": 0
+  },
+  "tpl/oilcard/oil-card-add.html": {
+    "href": "tpl/oilcard/oil-card-add.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png",
+      "images/icon/zsh.jpg",
+      "images/icon/zsy.jpg"
+    ],
+    "refer": [
+      "tpl/oilcard/oil-card-list.html"
+    ],
+    "priority": 0
+  },
+  "tpl/oilcard/oil-card-update.html": {
+    "href": "tpl/oilcard/oil-card-update.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png",
+      "images/icon/zsh.jpg",
+      "images/icon/zsy.jpg"
+    ],
+    "refer": [
+      "tpl/oilcard/oil-card-list.html"
+    ],
+    "priority": 0
+  },
+  "tpl/oilcard/oil-card-list.html": {
+    "href": "tpl/oilcard/oil-card-list.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png",
+      "images/icon/zsy.jpg",
+      "images/icon/zsh.jpg"
+    ],
+    "refer": [
+      "tpl/myuser/my-user.html",
+      "tpl/oilcard/oil-card-add.html",
+      "tpl/oilcard/oil-card-update.html"
+    ],
+    "priority": 0
+  },
+  "tpl/loan/loan-apply-modify.html": {
+    "href": "tpl/loan/loan-apply-modify.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/mui.picker.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/mui.zoom.js",
+      "js/mui.previewimage.js",
+      "js/jquery.js",
+      "js/ajaxfileupload.js",
+      "js/common.min.js",
+      "images/pic/1x1.png",
+      "images/icon/go-back.png",
+      "images/example/pic-7.jpg",
+      "images/icon/question.svg"
+    ],
+    "refer": [
+      "tpl/login/login.html",
+      "tpl/record/loan-record.html"
+    ],
+    "priority": 0
+  },
+  "tpl/record/credit-record.html": {
+    "href": "tpl/record/credit-record.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "tpl/record/agent-record.html"
+    ],
+    "priority": 0
+  },
+  "tpl/loan/agent-again.html": {
+    "href": "tpl/loan/agent-again.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/mui.picker.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/mui.zoom.js",
+      "js/mui.previewimage.js",
+      "js/jquery.js",
+      "js/ajaxfileupload.js",
+      "js/common.min.js",
+      "images/pic/1x1.png",
+      "images/icon/go-back.png",
+      "images/example/pic-7.jpg",
+      "images/icon/question.svg"
+    ],
+    "refer": [
+      "tpl/loan/loan-success.html",
+      "tpl/login/login.html",
+      "tpl/record/agent-record.html"
+    ],
+    "priority": 0
+  },
+  "tpl/record/agent-record.html": {
+    "href": "tpl/record/agent-record.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/jquery.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "tpl/record/credit-record.html",
+      "tpl/repayment/repayment-detail.html",
+      "tpl/myuser/my-user.html",
+      "tpl/loan/augment-apply.html",
+      "tpl/loan/agent-again.html"
+    ],
+    "priority": 0
+  },
+  "tpl/loan/augment-apply.html": {
+    "href": "tpl/loan/augment-apply.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/mui.picker.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/mui.zoom.js",
+      "js/mui.previewimage.js",
+      "js/jquery.js",
+      "js/ajaxfileupload.js",
+      "js/common.min.js",
+      "images/pic/1x1.png",
+      "images/icon/go-back.png",
+      "images/example/pic-7.jpg",
+      "images/icon/question.svg"
+    ],
+    "refer": [
+      "tpl/record/agent-record.html",
+      "tpl/login/login.html"
+    ],
+    "priority": 0
+  },
+  "tpl/record/loan-record.html": {
+    "href": "tpl/record/loan-record.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/jquery.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "tpl/loan/loan-apply-modify.html",
+      "tpl/repayment/repayment-detail.html",
+      "tpl/myuser/my-user.html",
+      "tpl/loan/augment-apply.html"
+    ],
+    "priority": 0
+  },
+  "tpl/repayment/repayment-success.html": {
+    "href": "tpl/repayment/repayment-success.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/success-pic.png"
+    ],
+    "refer": [
+      "tpl/record/loan-record.html"
+    ],
+    "priority": 0
+  },
+  "tpl/repayment/repayment.html": {
+    "href": "tpl/repayment/repayment.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/mui.zoom.js",
+      "js/mui.previewimage.js",
+      "js/common.min.js",
+      "images/icon/go-back.png",
+      "images/example/pic-6.png",
+      "images/icon/question.svg"
+    ],
+    "refer": [
+      "tpl/repayment/repayment-detail.html",
+      "tpl/repayment/repayment-success.html"
+    ],
+    "priority": 0
+  },
+  "tpl/repayment/repayment-detail.html": {
+    "href": "tpl/repayment/repayment-detail.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "tpl/record/loan-record.html",
+      "tpl/repayment/repayment.html"
+    ],
+    "priority": 0
+  },
+  "tpl/loan/loan-agent-apply.html": {
+    "href": "tpl/loan/loan-agent-apply.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/mui.picker.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/mui.zoom.js",
+      "js/mui.previewimage.js",
+      "js/jquery.js",
+      "js/ajaxfileupload.js",
+      "js/common.min.js",
+      "images/pic/1x1.png",
+      "images/icon/go-back.png",
+      "images/example/pic-7.jpg",
+      "images/icon/question.svg"
+    ],
+    "refer": [
+      "tpl/loan/loan-success.html",
+      "tpl/login/login.html",
+      "tpl/myuser/my-user.html"
+    ],
+    "priority": 0
+  },
+  "tpl/record/withdrawals-record.html": {
+    "href": "tpl/record/withdrawals-record.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/jquery.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "tpl/myuser/my-user.html"
+    ],
+    "priority": 0
+  },
+  "tpl/withdraw/withdraw-success.html": {
+    "href": "tpl/withdraw/withdraw-success.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/success-pic.png"
+    ],
+    "refer": [
+      "tpl/myuser/my-user.html"
+    ],
+    "priority": 0
+  },
+  "tpl/withdraw/withdraw.html": {
+    "href": "tpl/withdraw/withdraw.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "tpl/record/withdrawals-record.html",
+      "tpl/myuser/my-user.html",
+      "tpl/withdraw/withdraw-success.html"
+    ],
+    "priority": 0
+  },
+  "tpl/recharge/recharge-success.html": {
+    "href": "tpl/recharge/recharge-success.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/success-pic.png"
+    ],
+    "refer": [
+      "tpl/myuser/my-user.html"
+    ],
+    "priority": 0
+  },
+  "tpl/record/recharge-record.html": {
+    "href": "tpl/record/recharge-record.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/jquery.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "tpl/myuser/my-user.html"
+    ],
+    "priority": 0
+  },
+  "tpl/recharge/recharge.html": {
+    "href": "tpl/recharge/recharge.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/mui.zoom.js",
+      "js/mui.previewimage.js",
+      "js/common.min.js",
+      "images/icon/go-back.png",
+      "images/example/pic-6.png",
+      "images/icon/question.svg"
+    ],
+    "refer": [
+      "tpl/recharge/recharge-success.html",
+      "tpl/record/recharge-record.html",
+      "tpl/myuser/my-user.html"
+    ],
+    "priority": 0
+  },
+  "tpl/withholdPay/success.html": {
+    "href": "tpl/withholdPay/success.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/success-pic.png"
+    ],
+    "refer": [
+      "tpl/myuser/my-user.html"
+    ],
+    "priority": 0
+  },
+  "tpl/withholdPay/automatic.html": {
+    "href": "tpl/withholdPay/automatic.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/mui.picker.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/mui.picker.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "tpl/myuser/my-user.html",
+      "tpl/withholdPay/success.html"
+    ],
+    "priority": 0
+  },
+  "tpl/withholdPay/automatic-list.html": {
+    "href": "tpl/withholdPay/automatic-list.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "tpl/myuser/my-user.html",
+      "tpl/withholdPay/automatic.html"
+    ],
+    "priority": 0
+  },
+  "tpl/password/manage-pwd.html": {
+    "href": "tpl/password/manage-pwd.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "tpl/myuser/my-user.html"
+    ],
+    "priority": 0
+  },
+  "tpl/password/set-trade-pwd.html": {
+    "href": "tpl/password/set-trade-pwd.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "tpl/myuser/my-user.html",
+      "tpl/password/manage-pwd.html"
+    ],
+    "priority": 0
+  },
+  "tpl/quickpay/quickPay-success.html": {
+    "href": "tpl/quickpay/quickPay-success.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/success-pic.png"
+    ],
+    "refer": [
+      "tpl/myuser/my-user.html"
+    ],
+    "priority": 0
+  },
+  "tpl/quickpay/quick-pay-history.html": {
+    "href": "tpl/quickpay/quick-pay-history.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js"
+    ],
+    "refer": [
+      "tpl/quickpay/quick-pay.html"
+    ],
+    "priority": 0
+  },
+  "tpl/record/repayment-record.html": {
+    "href": "tpl/record/repayment-record.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/jquery.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "tpl/myuser/my-user.html"
+    ],
+    "priority": 0
+  },
+  "tpl/quickpay/quick-pay.html": {
+    "href": "tpl/quickpay/quick-pay.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/mui.zoom.js",
+      "js/mui.previewimage.js",
+      "js/common.min.js",
+      "images/icon/go-back.png",
+      "images/example/pic-6.png",
+      "images/icon/question.svg"
+    ],
+    "refer": [
+      "tpl/quickpay/quickPay-success.html",
+      "tpl/quickpay/quick-pay-history.html",
+      "tpl/record/repayment-record.html",
+      "tpl/myuser/my-user.html"
+    ],
+    "priority": 0
+  },
+  "tpl/bind/update-bank-card.html": {
+    "href": "tpl/bind/update-bank-card.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "tpl/myuser/my-user.html"
+    ],
+    "priority": 0
+  },
+  "tpl/withholdPay/detail.html": {
+    "href": "tpl/withholdPay/detail.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "tpl/withholdPay/success.html",
+      "tpl/withholdPay/list.html"
+    ],
+    "priority": 0
+  },
+  "tpl/withholdPay/list.html": {
+    "href": "tpl/withholdPay/list.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "tpl/myuser/my-user.html",
+      "tpl/withholdPay/detail.html"
+    ],
+    "priority": 0
+  },
+  "tpl/bind/bind-bank-card.html": {
+    "href": "tpl/bind/bind-bank-card.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "tpl/myuser/my-user.html"
+    ],
+    "priority": 0
+  },
+  "tpl/myuser/my-user.html": {
+    "href": "tpl/myuser/my-user.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/jweixin-1.0.0.js",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/portrait-1.png",
+      "images/icon/email.png",
+      "images/menu/home.svg",
+      "images/pic/my-user.jpg",
+      "images/icon/close.svg",
+      "images/menu/my-h.svg",
+      "images/menu/loan.svg",
+      "images/menu/insurance.svg"
+    ],
+    "refer": [
+      "index.html",
+      "tpl/loan/loan-list.html",
+      "tpl/oilcard/oil-card-list.html",
+      "tpl/insurance/insurance-list.html",
+      "tpl/repayment/repayment-detail.html",
+      "tpl/single/message.html",
+      "tpl/loan/loan-agent-apply.html",
+      "tpl/withdraw/withdraw.html",
+      "tpl/recharge/recharge.html",
+      "tpl/withholdPay/automatic-list.html",
+      "tpl/bind/bind-IDcard.html",
+      "tpl/myuser/my-user.html",
+      "tpl/password/set-trade-pwd.html",
+      "tpl/record/loan-record.html",
+      "tpl/quickpay/quick-pay.html",
+      "tpl/car/car.html",
+      "tpl/bind/update-bank-card.html",
+      "tpl/record/agent-record.html",
+      "tpl/withholdPay/list.html",
+      "tpl/bind/bind-bank-card.html",
+      "tpl/login/login.html"
+    ],
+    "priority": 0
+  },
+  "tpl/bind/bind-IDcard-success.html": {
+    "href": "tpl/bind/bind-IDcard-success.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/success-pic.png"
+    ],
+    "refer": [
+      "index.html",
+      "tpl/password/set-trade-pwd.html"
+    ],
+    "priority": 0
+  },
+  "tpl/bind/bind-IDcard.html": {
+    "href": "tpl/bind/bind-IDcard.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png",
+      "images/icon/email.png"
+    ],
+    "refer": [
+      "tpl/myuser/my-user.html",
+      "tpl/single/message.html",
+      "tpl/bind/bind-IDcard-success.html"
+    ],
+    "priority": 0
+  },
+  "tpl/reg/reg-success.html": {
+    "href": "tpl/reg/reg-success.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/success-pic.png"
+    ],
+    "refer": [
+      "index.html",
+      "tpl/bind/bind-IDcard.html"
+    ],
+    "priority": 0
+  },
+  "tpl/reg/reg.html": {
+    "href": "tpl/reg/reg.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js"
+    ],
+    "refer": [
+      "tpl/login/login.html",
+      "tpl/reg/reg-success.html"
+    ],
+    "priority": 0
+  },
+  "tpl/login/login.html": {
+    "href": "tpl/login/login.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/pwd.png",
+      "images/icon/mobile.png",
+      "css/base.css"
+    ],
+    "refer": [
+      "index.html",
+      "tpl/password/find-login-pwd.html",
+      "tpl/reg/reg.html",
+      "tpl/product/list.html"
+    ],
+    "priority": 0
+  },
+  "tpl/third/recharge-phone-success.html": {
+    "href": "tpl/third/recharge-phone-success.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/success-pic.png"
+    ],
+    "refer": [
+      "tpl/third/recharge-phone.html"
+    ],
+    "priority": 0
+  },
+  "tpl/third/recharge-phone.html": {
+    "href": "tpl/third/recharge-phone.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png",
+      "images/icon/balance.svg",
+      "images/icon/bank.svg",
+      "images/icon/success.svg",
+      "images/icon/integral.svg"
+    ],
+    "refer": [
+      "index.html",
+      "tpl/third/recharge-phone-success.html"
+    ],
+    "priority": 0
+  },
+  "tpl/third/recharge-oilcard-tips.html": {
+    "href": "tpl/third/recharge-oilcard-tips.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "tpl/third/recharge-oilcard.html"
+    ],
+    "priority": 0
+  },
+  "tpl/third/recharge-oilcard-success.html": {
+    "href": "tpl/third/recharge-oilcard-success.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/success-pic.png"
+    ],
+    "refer": [
+      "tpl/third/recharge-oilcard.html"
+    ],
+    "priority": 0
+  },
+  "tpl/third/recharge-oilcard-select.html": {
+    "href": "tpl/third/recharge-oilcard-select.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png",
+      "images/icon/zsy.jpg",
+      "images/icon/zsh.jpg"
+    ],
+    "refer": [
+      "tpl/third/recharge-oilcard.html",
+      "tpl/oilcard/oil-card-add.html"
+    ],
+    "priority": 0
+  },
+  "tpl/third/recharge-oilcard.html": {
+    "href": "tpl/third/recharge-oilcard.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png",
+      "images/icon/balance.svg",
+      "images/icon/bank.svg",
+      "fonts/mui.ttf",
+      "images/icon/success.svg",
+      "images/icon/integral.svg",
+      "images/icon/more.png",
+      "images/icon/zsh.jpg"
+    ],
+    "refer": [
+      "tpl/third/recharge-oilcard-tips.html",
+      "index.html",
+      "tpl/third/recharge-oilcard-success.html",
+      "tpl/third/recharge-oilcard-select.html"
+    ],
+    "priority": 0
+  },
+  "tpl/limitTest/limit-test-assessment.html": {
+    "href": "tpl/limitTest/limit-test-assessment.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "index.html",
+      "tpl/limitTest/limit-test-QA.html"
+    ],
+    "priority": 0
+  },
+  "tpl/limitTest/limit-test-QA.html": {
+    "href": "tpl/limitTest/limit-test-QA.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png",
+      "fonts/mui.ttf"
+    ],
+    "refer": [
+      "tpl/limitTest/limit-test-assessment.html",
+      "index.html"
+    ],
+    "priority": 0
+  },
+  "tpl/third/assess-record.html": {
+    "href": "tpl/third/assess-record.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "tpl/third/assess-result.html",
+      "tpl/third/assess-apply.html"
+    ],
+    "priority": 0
+  },
+  "tpl/third/assess-result.html": {
+    "href": "tpl/third/assess-result.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "tpl/third/assess-record.html",
+      "tpl/third/assess-apply.html"
+    ],
+    "priority": 0
+  },
+  "tpl/third/assess-select.html": {
+    "href": "tpl/third/assess-select.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png",
+      "images/icon/car-logo.png"
+    ],
+    "refer": [
+      "tpl/third/assess-apply.html"
+    ],
+    "priority": 0
+  },
+  "tpl/third/assess-apply.html": {
+    "href": "tpl/third/assess-apply.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "tpl/third/assess-result.html",
+      "tpl/third/assess-select.html",
+      "index.html",
+      "tpl/third/assess-record.html"
+    ],
+    "priority": 0
+  },
+  "tpl/third/oil-price-history.html": {
+    "href": "tpl/third/oil-price-history.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/echarts.common.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "index.html",
+      "tpl/third/oil-price.html"
+    ],
+    "priority": 0
+  },
+  "tpl/third/oil-price.html": {
+    "href": "tpl/third/oil-price.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "index.html",
+      "tpl/third/oil-price-history.html"
+    ],
+    "priority": 0
+  },
+  "tpl/third/peccancy-result.html": {
+    "href": "tpl/third/peccancy-result.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "tpl/third/peccancy-query.html"
+    ],
+    "priority": 0
+  },
+  "tpl/third/peccancy-history.html": {
+    "href": "tpl/third/peccancy-history.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "tpl/third/peccancy-result.html",
+      "tpl/third/peccancy-query.html"
+    ],
+    "priority": 0
+  },
+  "tpl/third/peccancy-query.html": {
+    "href": "tpl/third/peccancy-query.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/mui.js",
+      "js/common.min.js",
+      "images/icon/go-back.png"
+    ],
+    "refer": [
+      "tpl/third/peccancy-result.html",
+      "tpl/third/peccancy-history.html",
+      "index.html"
+    ],
+    "priority": 0
+  },
+  "tpl/car/car-insurance.html": {
+    "href": "tpl/car/car-insurance.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/mui.picker.min.css",
+      "css/base.min.css",
+      "js/mui.min.js",
+      "js/mui.picker.min.js",
+      "js/common.min.js",
+      "images/icon/go-back.png",
+      "images/icon/arrow.png",
+      "fonts/mui.ttf"
+    ],
+    "refer": [
+      "tpl/insurance/insurance-detail.html",
+      "index.html"
+    ],
+    "priority": 0
+  },
+  "index.html": {
+    "href": "index.html",
+    "resources": [
+      "css/mui.min.css",
+      "css/base.min.css",
+      "js/jweixin-1.0.0.js",
+      "js/mui.js",
+      "js/common.min.js",
+      "images/icon/go-back.png",
+      "images/icon/loading.gif",
+      "images/icon/home-product.png",
+      "images/menu/loan.svg",
+      "images/menu/my.svg",
+      "images/menu/home-h.svg",
+      "images/menu/insurance.svg",
+      "js/mui.min.js",
+      "js/mui.common.js",
+      "js/common.js"
+    ],
+    "refer": [
+      "tpl/login/login.html",
+      "tpl/third/recharge-phone.html",
+      "tpl/insurance/insurance-list.html",
+      "tpl/third/recharge-oilcard.html",
+      "tpl/oilcard/oil-card-add.html",
+      "index.html",
+      "tpl/repayment/repayment-detail.html",
+      "tpl/password/set-trade-pwd.html",
+      "tpl/limitTest/limit-test-QA.html",
+      "tpl/third/assess-apply.html",
+      "tpl/loan/loan-detail.html",
+      "tpl/bind/bind-IDcard.html",
+      "tpl/bind/bind-bank-card.html",
+      "tpl/record/loan-record.html",
+      "tpl/myuser/my-user.html",
+      "tpl/third/oil-price.html",
+      "tpl/insurance/insurance-detail.html",
+      "tpl/third/peccancy-query.html",
+      "tpl/loan/loan-list.html",
+      "tpl/car/car.html",
+      "tpl/car/car-insurance.html"
+    ],
+    "priority": 0
+  },
+  "loading.html": {
+    "resources": [
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "js/common.min.js",
+      "css/base.min.css"
+    ],
+    "refer": [
+      "index.html"
+    ]
+  },
+  "tpl/user-info/user.html": {
+    "resources": [
+      "css/base.css",
+      "css/mui.min.css",
+      "css/normalize.css"
+    ],
+    "refer": [
+      "tpl/login/login.html",
+      "tpl/product/list.html",
+      "tpl/work/add.html",
+      "tpl/mail/list.html"
+    ]
+  },
+  "tpl/product/list.html": {
+    "resources": [
+      "tpl/product/list-refresh.html"
+    ],
+    "refer": [
+      "tpl/product/list-refresh.html",
+      "tpl/msg/list.html",
+      "tpl/home/home.html",
+      "tpl/product/search.html",
+      "tpl/examine/manageAudit.html"
+    ]
+  },
+  "tpl/msg/list.html": {
+    "refer": [
+      "tpl/user-info/user.html"
+    ]
+  },
+  "tpl/work/add.html": {
+    "refer": [
+      "tpl/user-info/user.html"
+    ]
+  }
+}

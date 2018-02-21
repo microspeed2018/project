@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.coredb.transaction.BusinessMapper">
+	<resultMap id="BaseResultMap" type="Business">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="user_id" jdbcType="INTEGER" property="userId" />
+		<result column="business_type" jdbcType="INTEGER" property="businessType" />
+		<result column="result" jdbcType="INTEGER" property="result" />
+		<result column="comment" jdbcType="VARCHAR" property="comment" />
+		<result column="user_name" jdbcType="VARCHAR" property="userName" />
+		<result column="time" jdbcType="VARCHAR" property="time" />
+		<result column="access_ip" jdbcType="VARCHAR" property="accessIp" />
+		<result column="extend1" jdbcType="VARCHAR" property="extend1" />
+		<result column="extend2" jdbcType="VARCHAR" property="extend2" />
+		<result column="extend3" jdbcType="VARCHAR" property="extend3" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user_id" jdbcType="INTEGER" property="createUserId" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user_id" jdbcType="INTEGER" property="updateUserId" />
+		<result column="version" jdbcType="INTEGER" property="version" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, user_id, business_type, result, comment, access_ip, extend1, extend2,
+		extend3,
+		create_time, create_user_id, update_time, update_user_id, version
+	</sql>
+	<select id="getTransaction" parameterType="Business" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_business
+		where 1=1
+		and user_id = #{userId,jdbcType=INTEGER}
+		and business_type = #{businessType,jdbcType=INTEGER}
+		and create_time = #{createTime,jdbcType=TIMESTAMP}
+	</select>
+	<select id="getRechargePostalList" parameterType="BusinessQuery"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		,date_format(create_time,'%Y/%m/%d %H:%i') as time
+		from t_business
+		where 1=1
+		and user_id = #{userId,jdbcType=INTEGER}
+		and business_type = #{businessType,jdbcType=INTEGER}
+		order by create_time desc
+	</select>
+	<select id="getTransactionCount" resultType="int" parameterType="BusinessQuery">
+		select count(1) from ((select tb.id,
+        tb.business_type,
+        tu.`name`
+		from t_business tb
+		left join t_user tu
+		on tb.user_id = tu.id
+		where tb.user_id != 0)
+		union(select id,
+          business_type,
+          null `name`
+		from t_business
+		where user_id = 0)) a
+		where 1=1
+		<if test="userName != null">
+			and a.name = #{userName,jdbcType=VARCHAR}
+		</if>
+		<if test="businessType != null">
+			and a.business_type = #{businessType,jdbcType=INTEGER}
+		</if>
+		<if test="userId != null">
+			and a.user_id = #{userId,jdbcType=INTEGER}
+		</if>
+		<if test="result != null">
+			and a.result = #{result,jdbcType=INTEGER}
+		</if>
+	</select>
+	<select id="getFaliTransactionList" resultMap="BaseResultMap"
+		parameterType="BusinessQuery">
+		select * from t_business
+		
+		where 1=1
+		<if test="businessType != null">
+			and business_type = #{businessType,jdbcType=INTEGER}
+		</if>
+		<if test="userId != null">
+			and user_id = #{userId,jdbcType=INTEGER}
+		</if>
+		<if test="result != null">
+			and result = #{result,jdbcType=INTEGER}
+		</if>
+		<if test="checkInstant != null">
+		<!-- 查询本月的 -->
+			and  date_format(create_time,'%Y-%m')=date_format(now(),'%Y-%m') 
+		</if>
+        
+		order by create_time desc
+		limit 1
+	</select>
+	
+	<select id="getTransactionList" resultMap="BaseResultMap"
+		parameterType="BusinessQuery">
+		select a.* from ((select tb.id, tb.user_id, tb.business_type,
+		tb.result, tb.comment,
+		tb.access_ip, tb.extend1, tb.extend2, tb.extend3,
+		tb.create_time, tb.create_user_id, tb.update_time,
+		tb.update_user_id,date_format(tb.create_time,'%Y-%m-%d %H:%i:%S') as
+		time,
+		ifnull(tu.name,tu.user_code) as user_name
+		from t_business tb
+		left join t_user tu
+		on tb.user_id = tu.id
+		where tb.user_id != 0)
+		union(select id, user_id, business_type, result, comment,
+		access_ip, extend1, extend2, extend3,
+		create_time, create_user_id, update_time,
+		update_user_id,date_format(create_time,'%Y-%m-%d %H:%i:%S') as
+		time,extend1 as user_name
+		from t_business
+		where user_id = 0)) a
+		where 1=1
+		<if test="userName != null">
+			and a.user_name = #{userName,jdbcType=VARCHAR}
+		</if>
+		<if test="businessType != null">
+			and a.business_type = #{businessType,jdbcType=INTEGER}
+		</if>
+		<if test="extendedMsg != null">
+			and concat_ws(",",a.extend1,a.extend2,a.extend3) like concat("%",#{extendedMsg,jdbcType=VARCHAR},"%")
+		</if>
+		
+		order by a.create_time desc
+		limit #{pageBean.offset},#{pageBean.pageSize}
+	</select>
+	<insert id="insertTransaction" parameterType="Business" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+		insert into t_business
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="businessType != null">
+				business_type,
+			</if>
+			<if test="result != null">
+				result,
+			</if>
+			<if test="comment != null">
+				comment,
+			</if>
+			<if test="accessIp != null">
+				access_ip,
+			</if>
+			<if test="extend1 != null">
+				extend1,
+			</if>
+			<if test="extend2 != null">
+				extend2,
+			</if>
+			<if test="extend3 != null">
+				extend3,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="createUserId != null">
+				create_user_id,
+			</if>
+			<if test="updateTime != null">
+				update_time,
+			</if>
+			<if test="updateUserId != null">
+				update_user_id,
+			</if>
+			<if test="version != null">
+				version,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="businessType != null">
+				#{businessType,jdbcType=INTEGER},
+			</if>
+			<if test="result != null">
+				#{result,jdbcType=INTEGER},
+			</if>
+			<if test="comment != null">
+				#{comment,jdbcType=VARCHAR},
+			</if>
+			<if test="accessIp != null">
+				#{accessIp,jdbcType=VARCHAR},
+			</if>
+			<if test="extend1 != null">
+				#{extend1,jdbcType=VARCHAR},
+			</if>
+			<if test="extend2 != null">
+				#{extend2,jdbcType=VARCHAR},
+			</if>
+			<if test="extend3 != null">
+				#{extend3,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUserId != null">
+				#{createUserId,jdbcType=INTEGER},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUserId != null">
+				#{updateUserId,jdbcType=INTEGER},
+			</if>
+			<if test="version != null">
+				#{version,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateTransaction" parameterType="Business">
+		update t_business
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="businessType != null">
+				business_type = #{businessType,jdbcType=INTEGER},
+			</if>
+			<if test="result != null">
+				result = #{result,jdbcType=INTEGER},
+			</if>
+			<if test="comment != null">
+				comment = #{comment,jdbcType=VARCHAR},
+			</if>
+			<if test="accessIp != null">
+				access_ip = #{accessIp,jdbcType=VARCHAR},
+			</if>
+			<if test="extend1 != null">
+				extend1 = #{extend1,jdbcType=VARCHAR},
+			</if>
+			<if test="extend2 != null">
+				extend2 = #{extend2,jdbcType=VARCHAR},
+			</if>
+			<if test="extend3 != null">
+				extend3 = #{extend3,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUserId != null">
+				create_user_id = #{createUserId,jdbcType=INTEGER},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUserId != null">
+				update_user_id = #{updateUserId,jdbcType=INTEGER},
+			</if>
+			version = version + 1,
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<update id="updateTransactionByExtend3" parameterType="Business">
+		update t_business
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="businessType != null">
+				business_type = #{businessType,jdbcType=INTEGER},
+			</if>
+			<if test="result != null">
+				result = #{result,jdbcType=INTEGER},
+			</if>
+			<if test="comment != null">
+				comment = #{comment,jdbcType=VARCHAR},
+			</if>
+			<if test="accessIp != null">
+				access_ip = #{accessIp,jdbcType=VARCHAR},
+			</if>
+			<if test="extend1 != null">
+				extend1 = #{extend1,jdbcType=VARCHAR},
+			</if>
+			<if test="extend2 != null">
+				extend2 = #{extend2,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUserId != null">
+				create_user_id = #{createUserId,jdbcType=INTEGER},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUserId != null">
+				update_user_id = #{updateUserId,jdbcType=INTEGER},
+			</if>
+			version = version + 1,
+		</set>
+		<where>
+			<trim prefixOverrides="and">
+				<if test="id != null">
+					id = #{id,jdbcType=INTEGER}
+				</if>
+				<if test="extend3 != null">
+					and extend3 = #{extend3,jdbcType=VARCHAR}
+				</if>
+			</trim>
+		</where>
+	</update>
+	
+</mapper>

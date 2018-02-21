@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>技术审核</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+    </head>
+    <body>
+        <header class="header">
+            <img src="../../images/svg/left.svg" class="icon-40" id="goback"  />
+            <span class="tit">技术审核</span>
+            <i></i>
+        </header>
+        <div class='wrap'>
+            <ul class='product-list' id="list" style="padding-bottom: 0;"></ul>
+        </div>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/jquery.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script>
+        (function($, doc) {
+            $.init();
+
+            // 校验app或wap
+            myInit(indexFun);
+            function indexFun() {
+                // 历史url
+                var historyUrl = myGetLocalStorage("curr");
+                // goback
+                doc.querySelector("#goback").addEventListener("click", function () {
+                    myOpenWindow("/tpl/home/home.html", 'home');
+                });
+
+                // 当前角色
+                var user = JSON.parse(myGetLocalStorage("user"));
+                if (!user) {
+                    myOpenWindow("/tpl/login/login.html", 'login');
+                }
+
+                // 获取列表
+                getList();
+                function getList() {
+                    $.ajax(global.apiURL + '/leaderAudit/user/getProjectLeaderAudit.htm', {
+                        data : {
+                            status : 0
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                creareList(data.rows);
+                            } else {
+                                if (data.code == "405" && data.resultMsg == "请登录系统") {
+                                    againLogin(getList, param);
+                                } else {
+                                    myToast("当前没有需要技术审核的内容");
+                                }
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+                function creareList(datas) {
+                    var box = doc.querySelector("#list"),
+                        dom = "";
+                    for (var i = 0; i < datas.length; i++) {
+                        var projectLeader = datas[i].projectLeaderName;
+                        if (!projectLeader) {
+                            projectLeader = "(负责人未定)";
+                        }
+                        var step = datas[i].gardenProject.step;
+                        var subStep = datas[i].gardenProject.subStep;
+                        var subStep2 = datas[i].gardenProject.subStep2;
+                        var attributeName;
+                        if (datas[i].basicData) {
+                            attributeName = datas[i].basicData.attributeName
+                            if (!attributeName) {
+                                attributeName = ""
+                            }
+                        }
+                        dom += "<li id='"+ datas[i].id +"' projectId='"+ datas[i].projectId +"' type='"+ datas[i].type +"' amount='"+ datas[i].amount +"' paymentModeName='"+ datas[i].paymentModeName +"'>"+
+                            "<h3>"+ datas[i].gardenProject.name + "</h3>"+
+                            "<p>"+
+                                "<em>"+ projectLeader +"</em>"+
+                                "<em>"+ zjzm.getDay(datas[i].createTime.time, 'yyyy/MM/dd') +"</em>"+
+                                "<em>"+ attributeName +"</em>"; //
+                                if (step == 150) {
+                                    dom += "<a href='javascript:void(0);' step='"+ subStep +"' branch='1'>审核</a>";
+                                } else {
+                                    dom += "<a href='javascript:void(0);' step='"+ step +"'>审核</a>";
+                                }
+                           dom += "</p>"+
+                        "</li>";
+                    }
+                    box.innerHTML = dom;
+                }
+
+                $("#list").on("tap", "a", function (event) {
+                    event.stopPropagation();
+                    var productId = this.parentNode.parentNode.getAttribute("id");
+                    var projectId = this.parentNode.parentNode.getAttribute("projectId");
+                    var step = this.getAttribute("step");
+                    var status = this.getAttribute("status");
+                    var personnelNature = this.getAttribute("personnelNature");
+                    var branch = this.getAttribute("branch");
+                    var type = this.parentNode.parentNode.getAttribute("type");
+                    var amount = this.parentNode.parentNode.getAttribute("amount");
+                    var paymentModeName = this.parentNode.parentNode.getAttribute("paymentModeName");
+                    mySetLocalStorage("productId", productId);
+                    mySetLocalStorage("projectId", projectId);
+                    mySetLocalStorage("step", step);
+                    mySetLocalStorage("personnelNature", personnelNature);
+                    mySetLocalStorage("productPage", "stepPage");
+                    mySetLocalStorage("branch", branch);
+                    mySetLocalStorage("amount", amount);
+                    mySetLocalStorage("paymentModeName", paymentModeName);
+                    mySetLocalStorage("examineFlag", true);
+                    zjzm.historyUrl("/tpl/examine/leaderAudit.html");
+                    if (type == 83) {
+                        // 技术审核开票
+                        myOpenWindow("/tpl/examine/financialAudit1.html", 'financialAudit1');
+                    } else {
+                        myOpenWindow("/tpl/product/step-tab.html", 'step-tab');
+                    }
+                });
+            }
+        }(mui, document));
+    </script>
+</html>

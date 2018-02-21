@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<!-- - Log4j配置文件。 -->
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+	<!-- ===================================================================== -->
+	<!-- Appenders -->
+	<!-- ===================================================================== -->
+
+	<appender name="CONSOLE-APPENDER" class="org.apache.log4j.ConsoleAppender">
+		<param name="Target" value="System.out" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{yyyyMMdd HH:mm:ss SSS\} %-5p] [%t] %c{3\} - %m%n" />
+		</layout>
+	</appender>
+
+	<!-- [公共Appender] 默认 -->
+	<appender name="DEFAULT-APPENDER" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="file" value="/home/zjzmjr/logs/finance/common-default.log" />
+		<param name="append" value="true" />
+		<param name="encoding" value="UTF-8" />
+		<param name="MaxBackupIndex" value="10" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{yyyyMMdd HH:mm:ss SSS\} %-5p] [%t] %c{3\} - %m%n" />
+		</layout>
+	</appender>
+
+	<!-- [公共Appender] 汇总错误 -->
+	<appender name="ERROR-APPENDER" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="file" value="/home/zjzmjr/logs/finance/common-error.log" />
+		<param name="append" value="true" />
+		<param name="encoding" value="UTF-8" />
+		<param name="threshold" value="error" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{yyyyMMdd HH:mm:ss SSS\} %-5p] [%t] %c{3\} - %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="APACHE-APPENDER" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="file" value="/home/zjzmjr/logs/finance/common-apache.log"/>
+        <param name="append" value="true"/>
+        <param name="encoding" value="UTF-8"/>
+        <layout class="org.apache.log4j.PatternLayout">
+           <param name="ConversionPattern" value="[%d{yyyyMMdd HH:mm:ss SSS\} %-5p] [%t] %c{3\} - %m%n" />
+        </layout>
+    </appender>
+    
+    <appender name="SPRING-APPENDER" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="file" value="/home/zjzmjr/logs/finance/common-spring.log"/>
+        <param name="append" value="true"/>
+        <param name="encoding" value="UTF-8"/>
+        <layout class="org.apache.log4j.PatternLayout">
+           <param name="ConversionPattern" value="[%d{yyyyMMdd HH:mm:ss SSS\} %-5p] [%t] %c{3\} - %m%n" />
+        </layout>
+    </appender>
+
+	<appender name="QUOTE-DAL-APPENDER" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="file" value="/home/zjzmjr/logs/finance/finance-dal.log" />
+		<param name="append" value="true" />
+		<param name="encoding" value="UTF-8" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{yyyyMMdd HH:mm:ss SSS\} %-5p] [%t] %c{3\} - %m%n" />
+		</layout>
+	</appender>
+	
+    <logger name="com.zjzmjr.finance.web" additivity="true">
+        <level value="DEBUG"/>
+        <appender-ref ref="QUOTE-DAL-APPENDER"/>
+        <appender-ref ref="ERROR-APPENDER"/>
+    </logger>
+    
+    <logger name="org.springframework" additivity="true">
+        <level value="WARN"/>
+        <appender-ref ref="SPRING-APPENDER"/>
+        <appender-ref ref="ERROR-APPENDER"/>
+    </logger>
+	
+	<logger name="org.apache" additivity="true">
+        <level value="WARN"/>
+        <appender-ref ref="APACHE-APPENDER"/>
+        <appender-ref ref="ERROR-APPENDER"/>
+    </logger>
+    
+    <logger name="org.apache.commons.httpclient" additivity="true">
+    	<level value="WARN"/>
+    	<appender-ref ref="APACHE-APPENDER"/>
+        <appender-ref ref="ERROR-APPENDER"/>
+    </logger>
+    
+	<!-- ===================================================================== -->
+	<!-- Root logger -->
+	<!-- ===================================================================== -->
+	<root>
+		<level value="DEBUG" />
+		<appender-ref ref="CONSOLE-APPENDER" />
+		<appender-ref ref="DEFAULT-APPENDER" />
+		<appender-ref ref="ERROR-APPENDER" />
+	</root>
+</log4j:configuration>

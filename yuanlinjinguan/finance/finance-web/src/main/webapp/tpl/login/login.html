@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>登录</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+    </head>
+    <body>
+        <header class='header'>
+            <i></i>
+            <span class='tit'>登录</span>
+            <b id="reg">注册</b>
+        </header>
+        <div class='wrap login-wrap'>
+            <dl>
+                <dd>
+                    <input type="text" placeholder="请输入用户名" class="input input-max" id="mobile" />
+                </dd>
+                <dd>
+                    <input type="password" placeholder="请输入登录密码" maxlength="20" class="input input-max" id="pwd" />
+                </dd>
+                <dd class='validate-box'>
+                    <input type="text" placeholder="请输入图形验证码计算结果" class="input input-max" id="validate-code" />
+                    <img src='' class='validate-btn'  />
+                </dd>
+            </dl>
+        </div>
+        <div class='wrap'>
+            <div class='login-href'>
+                <span></span>
+                <span id="forgetPwd">忘记密码?</span>
+            </div>
+            <input type="button" value='登录' class='btn btn-max btn-top' id="submit" />
+            <span href="javasctipt:void(0)" class='btn btn-max btn-top' id="lookAt" style="display: block; text-align: center; background: rgba(218, 37, 28, .7) !important;">我先看看</span>
+        </div>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script>
+        (function($, doc) {
+            $.init();
+
+            // 校验app或wap
+            myInit(indexFun);
+            function indexFun() {
+                // 历史url
+                zjzm.historyUrl("/tpl/login/login.html");
+
+                doc.querySelector("#reg").addEventListener("tap", function () {
+                    myOpenWindow("/tpl/reg/reg.html", 'reg');
+                });
+
+                // 刷新验证码
+                var validateImg = doc.querySelector(".validate-btn");
+                validateImg.addEventListener("click", function () {
+                    var src = global.apiURL + '/checkCode.htm?' + Math.random();
+                    validateImg.setAttribute("src", src);
+                });
+                validateImg.click();
+
+                doc.querySelector("#lookAt").addEventListener("tap", function () {
+                    myOpenWindow("/tpl/home/home.html", 'home');
+                });
+                doc.querySelector("#forgetPwd").addEventListener("tap", function () {
+                    myOpenWindow("/tpl/pwd/find-pwd.html", 'find-pwd');
+                });
+
+                // 登录
+                var flag = 0;
+                doc.querySelector("#submit").addEventListener("tap", function () {
+                    var mobile = doc.querySelector("#mobile").value,
+                        pwd = doc.querySelector("#pwd").value,
+                        validateCode = doc.querySelector("#validate-code").value;
+                    if(!pwd) {
+                        myToast("请输入登录密码");
+                    } else if (!zjzm.pwdValidate(pwd)) {
+                        myToast("请输入6-20位的密码");
+                    } else if (flag > 0 && !validateCode) {
+                        myToast("请输入图形验证码计算结果");
+                    } else {
+                        myLoading();
+                        $.ajax(global.apiURL + '/yztz_user_login_check.htm', {
+                            data : {
+                                username : mobile,
+                                password : pwd,
+                                checkCode : validateCode
+                            },
+                            dataType : 'json',
+                            type : 'post',
+                            timeout : 10000,
+                            success : function(data){
+                                if (data.success) {
+                                    setUserInfo(data);
+                                } else {
+                                    flag++;
+                                    myToast(data.resultMsg);
+                                    doc.querySelector(".validate-box").style.display = "block";
+                                    validateImg.click();
+                                }
+                                myLoadingOver();
+                            },
+                            error : function(xhr, type , errorThrown) {
+                                flag++;
+                                myLoadingOver();
+                                doc.querySelector(".validate-box").style.display = "block";
+                                validateImg.click();
+                                myToast("服务器正忙，请稍后重试！");
+                            }
+                        });
+                    }
+                });
+                function getClientId(localClientID) {
+					mui.ajax(global.apiURL + '/register/user/updateClientId.htm', {
+						data: {
+							clientId : localClientID
+						},
+						dataType: 'json',
+						type: 'post',
+						timeout: 10000,
+						success: function(data) {
+							if (data.success) {
+
+							} else {
+
+							}
+						},
+						error: function() {
+							myToast("服务器正忙，请稍后重试！");
+						}
+					});
+				}
+
+                function setUserInfo(datas) {
+                    $.ajax(global.apiURL + '/user/staffLogin.htm', {
+                        data : {},
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                var data = data.data;
+                                var company = data[0].company;
+                                if (!company) {
+                                    company = data[0].companyName;
+                                }
+                                mySetLocalStorage("user", {
+                                    "springtoken"       : datas.springtoken,
+                                    "nickname"          : datas.userName,
+                                    "mobile"            : data[0].userInfo.username,
+                                    "name"              : data[0].userInfo.name,
+                                    "jobId"             : data[0].userInfo.jobId,
+                                    "personnelNature"   : data[0].personnelNature,
+                                    "userId"            : data[0].userId,
+                                    "company"           : company,
+                                    "imageAddress"      : data[0].userInfo.imageAddress,
+                                    "department"        : data[0].userInfo.department
+                                });
+                                if (mui.os.plus) {
+                            		var info = plus.push.getClientInfo();
+                            		var localClientID = info.clientid;
+                            		if (data[0].userInfo.clientId != localClientID) {
+                                    	getClientId(localClientID);
+                                    }
+                            	}
+                                myOpenWindow('/tpl/home/home.html', 'home');
+                            } else {
+                                myToast(data.resultMsg);
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+            }
+        }(mui, document));
+    </script>
+</html>

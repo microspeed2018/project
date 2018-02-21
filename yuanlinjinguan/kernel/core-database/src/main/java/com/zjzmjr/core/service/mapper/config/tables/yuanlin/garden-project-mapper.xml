@@ -1,0 +1,901 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.project.GardenProjectMapper" >
+  <resultMap id="BaseResultMap" type="GardenProject" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="project_no" property="projectNo" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="introducer" property="introducer" jdbcType="INTEGER" />
+    <result column="city" property="city" jdbcType="INTEGER" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="design_area" property="designArea" jdbcType="INTEGER" />
+    <result column="investment_mount" property="investmentMount" jdbcType="DECIMAL" />
+    <result column="nature" property="nature" jdbcType="INTEGER" />
+    <result column="category" property="category" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="management_department" property="managementDepartment" jdbcType="INTEGER" />
+    <result column="introduction" property="introduction" jdbcType="VARCHAR" />
+    <result column="intentional_cooperation" property="intentionalCooperation" jdbcType="INTEGER" />
+    <result column="need_technical" property="needTechnical" jdbcType="INTEGER" />
+    <result column="pre_requirements" property="preRequirements" jdbcType="VARCHAR" />
+    <result column="contract_award_company" property="contractAwardCompany" jdbcType="INTEGER" />
+    <result column="have_scheme" property="haveScheme" jdbcType="INTEGER" />
+    <result column="have_development" property="haveDevelopment" jdbcType="INTEGER" />
+    <result column="have_drawing" property="haveDrawing" jdbcType="INTEGER" />
+    <result column="have_planning" property="havePlanning" jdbcType="INTEGER" />
+    <result column="management_personnel" property="managementPersonnel" jdbcType="INTEGER" />
+    <result column="project_leader" property="projectLeader" jdbcType="INTEGER" />
+    <result column="project_liable" property="projectLiable" jdbcType="VARCHAR" />
+    <result column="apply_deadline" property="applyDeadline" jdbcType="VARCHAR" />
+    <result column="is_major_project" property="isMajorProject" jdbcType="INTEGER" />
+    <result column="bidding_deadline" property="biddingDeadline" jdbcType="VARCHAR" />
+    <result column="bidding_memo" property="biddingMemo" jdbcType="VARCHAR" />
+    <result column="bidding_documents_producer" property="biddingDocumentsProducer" jdbcType="INTEGER" />
+    <result column="registration_results" property="registrationResults" jdbcType="INTEGER" />
+    <result column="registration_results_memo" property="registrationResultsMemo" jdbcType="VARCHAR" />
+    <result column="have_technical" property="haveTechnical" jdbcType="INTEGER" />
+    <result column="margin_deadline" property="marginDeadline" jdbcType="VARCHAR" />
+    <result column="tender_deadline" property="tenderDeadline" jdbcType="VARCHAR" />
+    <result column="bidding_documents_memo" property="biddingDocumentsMemo" jdbcType="VARCHAR" />
+    <result column="bail" property="bail" jdbcType="DECIMAL" />
+    <result column="noback_bail" property="nobackBail" jdbcType="DECIMAL" />
+    <result column="latest_remittance_date" property="latestRemittanceDate" jdbcType="VARCHAR" />
+    <result column="remittance_company" property="remittanceCompany" jdbcType="VARCHAR" />
+    <result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+    <result column="account_no" property="accountNo" jdbcType="VARCHAR" />
+    <result column="bail_memo" property="bailMemo" jdbcType="VARCHAR" />
+    <result column="business_producer" property="businessProducer" jdbcType="INTEGER" />
+    <result column="tender_offer" property="tenderOffer" jdbcType="DECIMAL" />
+    <result column="is_win_bidding" property="isWinBidding" jdbcType="INTEGER" />
+    <result column="nopass_reason" property="nopassReason" jdbcType="VARCHAR" />
+    <result column="step" property="step" jdbcType="INTEGER" />
+    <result column="sub_step" property="subStep" jdbcType="INTEGER" />
+    <result column="sub_step2" property="subStep2" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap type="GardenProjectInfo" id="GardenProjectInfoResultMap" extends="BaseResultMap">
+    <result column="category_abbreviate" property="categoryAbbreviate" jdbcType="VARCHAR" />
+    <result column="management_department_abbreviate" property="managementDepartmentAbbreviate" jdbcType="VARCHAR" />
+    <result column="introducer_name" property="introducerName" jdbcType="VARCHAR" />
+    <result column="nature_name" property="natureName" jdbcType="VARCHAR" />
+    <result column="category_name" property="categoryName" jdbcType="VARCHAR" />
+    <result column="type_name" property="typeName" jdbcType="VARCHAR" />
+    <result column="department_name" property="departmentName" jdbcType="VARCHAR" />
+    <result column="cooperation_name" property="cooperationName" jdbcType="VARCHAR" />
+    <result column="city_name" property="cityName" jdbcType="VARCHAR" />
+    <association property="leader" column="project_leader" javaType="Admin">
+        <id property="id" column="admin_id" />
+        <result property="username" column="username" />
+        <result property="name" column="admin_name" />
+        <result property="mobile" column="mobile" />
+        <result property="jobId" column="job_id" />
+    </association>
+    <association property="manager" column="management_personnel" javaType="Admin">
+        <id property="id" column="Madmin_id" />
+        <result property="username" column="Musername" />
+        <result property="name" column="Madmin_name" />
+        <result property="mobile" column="Mmobile" />
+        <result property="jobId" column="Mjob_id" />
+    </association>
+    <association property="companyAssociated" column="contract_award_company" javaType="CompanyAssociated">
+        <id property="id" column="company_associated_id" />
+        <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    </association>
+    <association property="busiProducer" column="business_producer" javaType="Admin" fetchType="lazy">
+        <id property="id" column="bpdmin_id" />
+        <result property="username" column="bpsername" />
+        <result property="name" column="bpdmin_name" />
+        <result property="mobile" column="bpmobile" />
+        <result property="jobId" column="bpjob_id" />
+    </association>
+    <association property="bidDocuProducer" column="bidding_documents_producer" javaType="Admin" fetchType="lazy">
+        <id property="id" column="bdpdmin_id" />
+        <result property="username" column="bdpsername" />
+        <result property="name" column="bdpdmin_name" />
+        <result property="mobile" column="bdpmobile" />
+        <result property="jobId" column="bdpjob_id" />
+    </association>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, company_id, project_no, name, introducer, city, address, design_area, investment_mount, 
+    nature, category, type, management_department, introduction, intentional_cooperation, 
+    need_technical, pre_requirements, contract_award_company, have_scheme, have_development, 
+    have_drawing, have_planning, management_personnel, project_leader, project_liable, apply_deadline, is_major_project, 
+    bidding_deadline, bidding_memo, bidding_documents_producer, registration_results, 
+    registration_results_memo, have_technical, margin_deadline, tender_deadline, bidding_documents_memo, 
+    bail, noback_bail, latest_remittance_date, remittance_company, bank_name, account_no, bail_memo, 
+    business_producer, tender_offer, is_win_bidding, nopass_reason, step, sub_step, sub_step2, status, memo, create_time, 
+    create_user_id, update_time, update_user_id, version
+  </sql>
+  <select id="getProjectDetail" resultMap="GardenProjectInfoResultMap" parameterType="GardenProjectQuery">
+    select zp.*,ca.company_name,tar.area_name city_name, ta.name introducer_name, tbn.attribute_name nature_name,
+    tbc.attribute_name category_name,tbt.attribute_name type_name,tbd.attribute_name department_name,tbi.attribute_name cooperation_name
+    from z_project zp
+    left outer join z_company_associated ca on ca.id = zp.contract_award_company
+    left outer join t_area tar on tar.id = zp.city
+    left outer join t_basic tbn on tbn.attribute_id = zp.nature and tbn.category_id = 4
+    left outer join t_basic tbc on tbc.attribute_id = zp.category and tbc.category_id = 5
+    left outer join t_basic tbt on tbt.attribute_id = zp.type and tbt.category_id = 6
+    left outer join t_basic tbd on tbd.attribute_id = zp.management_department and tbd.category_id = 7
+    left outer join t_basic tbi on tbi.id = zp.intentional_cooperation
+    left outer join t_admin ta on ta.id = zp.introducer 
+    <where>
+      <trim prefixOverrides="and">
+            <if test="id != null">
+                zp.id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="status != null">
+                and zp.status = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="projectNo != null">
+                and zp.project_no like CONCAT(#{projectNo,jdbcType=VARCHAR}, '%')
+            </if>
+      </trim>
+    </where>    
+  </select>
+  <select id="getGardenProjectCount" resultType="java.lang.Integer" parameterType="GardenProjectQuery" >
+    select count(zp.id)
+    from z_project zp
+    left outer join t_admin ta on ta.id=zp.project_leader
+    left outer join t_area tar on tar.id = zp.city
+    <include refid="where_clause"></include>
+  </select>
+  <select id="getGardenProjectByCondition" resultMap="GardenProjectInfoResultMap" parameterType="GardenProjectQuery">
+    select zp.*, ta.id admin_id, ta.username, ta.name admin_name, ta.mobile, ta.job_id
+        , ma.id Madmin_id, ma.username Musername, ma.name Madmin_name, ma.mobile Mmobile, ma.job_id Mjob_id,mb.abbreviate category_abbreviate,
+        tb.abbreviate management_department_abbreviate,ca.company_name
+        ,bp.id bpdmin_id, bp.username bpsername, bp.name bpdmin_name, bp.mobile bpmobile, bp.job_id bpjob_id
+        ,bdp.id bdpdmin_id, bdp.username bdpsername, bdp.name bdpdmin_name, bdp.mobile bdpmobile, bdp.job_id bdpjob_id,
+        mb.attribute_name department_name, tb.attribute_name category_name, tbn.attribute_name nature_name,tar.area_name city_name
+    from z_project zp
+    left outer join t_admin ta on ta.id=zp.project_leader
+    left outer join t_admin ma on ma.id=zp.management_personnel   
+    left outer join z_company_associated ca on ca.id = zp.contract_award_company
+    left outer join t_basic mb on mb.category_id = 7 and mb.attribute_id = zp.management_department                                                                                
+    left outer join t_basic tb on tb.category_id = 5 and tb.attribute_id = zp.category
+    left outer join t_basic tbn on tbn.attribute_id = zp.nature and tbn.category_id = 4
+    left outer join t_admin bp on bp.id=zp.business_producer    
+    left outer join t_area tar on tar.id = zp.city
+    left outer join t_admin bdp on bdp.id=zp.bidding_documents_producer
+    <include refid="where_clause"></include>
+    <choose>
+        <when test="orderBy == 1">
+            order by  zp.update_time DESC
+        </when>
+        <when test="orderBy == 2">
+        	order by  zp.update_time
+        </when>
+        <when test="orderBy == 3">
+        	order by zp.project_no DESC
+        </when>
+        <otherwise>
+            order by zp.update_time DESC
+        </otherwise>
+    </choose>
+    limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+  <sql id="where_clause">
+    <where>
+        <trim prefixOverrides="and">
+            <if test="id != null">
+                zp.id = #{id,jdbcType=INTEGER}
+            </if>
+		      <if test="companyId != null" >
+		        and zp.company_id = #{companyId,jdbcType=INTEGER}
+		      </if>
+		      <if test="projectLeader != null" >
+		        and (zp.project_leader = #{projectLeader,jdbcType=INTEGER} OR zp.project_leader is null)
+		      </if>
+            <if test="projectNo != null">
+                and zp.project_no like CONCAT(#{projectNo,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="name != null">
+                and zp.name like CONCAT('%', #{name,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="cityId != null">
+                and tar.area_name like CONCAT('%', #{cityId,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="contractAwardCompany != null">
+                and zp.contract_award_company = #{contractAwardCompany,jdbcType=INTEGER}
+            </if>
+            <if test="department != null">
+                and zp.management_department = #{department,jdbcType=INTEGER}
+            </if>
+            <if test="managementPersonnel != null">
+                and (zp.management_personnel = #{managementPersonnel,jdbcType=INTEGER} OR (20 >= zp.step and zp.create_user_id = #{managementPersonnel,jdbcType=INTEGER}))               
+            </if>
+            <if test="nature != null">
+                and zp.nature = #{nature,jdbcType=INTEGER}
+            </if>
+            <if test="category != null">
+                and zp.category = #{category,jdbcType=INTEGER}
+            </if>
+            <if test="haveTechnical != null">
+                and zp.have_technical = #{haveTechnical,jdbcType=INTEGER}
+            </if>
+			<if test="step != null">
+				and (zp.step = #{step,jdbcType=INTEGER}
+				<if test="maxStep != null">
+	                <![CDATA[
+		                OR zp.step < #{maxStep,jdbcType=INTEGER}
+	                ]]>
+				</if>
+				<if test="minStep != null">
+	                <![CDATA[
+		                OR zp.step > #{minStep,jdbcType=INTEGER}
+	                ]]>
+				</if>
+				)
+			</if>
+			<if test="stepLst != null">
+			    and zp.step in (#{stepLst,jdbcType=VARCHAR})
+			</if>
+            <if test="status != null">
+                and zp.status = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="subStatus != null">
+                and zp.status != #{subStatus,jdbcType=INTEGER}
+            </if>
+            <if test="actiDatetime != null">
+                    <![CDATA[
+                and DATE_FORMAT(zp.create_time, '%Y%m%d') >= #{actiDatetime,jdbcType=VARCHAR}
+                    ]]>
+            </if>
+            <if test="actiDatetimeEnd != null">
+                    <![CDATA[
+                and DATE_FORMAT(zp.create_time, '%Y%m%d') <= #{actiDatetimeEnd,jdbcType=VARCHAR}
+                    ]]>
+            </if>
+            <if test="investmentMountStart != null">
+                    <![CDATA[
+                and zp.investment_mount >= #{investmentMountStart,jdbcType=VARCHAR}
+                    ]]>
+            </if>
+            <if test="investmentMountEnd != null">
+                    <![CDATA[
+                and zp.investment_mount <= #{investmentMountEnd,jdbcType=VARCHAR}
+                    ]]>
+            </if>
+            <if test="designAreaStart != null">
+                    <![CDATA[
+                and zp.design_area >= #{designAreaStart,jdbcType=VARCHAR}
+                    ]]>
+            </if>
+            <if test="designAreaEnd != null">
+                    <![CDATA[
+                and zp.design_area <= #{designAreaEnd,jdbcType=VARCHAR}
+                    ]]>
+            </if>
+            <if test="applyDeadlineStart != null">
+                    <![CDATA[
+                and DATE_FORMAT(zp.apply_deadline, '%Y%m%d') >= #{applyDeadlineStart,jdbcType=VARCHAR}
+                    ]]>
+            </if>
+            <if test="applyDeadlineEnd != null">
+                    <![CDATA[
+                and DATE_FORMAT(zp.apply_deadline, '%Y%m%d') <= #{applyDeadlineEnd,jdbcType=VARCHAR}
+                    ]]>
+            </if>
+            <if test="bidDeadlineStart != null">
+                    <![CDATA[
+                and DATE_FORMAT(zp.bidding_deadline, '%Y%m%d') >= #{bidDeadlineStart,jdbcType=VARCHAR}
+                    ]]>
+            </if>
+            <if test="bidDeadlineEnd != null">
+                    <![CDATA[
+                and DATE_FORMAT(zp.bidding_deadline, '%Y%m%d') <= #{bidDeadlineEnd,jdbcType=VARCHAR}
+                    ]]>
+            </if>
+            <if test="marginDeadlineStart != null">
+                    <![CDATA[
+                and DATE_FORMAT(zp.margin_deadline, '%Y%m%d') >= #{marginDeadlineStart,jdbcType=VARCHAR}
+                    ]]>
+            </if>
+            <if test="marginDeadlineEnd != null">
+                    <![CDATA[
+                and DATE_FORMAT(zp.margin_deadline, '%Y%m%d') <= #{marginDeadlineEnd,jdbcType=VARCHAR}
+                    ]]>
+            </if>
+            <if test="tenderDeadlineStart != null">
+                    <![CDATA[
+                and DATE_FORMAT(zp.tender_deadline, '%Y%m%d') >= #{tenderDeadlineStart,jdbcType=VARCHAR}
+                    ]]>
+            </if>
+            <if test="tenderDeadlineEnd != null">
+                    <![CDATA[
+                and DATE_FORMAT(zp.tender_deadline, '%Y%m%d') <= #{tenderDeadlineEnd,jdbcType=VARCHAR}
+                    ]]>
+            </if>
+        </trim>
+    </where>
+  </sql>
+  <delete id="deleteGardenProjectById" parameterType="java.lang.Integer" >
+    delete from z_project
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <select id="getGardenProjectMaxNo" resultType="java.lang.String">
+    select MAX(project_no)
+    from z_project
+    GROUP BY company_id
+  </select>
+  <select id="getGardenProjectNoContract" resultMap="BaseResultMap">
+    select zp.* from z_project zp
+    left outer join z_contract zc on zp.id = zc.project_id
+    where zc.id is null
+  </select>
+  <select id="getGardenProjectByIdAndStatus" resultMap="BaseResultMap" parameterType="GardenProjectQuery">
+    select * from z_project zp
+    <where>
+      <trim prefixOverrides="and">
+            <if test="id != null">
+                zp.id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="status != null">
+               and zp.status = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="projectNo != null">
+                and zp.project_no like CONCAT(#{projectNo,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="companyId != null">
+               and zp.company_id = #{companyId,jdbcType=INTEGER}
+            </if>
+            <if test="name != null">
+                and zp.name like CONCAT('%', #{name,jdbcType=VARCHAR}, '%')
+            </if>
+      </trim>
+    </where>    
+  </select>
+  
+  <select id="getGardenProjectCanBackBail" resultMap="GardenProjectInfoResultMap" parameterType="GardenProjectQuery">
+    select zp.* , ta.name admin_name from z_project zp
+    left outer join t_admin ta on ta.id=zp.project_leader
+    <where>
+      <trim prefixOverrides="and">
+            <if test="status != null">
+               and zp.status = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="companyId != null">
+               and zp.company_id = #{companyId,jdbcType=INTEGER}
+            </if>
+            <if test="managementPersonnel != null">
+                and zp.management_personnel = #{managementPersonnel,jdbcType=INTEGER}
+            </if>
+            <if test="nobackBail != null">
+                and zp.bail is not null and zp.noback_bail != #{nobackBail,jdbcType=DECIMAL}
+            </if>
+            <if test="step != null">
+                and zp.step > #{step,jdbcType=INTEGER}
+            </if>
+      </trim>
+    </where>    
+  </select>
+  <insert id="insertGardenProject" parameterType="GardenProject" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    insert into z_project
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="projectNo != null" >
+        project_no,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="introducer != null" >
+        introducer,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="designArea != null" >
+        design_area,
+      </if>
+      <if test="investmentMount != null" >
+        investment_mount,
+      </if>
+      <if test="nature != null" >
+        nature,
+      </if>
+      <if test="category != null" >
+        category,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="managementDepartment != null" >
+        management_department,
+      </if>
+      <if test="introduction != null" >
+        introduction,
+      </if>
+      <if test="intentionalCooperation != null" >
+        intentional_cooperation,
+      </if>
+      <if test="needTechnical != null" >
+        need_technical,
+      </if>
+      <if test="preRequirements != null" >
+        pre_requirements,
+      </if>
+      <if test="contractAwardCompany != null" >
+        contract_award_company,
+      </if>
+      <if test="haveScheme != null" >
+        have_scheme,
+      </if>
+      <if test="haveDevelopment != null" >
+        have_development,
+      </if>
+      <if test="haveDrawing != null" >
+        have_drawing,
+      </if>
+      <if test="havePlanning != null" >
+        have_planning,
+      </if>
+      <if test="managementPersonnel != null" >
+        management_personnel,
+      </if>
+      <if test="projectLeader != null" >
+        project_leader,
+      </if>
+      <if test="applyDeadline != null">
+        apply_deadline,
+      </if>
+      <if test="projectLiable != null">
+        project_liable,
+      </if>
+      <if test="isMajorProject != null" >
+        is_major_project,
+      </if>
+      <if test="biddingDeadline != null" >
+        bidding_deadline,
+      </if>
+      <if test="biddingMemo != null" >
+        bidding_memo,
+      </if>
+      <if test="biddingDocumentsProducer != null" >
+        bidding_documents_producer,
+      </if>
+      <if test="registrationResults != null" >
+        registration_results,
+      </if>
+      <if test="registrationResultsMemo != null" >
+        registration_results_memo,
+      </if>
+      <if test="haveTechnical != null" >
+        have_technical,
+      </if>
+      <if test="marginDeadline != null" >
+        margin_deadline,
+      </if>
+      <if test="tenderDeadline != null" >
+        tender_deadline,
+      </if>
+      <if test="biddingDocumentsMemo != null" >
+        bidding_documents_memo,
+      </if>
+      <if test="bail != null" >
+        bail,
+      </if>
+      <if test="nobackBail != null" >
+        noback_bail,
+      </if>
+      <if test="latestRemittanceDate != null" >
+        latest_remittance_date,
+      </if>
+      <if test="remittanceCompany != null" >
+        remittance_company,
+      </if>
+      <if test="bankName != null" >
+        bank_name,
+      </if>
+      <if test="accountNo != null" >
+        account_no,
+      </if>
+      <if test="bailMemo != null" >
+        bail_memo,
+      </if>
+      <if test="businessProducer != null" >
+        business_producer,
+      </if>
+      <if test="tenderOffer != null" >
+        tender_offer,
+      </if>
+      <if test="isWinBidding != null" >
+        is_win_bidding,
+      </if>
+      <if test="nopassReason != null" >
+        nopass_reason,
+      </if>
+      <if test="step != null" >
+        step,
+      </if>
+      <if test="subStep != null" >
+        sub_step,
+      </if>
+      <if test="subStep2 != null" >
+        sub_step2,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="memo != null" >
+        memo,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="projectNo != null" >
+        #{projectNo,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="introducer != null" >
+        #{introducer,jdbcType=INTEGER},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=INTEGER},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="designArea != null" >
+        #{designArea,jdbcType=INTEGER},
+      </if>
+      <if test="investmentMount != null" >
+        #{investmentMount,jdbcType=DECIMAL},
+      </if>
+      <if test="nature != null" >
+        #{nature,jdbcType=INTEGER},
+      </if>
+      <if test="category != null" >
+        #{category,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="managementDepartment != null" >
+        #{managementDepartment,jdbcType=INTEGER},
+      </if>
+      <if test="introduction != null" >
+        #{introduction,jdbcType=VARCHAR},
+      </if>
+      <if test="intentionalCooperation != null" >
+        #{intentionalCooperation,jdbcType=INTEGER},
+      </if>
+      <if test="needTechnical != null" >
+        #{needTechnical,jdbcType=INTEGER},
+      </if>
+      <if test="preRequirements != null" >
+        #{preRequirements,jdbcType=VARCHAR},
+      </if>
+      <if test="contractAwardCompany != null" >
+        #{contractAwardCompany,jdbcType=INTEGER},
+      </if>
+      <if test="haveScheme != null" >
+        #{haveScheme,jdbcType=INTEGER},
+      </if>
+      <if test="haveDevelopment != null" >
+        #{haveDevelopment,jdbcType=INTEGER},
+      </if>
+      <if test="haveDrawing != null" >
+        #{haveDrawing,jdbcType=INTEGER},
+      </if>
+      <if test="havePlanning != null" >
+        #{havePlanning,jdbcType=INTEGER},
+      </if>
+      <if test="managementPersonnel != null" >
+        #{managementPersonnel,jdbcType=INTEGER},
+      </if>
+      <if test="projectLeader != null" >
+        #{projectLeader,jdbcType=INTEGER},
+      </if>
+      <if test="projectLiable != null">
+        #{projectLiable,jdbcType=VARCHAR},
+      </if>
+      <if test="applyDeadline != null">
+        #{applyDeadline,jdbcType=VARCHAR},
+      </if>
+      <if test="isMajorProject != null" >
+        #{isMajorProject,jdbcType=INTEGER},
+      </if>
+      <if test="biddingDeadline != null" >
+        #{biddingDeadline,jdbcType=VARCHAR},
+      </if>
+      <if test="biddingMemo != null" >
+        #{biddingMemo,jdbcType=VARCHAR},
+      </if>
+      <if test="biddingDocumentsProducer != null" >
+        #{biddingDocumentsProducer,jdbcType=INTEGER},
+      </if>
+      <if test="registrationResults != null" >
+        #{registrationResults,jdbcType=INTEGER},
+      </if>
+      <if test="registrationResultsMemo != null" >
+        #{registrationResultsMemo,jdbcType=VARCHAR},
+      </if>
+      <if test="haveTechnical != null" >
+        #{haveTechnical,jdbcType=INTEGER},
+      </if>
+      <if test="marginDeadline != null" >
+        #{marginDeadline,jdbcType=VARCHAR},
+      </if>
+      <if test="tenderDeadline != null" >
+        #{tenderDeadline,jdbcType=VARCHAR},
+      </if>
+      <if test="biddingDocumentsMemo != null" >
+        #{biddingDocumentsMemo,jdbcType=VARCHAR},
+      </if>
+      <if test="bail != null" >
+        #{bail,jdbcType=DECIMAL},
+      </if>
+      <if test="nobackBail != null" >
+        #{nobackBail,jdbcType=DECIMAL},
+      </if>
+      <if test="latestRemittanceDate != null" >
+        #{latestRemittanceDate,jdbcType=VARCHAR},
+      </if>
+      <if test="remittanceCompany != null" >
+        #{remittanceCompany,jdbcType=VARCHAR},
+      </if>
+      <if test="bankName != null" >
+        #{bankName,jdbcType=VARCHAR},
+      </if>
+      <if test="accountNo != null" >
+        #{accountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="bailMemo != null" >
+        #{bailMemo,jdbcType=VARCHAR},
+      </if>
+      <if test="businessProducer != null" >
+        #{businessProducer,jdbcType=INTEGER},
+      </if>
+      <if test="tenderOffer != null" >
+        #{tenderOffer,jdbcType=DECIMAL},
+      </if>
+      <if test="isWinBidding != null" >
+        #{isWinBidding,jdbcType=INTEGER},
+      </if>
+      <if test="nopassReason != null" >
+        #{nopassReason,jdbcType=VARCHAR},
+      </if>
+      <if test="step != null" >
+        #{step,jdbcType=INTEGER},
+      </if>
+      <if test="subStep != null" >
+        #{subStep,jdbcType=INTEGER},
+      </if>
+      <if test="subStep2 != null" >
+        #{subStep2,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="memo != null" >
+        #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateGardenProjectById" parameterType="GardenProject" >
+    update z_project
+    <set >
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="projectNo != null" >
+        project_no = #{projectNo,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="introducer != null" >
+        introducer = #{introducer,jdbcType=INTEGER},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=INTEGER},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="designArea != null" >
+        design_area = #{designArea,jdbcType=INTEGER},
+      </if>
+      <if test="investmentMount != null" >
+        investment_mount = #{investmentMount,jdbcType=DECIMAL},
+      </if>
+      <if test="nature != null" >
+        nature = #{nature,jdbcType=INTEGER},
+      </if>
+      <if test="category != null" >
+        category = #{category,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="managementDepartment != null" >
+        management_department = #{managementDepartment,jdbcType=INTEGER},
+      </if>
+      <if test="introduction != null" >
+        introduction = #{introduction,jdbcType=VARCHAR},
+      </if>
+      <if test="intentionalCooperation != null" >
+        intentional_cooperation = #{intentionalCooperation,jdbcType=INTEGER},
+      </if>
+      <if test="needTechnical != null" >
+        need_technical = #{needTechnical,jdbcType=INTEGER},
+      </if>
+      <if test="preRequirements != null" >
+        pre_requirements = #{preRequirements,jdbcType=VARCHAR},
+      </if>
+      <if test="contractAwardCompany != null" >
+        contract_award_company = #{contractAwardCompany,jdbcType=INTEGER},
+      </if>
+      <if test="haveScheme != null" >
+        have_scheme = #{haveScheme,jdbcType=INTEGER},
+      </if>
+      <if test="haveDevelopment != null" >
+        have_development = #{haveDevelopment,jdbcType=INTEGER},
+      </if>
+      <if test="haveDrawing != null" >
+        have_drawing = #{haveDrawing,jdbcType=INTEGER},
+      </if>
+      <if test="havePlanning != null" >
+        have_planning = #{havePlanning,jdbcType=INTEGER},
+      </if>
+      <if test="managementPersonnel != null" >
+        management_personnel = #{managementPersonnel,jdbcType=INTEGER},
+      </if>
+      <if test="projectLeader != null" >
+        project_leader = #{projectLeader,jdbcType=INTEGER},
+      </if>
+      <if test="projectLiable != null">
+        project_liable = #{projectLiable,jdbcType=VARCHAR},
+      </if>
+      <if test="applyDeadline != null">
+        apply_deadline = #{applyDeadline,jdbcType=VARCHAR},
+      </if>
+      <if test="isMajorProject != null" >
+        is_major_project = #{isMajorProject,jdbcType=INTEGER},
+      </if>
+      <if test="biddingDeadline != null" >
+        bidding_deadline = #{biddingDeadline,jdbcType=VARCHAR},
+      </if>
+      <if test="biddingMemo != null" >
+        bidding_memo = #{biddingMemo,jdbcType=VARCHAR},
+      </if>
+      <if test="biddingDocumentsProducer != null" >
+        bidding_documents_producer = #{biddingDocumentsProducer,jdbcType=INTEGER},
+      </if>
+      <if test="registrationResults != null" >
+        registration_results = #{registrationResults,jdbcType=INTEGER},
+      </if>
+      <if test="registrationResultsMemo != null" >
+        registration_results_memo = #{registrationResultsMemo,jdbcType=VARCHAR},
+      </if>
+      <if test="haveTechnical != null" >
+        have_technical = #{haveTechnical,jdbcType=INTEGER},
+      </if>
+      <if test="marginDeadline != null" >
+        margin_deadline = #{marginDeadline,jdbcType=VARCHAR},
+      </if>
+      <if test="tenderDeadline != null" >
+        tender_deadline = #{tenderDeadline,jdbcType=VARCHAR},
+      </if>
+      <if test="biddingDocumentsMemo != null" >
+        bidding_documents_memo = #{biddingDocumentsMemo,jdbcType=VARCHAR},
+      </if>
+      <if test="bail != null" >
+        bail = #{bail,jdbcType=DECIMAL},
+      </if>
+      <if test="nobackBail != null" >
+        noback_bail = #{nobackBail,jdbcType=DECIMAL},
+      </if>
+      <if test="latestRemittanceDate != null" >
+        latest_remittance_date = #{latestRemittanceDate,jdbcType=VARCHAR},
+      </if>
+      <if test="remittanceCompany != null" >
+        remittance_company = #{remittanceCompany,jdbcType=VARCHAR},
+      </if>
+      <if test="bankName != null" >
+        bank_name = #{bankName,jdbcType=VARCHAR},
+      </if>
+      <if test="accountNo != null" >
+        account_no = #{accountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="bailMemo != null" >
+        bail_memo = #{bailMemo,jdbcType=VARCHAR},
+      </if>
+      <if test="businessProducer != null" >
+        business_producer = #{businessProducer,jdbcType=INTEGER},
+      </if>
+      <if test="tenderOffer != null" >
+        tender_offer = #{tenderOffer,jdbcType=DECIMAL},
+      </if>
+      <if test="isWinBidding != null" >
+        is_win_bidding = #{isWinBidding,jdbcType=INTEGER},
+      </if>
+      <if test="nopassReason != null" >
+        nopass_reason = #{nopassReason,jdbcType=VARCHAR},
+      </if>
+      <if test="step != null" >
+        step = #{step,jdbcType=INTEGER},
+      </if>
+      <if test="subStep != null" >
+        sub_step = #{subStep,jdbcType=INTEGER},
+      </if>
+      <if test="subStep2 != null" >
+        sub_step2 = #{subStep2,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="memo != null" >
+        memo = #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+      version = version + 1,
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

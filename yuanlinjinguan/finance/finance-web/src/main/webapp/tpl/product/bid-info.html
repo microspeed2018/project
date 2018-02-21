@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>开标信息</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+    </head>
+    <body>
+        <header class="header">
+            <img src="../../images/svg/left.svg" class="icon-40" id="goback" />
+            <span class="tit">开标信息</span>
+            <i></i>
+        </header>
+        <div class='wrap'>
+            <ul class='wrap-list'>
+                <li>
+                    <div class='tit'>
+                        排名
+                    </div>
+                    <div class='con'>
+                        <input type="tel" name="result" placeholder="请输入排名" class='input' id="ranking" value='1' readonly />
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        公司名称
+                    </div>
+                    <div class='con'>
+                        <span class="simulation-select one" id="bidCompany">请选择公司名称</span>
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        报价（万元）
+                    </div>
+                    <div class='con'>
+                        <input type="text" name="result" placeholder="请输入报价" class='input' id="bidOffer" />
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        总得分
+                    </div>
+                    <div class='con'>
+                        <input type="text" name="result" placeholder="请输入总得分" class='input' id="totleScore" />
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        商务标得分
+                    </div>
+                    <div class='con'>
+                        <input type="text" name="result" placeholder="请输入商务标得分" class='input' id="businessScore" />
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        技术标得分
+                    </div>
+                    <div class='con'>
+                        <input type="text" name="result" placeholder="请输入技术标得分" class='input' id="technicalScore" />
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        其他得分
+                    </div>
+                    <div class='con'>
+                        <input type="text" name="result" placeholder="请输入其他得分" class='input' id="otherScore" />
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        技术负责人
+                    </div>
+                    <div class='con'>
+                        <input type="text" name="result" placeholder="请输入技术负责人" class='input' id="projectLeader" />
+                    </div>
+                </li>
+                <li>
+                    <div class='tit'>
+                        备注
+                    </div>
+                    <div class='con'>
+                        <textarea placeholder="请输入备注" id="memo"></textarea>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class='wrap'>
+            <button class='btn btn-max' id="submit">确认</button>
+        </div>
+        <div class='wrap'>
+            <button class='btn btn-max' id="delete" style="display: none;">删除</button>
+        </div>
+        <div class='select-dialog'>
+            <div class='select-mask'></div>
+            <div class='select-content'>
+                <ul></ul>
+            </div>
+        </div>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/jquery.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script>
+        (function($, doc) {
+            $.init();
+
+            // 校验app或wap
+            myInit(indexFun);
+            function indexFun() {
+                // 历史url
+                var historyUrl = myGetLocalStorage("curr");
+                // goback
+                doc.querySelector("#goback").addEventListener("click", function () {
+                    myOpenWindow(historyUrl, '');
+                    zjzm.historyUrl("/tpl/product/list.html");
+                    myRemoveLocalStorage("bidId");
+                });
+
+                var obj = {};
+                var companyId = myGetLocalStorage("companyId");
+                if (companyId) {
+                    obj.companyId = companyId;
+                }
+                var projectId = myGetLocalStorage("projectId");
+                if (projectId) {
+                    obj.projectId = projectId;
+                }
+                obj.indexs = [];
+                obj.companyIds = [];
+
+                // 获取投标公司
+                jQuery("#bidCompany").on("click", function () {
+                    getbidCompany();
+                });
+                function createtPackLeader(list) {
+                    var box = doc.querySelector(".select-dialog ul");
+                    var dom = "";
+                    if (obj.companyIds) {
+                        var temp = []; //临时数组1
+                        var temparray = [];//临时数组2
+                        for (var i = 0; i < obj.companyIds.length; i++) {
+                            temp[obj.companyIds[i]] = true;//巧妙地方：把数组B的值当成临时数组1的键并赋值为真
+                        };
+                        for (var i = 0; i < list.length; i++) {
+                            if (!temp[list[i].id]) {
+                                temparray.push(list[i]);//巧妙地方：同时把数组A的值当成临时数组1的键并判断是否为真，如果不为真说明没重复，就合并到一个新数组里，这样就可以得到一个全新并无重复的数组
+                            };
+                        };
+                        for (var i = 0; i < temparray.length; i++) {
+                            dom += "<li id='"+ temparray[i].id +"'>"+ temparray[i].companyName +"</li>";
+                        }
+                    }
+                    box.innerHTML = dom;
+                    doc.querySelector(".select-dialog").style.display = "block";
+                    doc.querySelector(".select-dialog").setAttribute("id", "bidCompanys");
+                }
+                $(".select-dialog").on("tap", "li", function () {
+                    var text = this.innerHTML;
+                    var id = this.getAttribute("id");
+                    var boxID = this.parentNode.parentNode.parentNode.getAttribute("id");
+
+                    if (boxID == 'bidCompanys') {
+                        obj.bidCompany = id;
+                        doc.querySelector("#bidCompany").innerHTML = text;
+                    }
+                    doc.querySelector(".select-dialog").style.display = "none";
+                    doc.querySelector(".select-dialog").setAttribute("id", "");
+                });
+
+                // 获取投标公司
+                function getbidCompany() {
+                    $.ajax(global.apiURL + '/companyAssocited/user/getBiddingCompanyInfo.htm', {
+                        data : {},
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                createtPackLeader(data.rows)
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+
+                var bidId = myGetLocalStorage("bidId");
+                getBidList();
+                function getBidList() {
+                    $.ajax(global.apiURL + '/project/user/bidList.htm', {
+                        data : {
+                            companyId : obj.companyId,
+                            projectId: obj.projectId
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                if (bidId) {
+                                    initPage(data.data[bidId]);
+                                } else {
+                                    jQuery("#ranking").val(data.data.length + 1);
+                                }
+                                addArr(data.data);
+                            } else {
+                                //myToast(data.resultMsg);
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                };
+                function addArr(datas) {
+                    if (datas.length > 0) {
+                        for (var i = 0; i < datas.length; i++) {
+                            obj.indexs.push(datas[i].ranking);
+                            obj.companyIds.push(datas[i].company.id);
+                        }
+                    }
+                }
+                function initPage(datas) {
+                    //console.log(datas)
+                    obj.id = datas.id;
+                    jQuery("#ranking").val(datas.ranking);
+                    $.ajax(global.apiURL + '/companyAssocited/user/getCompanyAssociatedInfo.htm', {
+                        data : {},
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                if (datas.bidCompany != "999999") {
+                                    for (var i = 0; i < data.rows.length; i++) {
+                                        if (data.rows[i].id == datas.bidCompany) {
+                                            jQuery("#bidCompany").html(data.rows[i].companyName);
+                                        }
+                                    }
+                                } else {
+                                    var company = JSON.parse(myGetLocalStorage("user")).company;
+                                    jQuery("#bidCompany").html(company);
+                                }
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                    jQuery("#bidOffer").val(datas.bidOffer);
+                    if (datas.totleScore) {
+                        jQuery("#totleScore").val(datas.totleScore);
+                    }
+                    if (datas.businessScore) {
+                        jQuery("#businessScore").val(datas.businessScore);
+                    }
+                    if (datas.technicalScore) {
+                        jQuery("#technicalScore").val(datas.technicalScore);
+                    }
+                    if (datas.otherScore) {
+                        jQuery("#otherScore").val(datas.otherScore);
+                    }
+                    jQuery("#projectLeader").val(datas.projectLeader);
+                    jQuery("#memo").val(datas.memo);
+                    obj.bidCompany = datas.bidCompany;
+                }
+
+                if (bidId) {
+                    jQuery("#delete").show();
+                    doc.querySelector("#delete").addEventListener("tap", function () {
+                        myConfirm('您确定要删除该信息？', success);
+                        function success() {
+                            myLoading();
+                            $.ajax(global.apiURL + '/project/user/delBidding.htm', {
+                                data : {
+                                    id: obj.id,
+                                    projectId: obj.projectId
+                                },
+                                dataType : 'json',
+                                type : 'post',
+                                success : function(data){
+                                    if (data.success) {
+                                        myRemoveLocalStorage("bidId")
+                                        myOpenWindow("/tpl/product/step-tab.html", 'step-tab');
+                                    } else {
+                                        //myToast(data.resultMsg);
+                                    }
+                                    myLoadingOver();
+                                },
+                                error : function() {
+                                    myLoadingOver();
+                                    myToast("服务器正忙，请稍后重试！");
+                                }
+                            });
+                        }
+                    });
+                }
+
+                doc.querySelector("#submit").addEventListener("tap", function () {
+                    obj.ranking = jQuery("#ranking").val();
+                    obj.bidOffer = jQuery("#bidOffer").val();
+                    obj.totleScore = jQuery("#totleScore").val();
+                    obj.businessScore = jQuery("#businessScore").val();
+                    obj.technicalScore = jQuery("#technicalScore").val();
+                    obj.otherScore = jQuery("#otherScore").val();
+                    obj.projectLeader = jQuery("#projectLeader").val();
+                    obj.memo = jQuery("#memo").val();
+                    if (!obj.ranking) {
+                        myToast("请输入排名");
+                    }
+                    // else if (obj.ranking && obj.indexs) {
+                    //     for (var i = 0; i < obj.indexs.length; i++) {
+                    //         if (obj.ranking == obj.indexs[i]) {
+                    //             myToast("排名不能和已有排名重复");
+                    //         }
+                    //     }
+                    // }
+                    else if (!obj.bidCompany) {
+                        myToast("请选择公司名称");
+                    } else if (!obj.bidOffer) {
+                        myToast("请输入报价");
+                    } else if (!obj.projectLeader) {
+                        myToast("请输入技术负责人");
+                    } else {
+                        if (bidId) {
+                            modify();
+                        } else {
+                            submit();
+                        }
+                    }
+                });
+                function modify() {
+                    myLoading();
+                    $.ajax(global.apiURL + '/project/user/insBidding.htm', {
+                        data : {
+                            id : obj.id,
+                            companyId : obj.companyId,
+                            projectId : obj.projectId,
+                            ranking : obj.ranking,
+                            bidCompany : obj.bidCompany,
+                            bidOffer : obj.bidOffer,
+                            totleScore : obj.totleScore,
+                            businessScore : obj.businessScore,
+                            technicalScore : obj.technicalScore,
+                            otherScore : obj.otherScore,
+                            projectLeader : obj.projectLeader,
+                            memo : obj.memo
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                myOpenWindow(historyUrl, '');
+                            } else {
+                                //myToast(data.resultMsg);
+                            }
+                            myLoadingOver();
+                        },
+                        error : function() {
+                            myLoadingOver();
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+                function submit() {
+                    myLoading();
+                    $.ajax(global.apiURL + '/project/user/insBidding.htm', {
+                        data : {
+                            companyId : obj.companyId,
+                            projectId : obj.projectId,
+                            ranking : obj.ranking,
+                            bidCompany : obj.bidCompany,
+                            bidOffer : obj.bidOffer,
+                            totleScore : obj.totleScore,
+                            businessScore : obj.businessScore,
+                            technicalScore : obj.technicalScore,
+                            otherScore : obj.otherScore,
+                            projectLeader : obj.projectLeader,
+                            memo : obj.memo
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                myOpenWindow(historyUrl, '');
+                            } else {
+                                //myToast(data.resultMsg);
+                            }
+                            myLoadingOver();
+                        },
+                        error : function() {
+                            myLoadingOver();
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+            }
+        }(mui, document));
+    </script>
+</html>

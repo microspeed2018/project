@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.coredb.admin.AdminDao">
+	<resultMap id="adminResultMap" type="Admin">
+		<id property="id" column="id" />
+		<result property="username" column="username" />
+		<result property="name" column="name" />
+		<result property="mobile" column="mobile" />
+		<result property="email" column="email" />
+		<result property="department" column="department" />
+		<result property="jobId" column="job_id" />
+		<result property="roleName" column="role_name" />
+		<result property="companyId" column="company_id" />
+		<result property="password" column="password" />
+	    <result column="open_id" property="openId" jdbcType="VARCHAR" />
+	    <result column="client_id" property="clientId" jdbcType="VARCHAR" />
+	    <result column="image_address" property="imageAddress" jdbcType="VARCHAR" />
+		<result property="totalUserView" column="total_user_view" />
+		<result property="currentUserView" column="current_user_view" />
+		<result property="maxUserView" column="max_user_view" />
+		<result property="userViewLimit" column="user_view_limit" />
+		<result property="userViewDate" column="user_view_date" />
+		<result property="accStatus" column="acc_status" />
+		<result property="loginError" column="login_error" />
+		<result property="loginSucceed" column="login_succeed" />
+		<result property="loginFail" column="login_fail" />
+		<result property="loginTime" column="login_time" />
+		<result property="loginIp" column="login_ip" />
+		<result property="securityIp" column="security_ip" />
+		<result property="createUser" column="create_user" />
+		<result property="time" column="create_time" />
+		<result property="version" column="version" />
+	</resultMap>
+
+	<select id="getById" parameterType="int" resultMap="adminResultMap" resultType="Admin">
+		SELECT *
+		FROM t_admin WHERE id=#{id}
+	</select>
+
+	<select id="getByUsername" parameterType="string" resultMap="adminResultMap">
+		SELECT * FROM t_admin WHERE
+		username=#{username}
+	</select>
+
+    <select id="getByMobile" parameterType="string" resultMap="adminResultMap">
+        SELECT * FROM t_admin WHERE
+        mobile=#{mobile}
+    </select>
+    
+    <!-- 查询手机号是否重复 -->
+    <select id="getRepeatByMobile" parameterType="AdminQuery" resultMap="adminResultMap">
+        SELECT * FROM t_admin WHERE
+        mobile=#{mobile} and id != #{id}
+    </select>
+
+	<insert id="create" keyProperty="id" parameterType="Admin" useGeneratedKeys="true" keyColumn="id">
+		INSERT INTO t_admin
+		(
+		     username,
+		     name,
+		     mobile,
+		     email,
+		     department,
+		     job_id,
+		     company_id,
+		     password,
+	        open_id,
+	        client_id,
+	        image_address,
+		     acc_status,
+		     total_user_view,
+		     current_user_view,
+		     user_view_date,
+		     login_error,
+		     login_succeed,
+		     login_fail,
+		     login_time,
+		     login_ip,
+		     security_ip,
+		     create_user_id,
+		     create_time
+	     )
+		VALUES
+		(
+		     #{username},
+		     #{name},
+		     #{mobile},
+		     #{email},
+		     #{department},
+		     #{jobId},
+		     #{companyId},
+		     #{password},
+             #{openId,jdbcType=VARCHAR},
+             #{clientId,jdbcType=VARCHAR},
+             #{imageAddress,jdbcType=VARCHAR},
+		     #{accStatus},
+		     #{totalUserView},
+		     #{currentUserView},
+		     #{userViewDate},
+		     #{loginError},
+		     #{loginSucceed},
+		     #{loginFail},
+		     #{loginTime},
+		     #{loginIp},
+		     #{securityIp},
+		     #{createUser},
+		     #{time}
+	     )
+	</insert>
+
+	<update id="update" parameterType="Admin">
+		UPDATE t_admin
+		<set>
+			<if test="username != null">
+				username=#{username},
+			</if>
+			<if test="name != null">
+				name=#{name},
+			</if>
+			<if test="mobile != null">
+				mobile=#{mobile},
+			</if>
+			<if test="email != null">
+				email=#{email},
+			</if>
+			<if test="department != null">
+				department=#{department},
+			</if>
+			<if test="jobId != null">
+				job_id=#{jobId},
+			</if>
+			<if test="companyId != null">
+				company_id=#{companyId},
+			</if>
+			<if test="password != null">
+				password=#{password},
+			</if>
+		      <if test="openId != null" >
+		        open_id = #{openId,jdbcType=VARCHAR},
+		      </if>
+		      <if test="clientId != null" >
+		        client_id = #{clientId,jdbcType=VARCHAR},
+		      </if>
+		      <if test="imageAddress != null" >
+		        image_address = #{imageAddress,jdbcType=VARCHAR},
+		      </if>
+			<if test="accStatus != null">
+				acc_status=#{accStatus},
+			</if>
+			<if test="totalUserView != null">
+				total_user_view = #{totalUserView},
+			</if>
+			<if test="currentUserView != null">
+				current_user_view=#{currentUserView},
+			</if>
+			<if test="maxUserView != null">
+				max_user_view=#{maxUserView},
+			</if>
+			<if test="userViewLimit != null">
+				user_view_limit=#{userViewLimit},
+			</if>
+			<if test="userViewDate">
+				user_view_date=#{userViewDate},
+			</if>
+			<if test="loginError != null">
+				login_error=#{loginError},
+			</if>
+			<if test="loginSucceed != null">
+				login_succeed=#{loginSucceed},
+			</if>
+			<if test="loginFail != null">
+				login_fail=#{loginFail},
+			</if>
+			<if test="loginTime != null">
+				login_time=#{loginTime},
+			</if>
+			<if test="loginIp != null">
+				login_ip=#{loginIp},
+			</if>
+			<if test="securityIp != null">
+				security_ip=#{securityIp},
+			</if>
+			<if test="createUser != null">
+				create_user_id=#{createUser},
+			</if>
+			<if test="time != null">
+				create_time=#{time},
+			</if>			
+		</set>
+		<where>
+			id=#{id}
+			<if test="version != null">
+				AND version=#{version}
+			</if>
+		</where>
+	</update>
+
+
+	<select id="count" parameterType="AdminQuery" resultType="int">
+		SELECT COUNT(*) FROM t_admin
+		<include refid="QUERY_WHERE" />
+	</select>
+
+	<select id="query" parameterType="AdminQuery" resultType="list"
+		resultMap="adminResultMap">
+		SELECT * FROM t_admin
+		<include refid="QUERY_WHERE" />
+	</select>
+
+	<select id="queryByPage" parameterType="AdminQuery" resultType="list"
+		resultMap="adminResultMap">
+		SELECT a.* FROM t_admin a
+		<include refid="QUERY_WHERE" />
+		<choose>
+			<when test="orderBy != null">
+				ORDER BY #{orderBy}
+			</when>
+			<otherwise>
+				ORDER BY id ASC
+			</otherwise>
+		</choose>
+		limit #{pageBean.offset},#{pageBean.pageSize}
+	</select>
+
+	<sql id="QUERY_WHERE">
+		<where>
+			<if test="id != null">
+				id = #{id}
+			</if>
+			<if test="username != null">
+				AND username LIKE concat(concat('%',#{username}),'%')
+			</if>
+			<if test="name != null">
+				AND name LIKE concat(concat('%',#{name}),'%')
+			</if>
+			<if test="department != null">
+				AND department=#{department}
+			</if>
+			<if test="mobile != null">
+				AND mobile=#{mobile}
+			</if>
+			<if test="email != null">
+				AND email=#{email}
+			</if>
+			<if test="accStatus != null">
+				AND acc_status = #{accStatus}
+			</if>
+			<if test="jobId != null">
+				AND job_id = #{jobId,jdbcType=INTEGER}
+			</if>
+			<if test="registerStart != null">
+				<![CDATA[
+				AND time>=#{registerStart}
+				]]>
+			</if>
+			<if test="registerEnd != null">
+			    <![CDATA[
+				AND time<=#{registerEnd}
+				]]>
+			</if>
+		</where>
+	</sql>
+</mapper>

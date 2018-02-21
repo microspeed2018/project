@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:ctx="http://www.springframework.org/schema/context" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+  http://code.alibabatech.com/schema/dubbo 
+  http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+	<!-- 提供方应用信息，用于计算依赖关系 -->
+	<dubbo:application name="dubbo-front-consumer" owner="programmer"
+		organization="dubbox"></dubbo:application>
+
+	<!-- 使用zookeeper注册中心暴露服务地址 
+	<dubbo:registry address="${dubbo.registry.address}"/>-->
+	<!-- 使用zookeeper注册中心暴露服务地址 -->
+	<!-- <dubbo:registry address="N/A" /> 
+	<dubbo:protocol name="dubbo" port="${dubbo.port}" />-->
+
+    <dubbo:reference id="adminFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+        interface="com.zjzmjr.core.api.admin.IAdminFacade" group="${dubbo.group}"/>
+    <dubbo:reference id="adminLoginAuthFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+        interface="com.zjzmjr.core.api.admin.IAdminLoginAuthFacade" group="${dubbo.group}"/>
+	<dubbo:reference id="adminTransactionFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+		group="${dubbo.group}" interface="com.zjzmjr.core.api.transaction.IAdminTransactionFacade" />
+
+	<dubbo:reference id="areaFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+		group="${dubbo.group}" interface="com.zjzmjr.core.api.area.IAreaFacade" />
+	<dubbo:reference id="messageFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+		group="${dubbo.group}" interface="com.zjzmjr.core.api.message.IMessageFacade" />
+	<dubbo:reference id="transactionFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+		interface="com.zjzmjr.core.api.transaction.ITransactionFacade" group="${dubbo.group}"/>
+	<dubbo:reference id="logoManageFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+		group="${dubbo.group}" interface="com.zjzmjr.core.api.logo.ILogoManageFacade" />
+	<dubbo:reference id="appReleaseFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+		group="${dubbo.group}" interface="com.zjzmjr.core.api.app.IAppReleaseFacade" />
+	<dubbo:reference id="faceFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+		group="${dubbo.group}" interface="com.zjzmjr.core.api.face.IFaceFacade" />
+	<dubbo:reference id="notifyFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+		group="${dubbo.group}" interface="com.zjzmjr.core.api.sms.INotifyFacade" />
+		
+    <!-- 微信菜单 -->
+    <dubbo:reference id="weixinMenuFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+        group="${dubbo.group}" interface="com.zjzmjr.core.api.weixin.IWeixinMenuFacade" />
+        
+</beans>

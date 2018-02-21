@@ -1,0 +1,528 @@
+<!documentTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>方案信息</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/mui.picker.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+    </head>
+    <body>
+    <div id="step">
+        <header class='header'>
+            <img src="../../images/svg/left.svg" class="icon-40" @click="goBack()" />
+            <span class='tit'>方案信息</span>
+            <i></i>
+        </header>
+        <div class="wrap" v-if="step >= 400 && step < 420 && haveScheme && (role == 1 || role == 2 || role == 3 || role == 4 || role == 5 || personnelNature == 44)">
+            <h4>
+                <span>方案设计初稿</span><p class="downLoad-11"></p>
+            </h4>
+        </div>
+        <div class="wrap" v-if="step >= 420 && haveScheme && (role == 1 || role == 2 || role == 3 || role == 4 || role == 5 || personnelNature == 44)">
+            <h4>
+                <span>方案设计</span><p class="downLoad-12"></p>
+            </h4>
+        </div>
+        <div class="wrap" v-if="step > 420 && haveScheme && (role == 1 || role == 2 || role == 3 || role == 4 || role == 5 || personnelNature == 44 || role == 7 || role == 8 || role == 10 || role == 9 || role == 11)">
+            <h4>
+                <span>方案确认书</span><p class="downLoad-13"></p>
+            </h4>
+        </div>
+        <div class="wrap" v-if="step > 430 && step < 450 && haveDevelopment && (role == 1 || role == 2 || role == 3 || role == 4 || role == 5 || personnelNature == 44 || role == 11)">
+            <h4>
+                <span>扩初方案初稿</span><p class="downLoad-14"></p>
+            </h4>
+        </div>
+        <div class="wrap" v-if="step >= 450 && haveDevelopment && (role == 1 || role == 2 || role == 3 || role == 4 || role == 5 || personnelNature == 44 || role == 11)">
+            <h4>
+                <span>扩初方案设计</span><p class="downLoad-15"></p>
+            </h4>
+        </div>
+        <div class="wrap" v-if="step > 450 && haveDevelopment && (role == 1 || role == 2 || role == 3 || role == 4 || role == 5 || personnelNature == 44 || role == 7 || role == 8 || role == 10 || role == 9 || role == 11)">
+            <h4>
+                <span>扩初确认书</span><p class="downLoad-16"></p>
+            </h4>
+        </div>
+        <div class="wrap" v-if="step > 460 && step < 480 && haveDrawing && (role == 1 || role == 2 || role == 3 || role == 4 || role == 5 || personnelNature == 44 || role == 11)">
+            <h4>
+                <span>施工图初稿</span><p class="downLoad-17"></p>
+            </h4>
+        </div>
+        <div class="wrap" v-if="step >= 480 && haveDrawing && (role == 1 || role == 2 || role == 3 || role == 4 || role == 5 || personnelNature == 44 || role == 11)">
+            <h4>
+                <span>施工图设计</span><p class="downLoad-18"></p>
+            </h4>
+        </div>
+        <div class="wrap" v-if="step > 480 && haveDrawing && (role == 1 || role == 2 || role == 3 || role == 4 || role == 5 || personnelNature == 44 || role == 7 || role == 8 || role == 10 || role == 9 || role == 11)">
+            <h4>
+                <span>施工图确认书</span><p class="downLoad-19"></p>
+            </h4>
+        </div>
+        <div class="wrap" v-if="step >= 490 && step < 510  && havePlanning && (role == 1 || role == 2 || role == 3 || role == 4 || role == 5 || personnelNature == 44 || role == 11)">
+            <h4>
+                <span>规划设计初稿</span><p class="downLoad-20"></p>
+            </h4>
+        </div>
+        <div class="wrap" v-if="step >= 510 && havePlanning && (role == 1 || role == 2 || role == 3 || role == 4 || role == 5 || personnelNature == 44 || role == 11)">
+            <h4>
+                <span>规划设计</span><p class="downLoad-21"></p>
+            </h4>
+        </div>
+        <div class="wrap" v-if="step > 510 && havePlanning && (role == 1 || role == 2 || role == 3 || role == 4 || role == 5 || personnelNature == 44 || role == 7 || role == 8 || role == 10 || role == 9 || role == 11)">
+            <h4>
+                <span>规划确认书</span><p class="downLoad-22"></p>
+            </h4>
+        </div>
+        <div class="wrap" v-if="step > 510 && (role == 1 || role == 2 || role == 3 || role == 4 || role == 5 || personnelNature == 44 || role == 7 || role == 8 || role == 10 || role == 9 || role == 11)">
+            <h4>
+                <span>竣工报告</span><p class="downLoad-24"></p>
+            </h4>
+        </div>
+        <div class='wrap'>
+            <input type="button" value='返回' class='btn btn-max' @click="goBack()" />
+        </div>
+    </div>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/jquery.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../js/mui.picker.js"></script>
+    <script src="../../js/mui.poppicker.js"></script>
+    <script src="../../js/mui.picker.min.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script type="text/javascript">
+        var step = new Vue({
+            el: "#step",
+            data: {
+                step : myGetLocalStorage("step"),
+                productId: myGetLocalStorage("productId"),
+                productPage: myGetLocalStorage("productPage"),
+                branch: myGetLocalStorage("branch"),
+                role : JSON.parse(myGetLocalStorage("user")).jobId,
+                personnelNature: JSON.parse(myGetLocalStorage("user")).personnelNature,
+                examineFlag: myGetLocalStorage("examineFlag"),
+                id: "",
+                companyId: "",
+                companyName: "",
+                projectId: "",
+                fileName: "",
+                fileUrl: "",
+                listStep: "",
+                subStep: "",
+                subStep2: "",
+                isMajorProject: "",
+                haveTechnical: "",
+                haveDevelopment: "",
+                haveDrawing: "",
+                havePlanning: "",
+                haveScheme: "",
+                intentionalCooperation: "",
+                obj : {},
+                projectLeader : "",
+                contractPayment: "",
+                // 用于页面显示值
+                show: {
+                    productName : "",
+                    managementPersonnel: "",
+                    bail : "",
+                    latestRemittanceDate : "",
+                    remittanceCompany : "",
+                    bankName : "",
+                    accountNo : "",
+                    bailMemo : "",
+                    bmnd : { // 报名拟定
+                        name: "",
+                        time: "",
+                        memo: ""
+                    },
+                    bzj : { // 保证经
+                        name: "",
+                        time: "",
+                        memo: ""
+                    },
+                    swb : { // 商务标
+                        name: "",
+                        time: "",
+                        memo: ""
+                    },
+                    jsb : { // 技术标
+                        name: "",
+                        time: "",
+                        memo: ""
+                    },
+                    ht : { // 合同
+                        name: "",
+                        time: "",
+                        memo: ""
+                    },
+                    fb : { // 分包
+                        name: "",
+                        time: "",
+                        memo: ""
+                    },
+                    kp : { // 开票
+                        name: "",
+                        time: "",
+                        memo: ""
+                    },
+                    xmzc : { // 项目支出
+                        name: "",
+                        time: "",
+                        memo: ""
+                    }
+                }
+            },
+            omputed : {},
+            methods: {
+                init: function () {
+
+                },
+                goBack : function () {
+                    myOpenWindow("step-tab.html", 'step-tab');
+                },
+                goDetail : function () {
+                    zjzm.historyUrl("/tpl/product/step-tab.html");
+                    myOpenWindow("/tpl/product/detail.html", '');
+                },
+                goto: function (url) {
+                    myOpenWindow(url, '');
+                },
+                // 获取详情
+                getProduct: function (name) {
+                    var that = this
+                    myLoading();
+                    var param = [this.productId];
+                    mui.ajax(global.apiURL + '/project/user/list.htm', {
+                        data : {
+                            id : param[0]
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                var data = data.rows[0];
+                                that.id = data.id;
+                                that.companyId = data.companyId;
+                                that.companyName = data.companyAssociated.companyName;
+                                that.projectId = data.id;
+
+                                if (that.examineFlag) {
+                                    that.step = data.step;
+                                } else {
+                                    that.listStep = data.step;
+                                }
+                                that.subStep = data.subStep;
+                                that.subStep2 = data.subStep2;
+                                that.isMajorProject = data.isMajorProject;
+                                that.haveTechnical = data.haveTechnical;
+
+                                that.haveDevelopment = data.haveDevelopment;
+                                that.haveDrawing = data.haveDrawing;
+                                that.havePlanning = data.havePlanning;
+                                that.haveScheme = data.haveScheme;
+
+                                that.intentionalCooperation = data.intentionalCooperation;
+                                // 赋值字段为合同添加做校验
+                                that.obj.contract_name = data.name;
+                                that.obj.contract_contractAwardCompany = data.contractAwardCompany;
+                                that.obj.contract_category = data.category;
+                                that.obj.contract_type = data.type;
+                                that.obj.contract_city = data.city;
+                                that.obj.contract_address = data.address;
+                                that.obj.contract_designArea = data.designArea;
+                                that.obj.contract_investmentMount = data.investmentMount;
+                                that.obj.contract_haveScheme = data.haveScheme;
+                                that.obj.contract_haveDevelopment = data.haveDevelopment;
+                                that.obj.contract_haveDrawing = data.haveDrawing;
+                                that.obj.contract_havePlanning = data.havePlanning;
+
+                                // step >= 400
+                                if (that.step >= 400 && that.step < 420 && (that.role == 1 || that.role == 2 || that.role == 3 || that.role == 4 || that.role == 5 || that.personnelNature == 44)) {
+                                    setTimeout(function () {
+                                        that.downLoad(jQuery(".downLoad-11"), data.id, 11);
+                                    }, 100);
+                                }
+                                // step >= 420
+                                if (that.step >= 420 && (that.role == 1 || that.role == 2 || that.role == 3 || that.role == 4 || that.role == 5 || that.personnelNature == 44)) {
+                                    setTimeout(function () {
+                                        that.downLoad(jQuery(".downLoad-12"), data.id, 12);
+                                    }, 100);
+                                }
+                                // step > 420
+                                if (that.step > 420 && (that.role == 1 || that.role == 2 || that.role == 3 || that.role == 4 || that.role == 5 || that.personnelNature == 44 || that.role == 7 || that.role == 8 || that.role == 10 || that.role == 9 || that.role == 11)) {
+                                    // 方案设计成果确认书
+                                    setTimeout(function () {
+                                        that.downLoad(jQuery(".downLoad-13"), data.id, 13);
+                                    }, 100);
+                                }
+                                // step == 430
+                                if (that.step == 430 && (that.role == 1 || that.role == 2 || that.role == 3 || that.role == 4 || that.role == 5 || that.personnelNature == 44 || that.role == 11)) {
+                                    setTimeout(function () {
+                                        that.downLoad(jQuery(".downLoad-14"), data.id, 14);
+                                    }, 100);
+                                }
+                                // step > 430-450
+                                if (that.step > 430 && (that.role == 1 || that.role == 2 || that.role == 3 || that.role == 4 || that.role == 5 || that.personnelNature == 44 || that.role == 11)) {
+                                    setTimeout(function () {
+                                        that.downLoad(jQuery(".downLoad-14"), data.id, 14);
+                                    }, 100);
+                                }
+                                // step > 450
+                                if (that.step >= 450 && that.role != 7 && that.role != 8 && that.role != 10 && that.role != 9) {
+                                    setTimeout(function () {
+                                        that.downLoad(jQuery(".downLoad-15"), data.id, 15);
+                                    }, 100);
+                                }
+                                // step > 450
+                                if (that.step > 450) {
+                                    // 扩初成果
+                                    setTimeout(function () {
+                                        that.downLoad(jQuery(".downLoad-16"), data.id, 16);
+                                    }, 100);
+                                }
+                                // step > 460-480
+                                if (that.step >= 460 && that.step < 480 && that.role != 7 && that.role != 8 && that.role != 10 && that.role != 9) {
+                                    setTimeout(function () {
+                                        that.downLoad(jQuery(".downLoad-17"), data.id, 17);
+                                    }, 100);
+                                }
+                                // step > 480
+                                if (that.step >= 480 && that.role != 7 && that.role != 8 && that.role != 10 && that.role != 9) {
+                                    setTimeout(function () {
+                                        that.downLoad(jQuery(".downLoad-18"), data.id, 18);
+                                    }, 100);
+                                }
+                                // step > 480
+                                if (that.step > 480) {
+                                    // 施工成果
+                                    setTimeout(function () {
+                                        that.downLoad(jQuery(".downLoad-19"), data.id, 19);
+                                    }, 100);
+                                }
+                                // step >= 490
+                                if (that.step >= 490 && that.role != 7 && that.role != 8 && that.role != 10 && that.role != 9) {
+                                    setTimeout(function () {
+                                        that.downLoad(jQuery(".downLoad-20"), data.id, 20);
+                                    }, 100);
+                                }
+                                // step >= 510
+                                if (that.step >= 510 && that.role != 7 && that.role != 8 && that.role != 10 && that.role != 9) {
+                                    setTimeout(function () {
+                                        that.downLoad(jQuery(".downLoad-21"), data.id, 21);
+                                    }, 100);
+                                }
+                                // step > 510
+                                if (that.step > 510) {
+                                    setTimeout(function () {
+                                        that.downLoad(jQuery(".downLoad-22"), data.id, 22);
+                                    }, 100);
+                                }
+                                // step >= 520
+                                if (that.step >= 520) {
+                                    setTimeout(function () {
+                                        that.downLoad(jQuery(".downLoad-24"), data.id, 24);
+                                    }, 100);
+                                }
+                            } else {
+                                if (data.code == "405" && data.resultMsg == "请登录系统") {
+                                    againLogin(that.getProduct, param);
+                                } else {
+                                    //myToast(data.resultMsg);
+                                }
+                            }
+                            myLoadingOver();
+                        },
+                        error : function() {
+                            myLoadingOver();
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                },
+                // 获取基础数据
+                getBasic: function(id, cb) {
+                    jQuery.ajax({
+                        url: global.apiURL + "/company/user/getBasic.htm",
+                        type: 'post',
+                        dataType: 'json',
+                        data: {
+                            categoryId : id
+                        },
+                        success: function (data) {
+                            if (data.success) {
+                                cb(data.rows);
+                            } else {
+                                //myToast(data.resultMsg);
+                            }
+                        }
+                    });
+                },
+                // 获取项目介绍人
+                getintroducer : function () {
+                    mui.ajax(global.apiURL + '/user/companyStaffs.htm', {
+                        data : {},
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                var datas = data.data;
+                                var boxs = jQuery("#people");
+                                var dom = "";
+                                for (var i = 0; i < datas.length; i++) {
+                                    dom += "<option value='"+ datas[i].userId +"'>"+ datas[i].userInfo.name +"</option>";
+                                }
+                                boxs.html(dom);
+                            } else {
+                                //myToast(data.resultMsg);
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                },
+                // 获取发包单位
+                getCompanyAssociatedInfo: function () {
+                    mui.ajax(global.apiURL + '/companyAssocited/user/getCompanyAssociatedInfo.htm', {
+                        data : {},
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                var box = jQuery("#contractAwardCompany");
+                                var dom = "";
+                                for (var i = 0; i < data.rows.length; i++) {
+                                    dom += "<option value='"+ data.rows[i].id +"'>"+ data.rows[i].companyName +"</option>";
+                                }
+                                box.html(dom);
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                },
+                // 获取经营专员/报名制作人
+                getProposer: function() {
+                    mui.ajax(global.apiURL + '/user/companyStaffs.htm', {
+                        data : {
+                            jobId: 4
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                var datas = data.data;
+                                var box = jQuery("#managementPersonnel");
+                                var boxs = jQuery("#people");
+                                var boxss = jQuery("#biddingdocumentsProducer");
+                                var boxsss = jQuery("#businessProducer");
+                                var dom = "";
+                                for (var i = 0; i < datas.length; i++) {
+                                    dom += "<option value='"+ datas[i].userId +"'>"+ datas[i].userInfo.name +"</option>";
+                                }
+                                if (box) box.html(dom);
+                                if (boxs) boxs.html(dom);
+                                if (boxss) boxss.html(dom);
+                                if (boxsss) boxsss.html(dom);
+                            } else {
+                                //myToast(data.resultMsg);
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                },
+                // 获取邀请人
+                getstaffPersons: function getstaffPersons() {
+                    $.ajax(global.apiURL + '/user/staffPersons.htm', {
+                        data : {
+                            jobId: 5,
+                            personnelNature: 44
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            if (data.success) {
+                                var datas = data.data;
+                                var box = jQuery("#inviterIds");
+                                var boxs = jQuery("#proposerId");
+                                var boxss = jQuery("#people");
+                                var dom = "";
+                                for (var i = 0; i < datas.length; i++) {
+                                    dom += "<option value='"+ datas[i].userId +"'>"+ datas[i].userInfo.name +"</option>";
+                                }
+                                if (box) {
+                                    box.html(dom);
+                                }
+                                if (boxs) {
+                                    boxs.html(dom);
+                                }
+                                if (boxss) {
+                                    boxss.html(dom);
+                                }
+                            } else {
+                                //myToast(data.resultMsg);
+                            }
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                },
+                // 文件查看
+                downLoad: function(box, projectId, fileId) {
+                    $.ajax(global.apiURL + '/fileUpLoad/user/getSpecifyFile.htm', {
+                        data : {
+                            projectId: projectId,
+                            fileId : fileId
+                        },
+                        dataType : 'json',
+                        type : 'post',
+                        success : function(data){
+                            var dom = "";
+                            if (data.success) {
+                                var datas = data.data;
+                                var flagZip = 0;
+                                var flagFile = 0;
+                                if (datas.length) {
+                                    for (var i = 0; i < datas.length; i++) {
+                                        var arr = datas[i].fileAddress;
+                                        if(arr.indexOf(".zip") >= 0 || arr.indexOf(".rar") >= 0) {
+                                            flagZip++;
+                                            dom += "<a href='javascript:void(0);'>压缩包"+ flagZip +"</a>";
+                                        } else {
+                                            flagFile++;
+                                            if (datas.length == 1) {
+                                                dom += "<a class='a' href='"+ arr +"'>文件</a>";
+                                            } else {
+                                                dom += "<a class='a' href='"+ arr +"'>文件"+ flagFile +"</a>";
+                                            }
+                                        }
+                                    }
+                                }
+                            } else {
+                                dom += "<em class='fail'>未上传</em>";
+                            }
+                            box.html(dom);
+                        },
+                        error : function() {
+                            myToast("服务器正忙，请稍后重试！");
+                        }
+                    });
+                }
+            },
+            mounted: function () {
+                this.$nextTick(function () {
+                    mui.init();
+                    this.init();
+                    this.getProduct();
+                })
+            }
+        })
+    </script>
+</html>

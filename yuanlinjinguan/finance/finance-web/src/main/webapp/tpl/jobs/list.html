@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <title>招聘信息</title>
+    <link href="../../css/mui.min.css" rel="stylesheet" />
+    <link href="../../css/base.css" rel="stylesheet" />
+</head>
+<body>
+    <div id="jobList" v-cloak>
+        <header class="header">
+            <img src="../../images/svg/left.svg" class="icon-40" @click='goBack' />
+            <span class="tit">招聘信息</span> <i></i>
+        </header>
+        <div class='jobList'>
+            <ul>
+                <li v-for='item in rows' @click='detail(item)'>
+                    <p>
+                        <span>{{ item.positionName }}</span>
+                        <span v-if='item.companyDepartment'>{{ item.companyDepartment.name }}</span>
+                        <span>{{ item.address }}</span>
+                    </p>
+                    <p>
+                        <span>
+                            薪资待遇：<i>{{ item.salary }}</i>
+                        </span>
+                        <span>发布于：<em v-if='item.createTime'>{{ item.createTime.time | formatDate }}</em></span>
+                    </p>
+                    <b v-if='item.isValid == 0'></b>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../js/axios.min.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script>
+        // 校验app或wap
+        myInit(indexFun);
+        function indexFun() {
+            var home = new Vue({
+                el: "#jobList",
+                data : {
+                    rows: [
+                        // 测试数据
+                        // {
+                        //     positionName: "规划设计师",
+                        //     department: "设计中心",
+                        //     address: "杭州",
+                        //     salary: "面议",
+                        //     time: "2017-06-20",
+                        //     numbers : "3",
+                        //     education: "学历",
+                        //     experience: "工作经验 ",
+                        //     age: 25 (zjzm.formatDate(datas.timeStart, "/")
+                        // }
+                    ]
+                },
+                methods: {
+                    goBack: function () {
+                        myOpenWindow('/tpl/home/home.html', "home");
+                    },
+                    getList: function () {
+                        var _this = this;
+                        myLoading();
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + '/recruitment/getRecruitment.htm',
+                            params: {}
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                _this.rows = datas.rows
+                            } else {
+                                myToast(datas.resultMsg);
+                            }
+                            myLoadingOver();
+                        }).catch(function (error) {
+                            myLoadingOver();
+                        })
+                    },
+                    detail: function (item) {
+                        mySetLocalStorage("jobsDetail", item);
+                        myOpenWindow('/tpl/jobs/detail.html', "detail");
+                    }
+                },
+                filters: {
+                    formatDate: function(time) {
+                        return zjzm.getDay(time, 'yyyy/MM/dd');
+                    }
+                },
+                mounted: function () {
+                    this.$nextTick(function () {
+                        mui.init();
+                        this.getList();
+                    })
+                }
+            });
+        }
+    </script>
+</html>

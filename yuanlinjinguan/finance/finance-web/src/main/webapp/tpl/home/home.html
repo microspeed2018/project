@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>首页</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div id="home" v-cloak>
+            <div class='home-banner'>
+                <ul>
+                    <li v-for='item in publicArr' @click='homeTap(item)'>
+                        <i :class="'home-' + item.id"></i>
+                        <span>{{ item.name }}</span>
+                    </li>
+                </ul>
+            </div>
+            <div class='home wrap' style="margin-top: 0;">
+                <h2>人事管理</h2>
+                <ul>
+                    <li v-for='item in personnelArr' @click='homeTap(item)'>
+                        <i :class="'home-' + item.id"></i>
+                        <span>{{ item.name }}</span>
+                    </li>
+                </ul>
+            </div>
+            <div class='home wrap'>
+                <h2>项目管理</h2>
+                <ul>
+                    <li v-for='item in projectArr' @click='homeTap(item)'>
+                        <i :class="'home-' + item.id"></i>
+                        <span>{{ item.name }}</span>
+                        <em v-if='item.num'>{{ item.num }}</em>
+                    </li>
+                </ul>
+            </div>
+            <div class='banner wrap' style="margin-bottom: 2rem;">
+                <div id="slider" class="mui-slider">
+                    <div class="mui-slider-group mui-slider-loop">
+                    </div>
+                    <div class="mui-slider-indicator">
+                    </div>
+                </div>
+            </div>
+            <footer class='footer'>
+                <ul>
+                    <li v-for='(item, index) in footer' @click='tabTap(item)' :class='index == 0 ? "active" : ""'>
+                        <i :class="item.id + '-icon'"></i>
+                        <span>{{ item.name }}</span>
+                    </li>
+                </ul>
+            </footer>
+        </div>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../js/axios.min.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script>
+        // 校验app或wap
+        myInit(indexFun);
+        function indexFun() {
+            //getPushInfo()
+            var home = new Vue({
+                el: "#home",
+                data : {
+                    publicArr: [
+                        {name: '公司介绍', id: 'about',  status: true},
+                        {name: '云端共享', id: 'share',  status: false},
+                        {name: '物品借还', id: 'borrow', status: false}
+                    ],
+                    personnelArr: [
+                        {name: '我的申请', id: 'myApply',   status: false},
+                        {name: '我的审批', id: 'myExamine', status: false},
+                        {name: '面试设定', id: 'interviewSet', status: false},
+                        {name: '通讯录',   id: 'mail',      status: false},
+                        {name: '招聘信息', id: 'jobs',      status: true},
+                        {name: '我的简历', id: 'resume',    status: true},
+                        {name: '我的面试', id: 'myInterview', status: true},
+                        {name: '我的薪酬', id: 'pay',       status: false} 
+                    ],
+                    projectArr: [
+                    	{name: '工作汇报', id: 'work',    status: false},
+                    	{name: '业务审核', id: 'examine', status: false, num: 0},
+                    	{name: '项目报表', id: 'count',   status: false},
+                        {name: '业务申请', id: 'apply',   status: false}   
+                    ],
+                    footer: [
+                        {url: '/tpl/home/home.html', id: 'home', name: "首页"},
+                        {url: '/tpl/product/list.html', id: 'product', name: "项目"},
+                        {url: '/tpl/msg/list.html', id: 'msg', name: "消息"},
+                        {url: '/tpl/user-info/user.html', id: 'user', name: "我的"}
+                    ],
+                    user: JSON.parse(myGetLocalStorage("user"))
+                },
+                methods: {
+                    getUser: function () {
+                        if (this.user) {
+                            // 非普通用户
+                            if (this.user.department != "99" || this.user.personnelNature == 44) {
+                                // 处理头部按钮
+                                for (var i = 0; i < this.publicArr.length; i++) {
+                                    this.publicArr[i].status = true
+                                }
+                                // 处理人事按钮
+                                for (var i = 0; i < this.personnelArr.length; i++) {
+                                    this.personnelArr[i].status = true
+                                }
+                                // 处理项目按钮
+                                this.projectArr[0].status = true // 工作汇报
+                                if (this.user.jobId == 5 || this.user.jobId == 4 || this.user.personnelNature == 44) {
+                                    // 业务申请
+                                    this.projectArr[3].status = true
+                                }
+                                if (this.user.jobId == 2 || this.user.jobId == 3 || this.user.jobId == 5 || this.user.jobId == 7 || this.user.jobId == 8 || this.user.jobId == 9 || this.user.jobId == 10 || this.user.jobId == 11 || this.user.personnelNature == 44) {
+                                    // 业务审核
+                                    this.projectArr[1].status = true
+                                    if (this.user.jobId == 2) {
+                                        this.projectArr[1].name = '院办审核'
+                                        this.getJobId2()
+                                    }
+                                    if (this.user.jobId == 3) {
+                                        this.projectArr[1].name = '经营审核'
+                                        this.getJobId3()
+                                    }
+                                    if (this.user.jobId == 5 || this.user.personnelNature == 44) {
+                                        this.projectArr[1].name = '技术审核'
+                                        this.getJobId5()
+                                    }
+                                    if (this.user.jobId == 7) {
+                                        this.projectArr[1].name = '财务审核'
+                                        this.getJobId7()
+                                    }
+                                    if (this.user.jobId == 8) {
+                                        this.projectArr[1].name = '出纳确认'
+                                        this.getJobId8()
+                                    }
+                                    if (this.user.jobId == 9) {
+                                        this.projectArr[1].name = '行政盖章'
+                                        this.getJobId9()
+                                    }
+                                    if (this.user.jobId == 10) {
+                                        this.projectArr[1].name = '法务审核'
+                                        this.getJobId10()
+                                    }
+                                    if (this.user.jobId == 11) {
+                                        this.projectArr[1].name = '总工审核'
+                                        this.getJobId11()
+                                    }
+                                }
+                                if (this.user.jobId == 1 || this.user.jobId == 2 || this.user.jobId == 3 || this.user.jobId == 4 || this.user.jobId == 5 || this.user.jobId == 8 || this.user.jobId == 9 || this.user.personnelNature == 44) {
+                                    // 项目报表
+                                    this.projectArr[2].status = true
+                                }
+                            }
+                        } else {
+                            // 没有登录
+                        }
+                    },
+                    getJobId2: function () {
+                        var that = this
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + '/officeAudit/user/getProjectOfficeAuditCount.htm',
+                            params: {}
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                that.projectArr[1].num = datas.data
+                            } else {
+                                if (datas.code == 405) {
+                                    againLogin(that.getJobId2, []);
+                                } else {
+                                    myToast(datas.resultMsg);
+                                }
+                            }
+                        }).catch(function (error) {
+                            //myToast(error);
+                        })
+                    },
+                    getJobId3: function () {
+                        var that = this
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + '/manageAudit/user/getProjectManagerAuditCount.htm',
+                            params: {}
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                that.projectArr[1].num = datas.data
+                            } else {
+                                //myToast(error);
+                            }
+                        }).catch(function (error) {
+                            //myToast(error);
+                        })
+                    },
+                    getJobId5: function () {
+                        var that = this
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + '/leaderAudit/user/getProjectLeaderAuditCount.htm',
+                            params: {}
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                that.projectArr[1].num = datas.data
+                            } else {
+                                //myToast(error);
+                            }
+                        }).catch(function (error) {
+                            //myToast(error);
+                        })
+                    },
+                    getJobId7: function () {
+                        var that = this
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + '/financialAudit/user/getProjectFinancialAuditCount.htm',
+                            params: {}
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                that.projectArr[1].num = datas.data
+                            } else {
+                                //myToast(error);
+                            }
+                        }).catch(function (error) {
+                            //myToast(error);
+                        })
+                    },
+                    getJobId8: function () {
+                        var that = this
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + '/cashierConfirmation/user/getProjectCashierConfirmationCount.htm',
+                            params: {}
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                that.projectArr[1].num = datas.data
+                            } else {
+                                //myToast(error);
+                            }
+                        }).catch(function (error) {
+                            //myToast(error);
+                        })
+                    },
+                    getJobId9: function () {
+                        var that = this
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + '/administrativeSeal/user/getProjectAdministrativeSealCount.htm',
+                            params: {}
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                that.projectArr[1].num = datas.data
+                            } else {
+                                //myToast(error);
+                            }
+                        }).catch(function (error) {
+                            //myToast(error);
+                        })
+                    },
+                    getJobId10: function () {
+                        var that = this
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + '/lawAudit/user/getProjectLawAuditCount.htm',
+                            params: {}
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                that.projectArr[1].num = datas.data
+                            } else {
+                                //myToast(error);
+                            }
+                        }).catch(function (error) {
+                            //myToast(error);
+                        })
+                    },
+                    getJobId11: function () {
+                        var that = this
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + '/chiefAudit/user/getProjectChiefAuditCount.htm',
+                            params: {}
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                that.projectArr[1].num = datas.data
+                            } else {
+                                //myToast(error);
+                            }
+                        }).catch(function (error) {
+                            //myToast(error);
+                        })
+                    },
+                    homeTap: function(item) {
+                        if (!item.status) {
+                            myAlert("暂无查看权限");
+                        } else {
+                            if (item.id == "about") {
+                                // 公司简介
+                                myOpenWindow('/tpl/about/index.html', item.id);
+                                //myAlert("敬请期待");
+                            } else if (item.id == "resume") {
+                                // 简历
+                                zjzm.historyUrl("/tpl/home/home.html");
+                                myOpenWindow('/tpl/resume/index.html', item.id);
+                            } else if (item.id == "jobs") {
+                                // 招聘
+                                myOpenWindow('/tpl/jobs/list.html', item.id);
+                            } else if (item.id == "share") {
+                                // 共享
+                                myOpenWindow('/tpl/share/list.html', item.id);
+                            } else if (item.id == "pay") {
+                                // 薪酬
+                                myOpenWindow('/tpl/pay/list.html', item.id);
+                            }  else if (item.id == "apply") {
+                                // 申请
+                                myOpenWindow('/tpl/invoice/list.html', item.id);
+                            } else if (item.id == "work") {
+                                // 工作
+                                myOpenWindow('/tpl/work/add.html', item.id);
+                            } else if (item.id == "mail") {
+                                // 通讯录
+                                myOpenWindow('/tpl/mail/list.html', item.id);
+                            } else if (item.id == "count") {
+                                // 统计
+                                myOpenWindow('/tpl/table/list.html', item.id);
+                            } else if (item.id == "examine") {
+                                // 审核
+                                if (this.user.jobId == 2) {
+                                    myOpenWindow("/tpl/examine/officeAudit.html", 'officeAudit');
+                                } else if (this.user.jobId == 3) {
+                                    myOpenWindow("/tpl/examine/manageAudit.html", 'manageAudit');
+                                } else if (this.user.jobId == 5 || this.user.personnelNature == 44) {
+                                    myOpenWindow("/tpl/examine/leaderAudit.html", 'leaderAudit');
+                                } else if (this.user.jobId == 7) {
+                                    myOpenWindow("/tpl/examine/financialAudit.html", 'financialAudit');
+                                } else if (this.user.jobId == 8) {
+                                    myOpenWindow("/tpl/examine/cashierConfirmation.html", 'cashierConfirmation');
+                                } else if (this.user.jobId == 9 || this.user.jobId == 10 || this.user.jobId == 11) {
+                                    myOpenWindow("/tpl/product/step-tab.html", 'step-tab');
+                                }
+                            } else if (item.id == "interviewSet") {
+                                myOpenWindow('/tpl/interview/list.html', item.id);
+                            } else if (item.id == "myInterview") {
+                                //myAlert("敬请期待");
+                                myOpenWindow('/tpl/interview/mylist.html', item.id);
+                            } else {
+                                myAlert("敬请期待");
+                            }
+                        }
+                    },
+                    tabTap: function (item) {
+                        if (item.id == "product") {
+                            if (this.user) {
+                                // 判断是否是外部人员
+                                if (this.user.department == "99" && this.user.personnelNature != "44") {
+                                    myAlert("暂无查看权限");
+                                } else {
+                                    myOpenWindow(item.url, item.id);
+                                }
+                            } else {
+                                myOpenWindow("/tpl/login/login.html", "login");
+                            }
+                        } else {
+                            myOpenWindow(item.url, item.id);
+                        }
+                    }
+                },
+                mounted: function () {
+                    this.$nextTick(function () {
+                        mui.init();
+                        // 获取广告位
+                        zjzm.initAdsList(2);
+                        this.getUser();
+                    })
+                }
+            });
+        }
+    </script>
+</html>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+		<setting name="logImpl" value="LOG4J"/>
+	</settings>
+	<typeAliases>
+		<typeAlias type="com.zjzmjr.core.model.app.AppRelease" alias="AppRelease"/>
+		<typeAlias type="com.zjzmjr.core.model.app.AppReleaseQuery" alias="AppReleaseQuery"/>
+		
+		<!-- 微信菜单 -->
+		<typeAlias type="com.zjzmjr.core.model.weixin.MenuForm" alias="MenuForm"/>
+		<!-- 微信消息回复 -->
+		<typeAlias type="com.zjzmjr.core.model.weixin.MsgReplyForm" alias="MsgReplyForm"/>
+		
+		<typeAlias type="com.zjzmjr.core.model.app.AppRelease" alias="AppRelease"/>
+		<typeAlias type="com.zjzmjr.core.model.app.AppReleaseQuery" alias="AppReleaseQuery"/>
+
+		<typeAlias type="com.zjzmjr.core.model.user.LoginRecord" alias="LoginRecord"/>
+		<typeAlias type="com.zjzmjr.core.model.user.LoginRecordQuery" alias="LoginRecordQuery"/>
+
+		<typeAlias type="com.zjzmjr.core.model.area.Area" alias="Area"/>
+		<typeAlias type="com.zjzmjr.core.model.area.AreaQuery" alias="AreaQuery"/>
+		<typeAlias type="com.zjzmjr.core.model.admin.Admin" alias="Admin"/>
+		<typeAlias type="com.zjzmjr.core.model.admin.AdminQuery" alias="AdminQuery"/>
+		<typeAlias type="com.zjzmjr.core.model.menu.AdminMenu" alias="AdminMenu" />
+		<typeAlias type="com.zjzmjr.core.model.menu.RoleMenu" alias="RoleMenu" />
+		<typeAlias type="com.zjzmjr.core.model.menu.RoleMenuQuery" alias="RoleMenuQuery" />
+		<typeAlias type="com.zjzmjr.core.model.admin.AdminAuth" alias="AdminAuth" />
+		<typeAlias type="com.zjzmjr.core.model.admin.AdminAuthQuery" alias="AdminAuthQuery"/>
+    	<typeAlias type="com.zjzmjr.core.model.admin.AdminUserAuth" alias="AdminUserAuth"/>
+    	<typeAlias type="com.zjzmjr.core.model.admin.RoleAuth" alias="RoleAuth" />
+		<typeAlias type="com.zjzmjr.core.model.admin.Business" alias="Business"/>
+		<typeAlias type="com.zjzmjr.core.model.admin.BusinessQuery" alias="BusinessQuery"/>
+		<typeAlias type="com.zjzmjr.core.model.message.Message" alias="Message"/>
+		<typeAlias type="com.zjzmjr.core.model.message.MessageInfo" alias="MessageInfo"/>
+		<typeAlias type="com.zjzmjr.core.model.message.MessageQuery" alias="MessageQuery"/>
+		<typeAlias type="com.zjzmjr.core.model.message.MessageInfoQuery" alias="MessageInfoQuery"/>
+        <typeAlias type="com.zjzmjr.core.model.message.SendMessage" alias="SendMessage"/>
+		<typeAlias type="com.zjzmjr.core.model.logo.LogoManage" alias="LogoManage"/>
+		<typeAlias type="com.zjzmjr.core.model.logo.LogoManageQuery" alias="LogoManageQuery"/>
+		<typeAlias type="com.zjzmjr.core.model.admin.AdminBusiness" alias="AdminBusiness"/>
+		<typeAlias type="com.zjzmjr.core.model.admin.AdminBusinessQuery" alias="AdminBusinessQuery"/>
+		<typeAlias type="com.zjzmjr.core.model.holiday.Holiday" alias="Holiday"/>
+		<typeAlias type="com.zjzmjr.core.model.holiday.HolidayQuery" alias="HolidayQuery"/>
+		<typeAlias type="com.zjzmjr.core.model.admin.AdminStaff" alias="AdminStaff"/>
+		<typeAlias type="com.zjzmjr.core.model.sms.Notify" alias="Notify"/>
+		<typeAlias type="com.zjzmjr.core.model.sms.NotifyQuery" alias="NotifyQuery"/>
+	</typeAliases>
+
+	<typeHandlers>
+		<typeHandler javaType="java.lang.Double" handler="com.zjzmjr.core.service.handler.DoubleTypeHandler" />
+	</typeHandlers>
+	
+</configuration>

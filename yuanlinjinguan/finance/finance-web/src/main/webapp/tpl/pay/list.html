@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>我的薪酬</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div id="payList" v-cloak>
+            <header class="header">
+                <img src="../../images/svg/left.svg" class="icon-40" @click='goBack' />
+                <span class="tit">我的薪酬</span>
+                <i></i>
+            </header>
+            <div class='payList'>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>月份</th>
+                            <th>应发工资(元)</th>
+                            <th>应扣工资(元)</th>
+                            <th>代扣个税(元)</th>
+                            <th>实发工资(元)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for='item in rows' @click='detail(item)'>
+                            <td>{{ item.wagesYear }}/{{ item.wagesMonth }}</td>
+                            <td>{{ item.paySubtotal | formatPay }}</td>
+                            <td>{{ item.deductSubtotal | formatPay }}</td>
+                            <td>{{ item.individualTax | formatPay }}</td>
+                            <td>{{ item.realWages | formatPay }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../js/axios.min.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script>
+        // 校验app或wap
+        myInit(indexFun);
+        function indexFun() {
+            var home = new Vue({
+                el: "#payList",
+                data : {
+                    rows: [
+                        // 测试数据
+                        // {
+                        //     name : "姓名",
+                        //     department : "部门",
+                        //     staff_info : "工号",
+                        //     wagesMonth: "薪酬月份",
+                        //     basePay: "基本工资",
+                        //     postPay: "岗位工资",
+                        //     meritPay: "绩效工资",
+                        //     bonus_pay: "奖金提成",
+                        //     professional_pay: "职称津贴",
+                        //     siling_pay: "司龄津贴",
+                        //     other_pay: "其他",
+                        //     pay_subtotal: "应发小计",
+                        //     absence_deduct: "缺勤扣款",
+                        //     social_fund: "社保",
+                        //     housing_provident: "公积金",
+                        //     other_deduct: "其他",
+                        //     deduct_subtotal: "应扣小计",
+                        //     taxable_wages: "应税工资",
+                        //     individual_tax: "代扣个税",
+                        //     communication_subsidy: "通讯补贴",
+                        //     realWages: " 实发工资"
+                        // }
+                    ]
+                },
+                methods: {
+                    goBack: function () {
+                        myOpenWindow('/tpl/home/home.html', "home");
+                    },
+                    getList: function () {
+                        var _this = this;
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + '/staffWages/user/queryStaffWages.htm',
+                            params: {
+                                rows: 1000,
+                                page : 1
+                            }
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                _this.rows = datas.rows
+                            } else {
+                                myToast(datas.resultMsg);
+                            }
+                        }).catch(function (error) {
+                        })
+                    },
+                    detail: function (item) {
+                        mySetLocalStorage("payDetail", item);
+                        myOpenWindow('/tpl/pay/detail.html', "detail");
+                    }
+                },
+                filters: {
+                    formatPay: function(price) {
+                        return formatCurrency(price);
+                    }
+                },
+                mounted: function () {
+                    this.$nextTick(function () {
+                        mui.init();
+                        this.getList();
+                    })
+                }
+            });
+        }
+    </script>
+</html>

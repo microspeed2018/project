@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.project.ContractSubpackageMapper" >
+  <resultMap id="BaseResultMap" type="ContractSubpackage" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="project_id" property="projectId" jdbcType="INTEGER" />
+    <result column="subpackage_leader" property="subpackageLeader" jdbcType="INTEGER" />
+    <result column="subpackage_capital" property="subpackageCapital" jdbcType="DECIMAL" />
+    <result column="subpackage_content" property="subpackageContent" jdbcType="VARCHAR" />
+    <result column="payment_memo" property="paymentMemo" jdbcType="VARCHAR" />
+    <result column="subpackage_memo" property="subpackageMemo" jdbcType="VARCHAR" />
+    <result column="temporary_id" property="temporaryId" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="subpackage_leader_name" property="subpackageLeaderName" jdbcType="VARCHAR" />   
+  </resultMap>
+  <resultMap type="ContractSubpackageInfo" id="ContractSubpackageInfoResultMap" extends="BaseResultMap">
+  	<collection property="subpackagePayment" column="subpackage_id" ofType="SubpackagePayment" fetchType="lazy">
+        <id column="subpackagepay_id" property="id" jdbcType="INTEGER" />
+        <result column="subpackage_company_id" property="companyId" jdbcType="INTEGER" />
+        <result column="subpackage_id" property="subpackageId" jdbcType="INTEGER" />
+        <result column="subpackage_payment_mode" property="paymentMode" jdbcType="INTEGER" />
+        <result column="subpackage_payment_amount" property="paymentAmount" jdbcType="DECIMAL" />
+        <result column="subpackage_payment_mode_name" property="paymentModeName" jdbcType="INTEGER" />
+  	</collection>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, company_id, project_id, subpackage_leader, subpackage_capital, subpackage_content, 
+    payment_memo, subpackage_memo, temporary_id, status, create_time, create_user_id, update_time, 
+    update_user_id, version
+  </sql>
+  <select id="getContractSubpackageByCondition" parameterType="ContractSubpackageQuery" resultMap="BaseResultMap">
+    select  <include refid="Base_Column_List" />
+    from z_subpackage zs
+    <include refid="where_clause"></include>
+    <choose>
+        <when test="orderBy != null and orderBy!=''">
+            order by #{orderBy}
+        </when>
+        <otherwise>
+            order by id DESC
+        </otherwise>
+    </choose>
+  </select>
+  <select id="getContractSubpackageInfo" parameterType="ContractSubpackageQuery" resultMap="ContractSubpackageInfoResultMap">
+    select zs.*, zsp.payment_mode subpackage_payment_mode,zsp.payment_amount subpackage_payment_amount,zsp.subpackage_id,
+    tbsp.attribute_name subpackage_payment_mode_name,zsp.id subpackagepay_id, tas.name subpackage_leader_name
+    from z_subpackage zs 
+    left outer join z_subpackage_payment zsp on zsp.subpackage_id = zs.id
+    left outer join t_basic tbsp on tbsp.id = zsp.payment_mode and tbsp.category_id=11
+    left outer join t_admin tas on tas.id = zs.subpackage_leader
+    <include refid="where_clause"></include>
+  </select>
+  <sql id="where_clause">
+     <where>
+        <trim prefixOverrides="and">
+            <if test="projectId != null">
+                zs.project_id = #{projectId,jdbcType=INTEGER}
+            </if>
+            <if test="id != null">
+                and zs.id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="companyId != null">
+                and zs.company_id = #{companyId,jdbcType=INTEGER}
+            </if>
+            <if test="status != null">
+                and zs.status > #{status,jdbcType=INTEGER}
+            </if>
+            <if test="verifyStatus != null">
+                and zs.status = #{verifyStatus,jdbcType=INTEGER}
+            </if>
+            <if test="temporaryId != null">
+                and zs.temporary_id = #{temporaryId,jdbcType=INTEGER}
+            </if>
+            <if test="subPackageStatus != null">
+  				and zs.temporary_id is null and zs.status in
+  				<foreach collection="subPackageStatus" open="(" close=")" separator="," item="item">
+  					#{item}
+  				</foreach>
+  			</if>
+        </trim>
+    </where>
+  </sql>
+   <delete id="deleteSubpackageByCondition" parameterType="ContractQuery" >
+    delete from z_subpackage
+    <where>
+    <trim prefixOverrides="and">
+    <if test="id != null">
+       and id = #{id,jdbcType=INTEGER}
+    </if>
+    <if test="projectId != null">
+       and project_id = #{projectId,jdbcType=INTEGER}
+    </if>
+    <if test="companyId != null">
+       and company_id = #{companyId,jdbcType=INTEGER}
+    </if>
+    </trim>
+    </where>
+  </delete>
+  <insert id="insertContractSubpackage" parameterType="ContractSubpackage" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
+    insert into z_subpackage
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="projectId != null" >
+        project_id,
+      </if>
+      <if test="subpackageLeader != null" >
+        subpackage_leader,
+      </if>
+      <if test="subpackageCapital != null" >
+        subpackage_capital,
+      </if>
+      <if test="subpackageContent != null" >
+        subpackage_content,
+      </if>
+      <if test="paymentMemo != null" >
+        payment_memo,
+      </if>
+      <if test="subpackageMemo != null" >
+        subpackage_memo,
+      </if>
+      <if test="temporaryId != null" >
+        temporary_id,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="projectId != null" >
+        #{projectId,jdbcType=INTEGER},
+      </if>
+      <if test="subpackageLeader != null" >
+        #{subpackageLeader,jdbcType=INTEGER},
+      </if>
+      <if test="subpackageCapital != null" >
+        #{subpackageCapital,jdbcType=DECIMAL},
+      </if>
+      <if test="subpackageContent != null" >
+        #{subpackageContent,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentMemo != null" >
+        #{paymentMemo,jdbcType=VARCHAR},
+      </if>
+      <if test="subpackageMemo != null" >
+        #{subpackageMemo,jdbcType=VARCHAR},
+      </if>
+      <if test="temporaryId != null" >
+        #{temporaryId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateContractSubpackageById" parameterType="ContractSubpackage" >
+    update z_subpackage
+    <set >
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="projectId != null" >
+        project_id = #{projectId,jdbcType=INTEGER},
+      </if>
+      <if test="subpackageLeader != null" >
+        subpackage_leader = #{subpackageLeader,jdbcType=INTEGER},
+      </if>
+      <if test="subpackageCapital != null" >
+        subpackage_capital = #{subpackageCapital,jdbcType=DECIMAL},
+      </if>
+      <if test="subpackageContent != null" >
+        subpackage_content = #{subpackageContent,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentMemo != null" >
+        payment_memo = #{paymentMemo,jdbcType=VARCHAR},
+      </if>
+      <if test="subpackageMemo != null" >
+        subpackage_memo = #{subpackageMemo,jdbcType=VARCHAR},
+      </if>
+      <if test="temporaryId != null" >
+        temporary_id = #{temporaryId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+        version = version + 1,
+    </set>
+    <where>
+    <trim prefixOverrides="and">
+    <if test="id != null" >
+        id = #{id,jdbcType=INTEGER}
+    </if>
+    <if test="subTemporaryId!= null" >
+        and temporary_id = #{subTemporaryId,jdbcType=INTEGER}
+    </if>
+    </trim>
+    </where>
+  </update>
+
+</mapper>

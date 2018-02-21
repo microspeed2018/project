@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>面试设置</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/mui.picker.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div id="interview" v-cloak>
+            <header class='header'>
+                <img src="../../images/svg/left.svg" class="icon-40" id="goback" @click='back' />
+                <span class='tit'>{{ title }}</span>
+                <i></i>
+            </header>
+            <div class='wrap'>
+                <ul class='wrap-list'>
+                    <li>
+                        <div class="tit">
+                            面试人员
+                        </div>
+                        <div class="con">
+                            <input type="text" class="input" v-model='interviewerName' readonly />
+                        </div>
+                    </li>
+                    <li>
+                        <div class="tit">
+                            面试职位
+                        </div>
+                        <div class="con">
+                            <input type="text" class="input" v-model='positionName' readonly />
+                        </div>
+                    </li>
+                    <li>
+                        <div class="tit">
+                            面试轮次
+                        </div>
+                        <div class="con">
+                            <input type="text" class="input" v-model='round' readonly />
+                        </div>
+                    </li>
+                    <li>
+                        <div class="tit">
+                            面试地点
+                        </div>
+                        <div class="con">
+                            <!-- <button id='place' class="simulation-select one"  @click='setPlace'>{{ placeName }}</button> -->
+                            <input type="text" placeholder="请输入面试地点" class="input" v-model='place' />
+                        </div>
+                    </li>
+                    <li>
+                        <div class="tit">
+                            面试时间
+                        </div>
+                        <div class="con">
+                            <button id='time' data-options='{"type":"day"}' class="simulation-select one"  @click='setTime'>{{ timeName }}</button>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="tit">
+                            面试官
+                        </div>
+                        <div class="con">
+                            <span id="interviewer" class="simulation-select one"  @click='getInterviewer'>{{ interviewerNames }}</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="tit">
+                            面试备注
+                        </div>
+                        <div class="con">
+                            <textarea placeholder="请输入面试备注" v-model='memo'></textarea>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="tit">
+
+                        </div>
+                        <div class="con">
+                            <div class="mui-input-row mui-checkbox mui-left" @click='isSendSMS'>
+                                <label>是否短信通知</label>
+                                <input type="checkbox" name="isSms" :checked='isSms' />
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class='wrap'>
+                <input type="button" value='返回' class='btn btn-max' @click='back' v-if='disabledFlag' />
+                <input type="button" value='确认' class='btn btn-max' @click='submit' v-else />
+                <p style="text-align: right; padding-right: .6rem;">*确认后将发送面试邀请</p>
+            </div>
+            <div class='select-dialog'>
+                <div class='select-mask' @click='hideLayout'></div>
+                <div class='select-content'>
+                    <div class="select-title">
+                        <span id="cancel" @click='hideLayout'>取消</span>
+                        <span id="true">确定</span>
+                    </div>
+                    <ul>
+                        <li v-for='item in selects' :id='item.id' @click='bindSelect'>{{ item.name }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../js/axios.min.js"></script>
+    <script src="../../js/mui.picker.js"></script>
+    <script src="../../js/mui.poppicker.js"></script>
+    <script src="../../js/mui.picker.min.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script type="text/javascript">
+        // 校验app或wap
+        myInit(indexFun);
+        function indexFun() {
+            var interview = new Vue({
+                el: "#interview",
+                data: {
+                    title: "面试设置",
+                    mobile: '',
+                    id: "",
+                    interviewerName: "",
+                    positionName: "",
+                    round: "",
+                    roundName: "",
+                    time: "",
+                    timeName: "请选择",
+                    place: "",
+                    placeName: "请选择",
+                    interviewer: "",
+                    interviewerNames: "请选择",
+                    memo: "",
+                    isSms: '',
+                    talentId: '',
+                    recruitmentId: '',
+                    round: '',
+                    selects: [],
+                    disabledFlag: false
+                },
+                methods: {
+                    back: function () {
+                        myRemoveLocalStorage("setter");
+                        myOpenWindow("list.html", 'list');
+                    },
+                    initPage: function () {
+                        var setter = JSON.parse(myGetLocalStorage("setter"));
+                        var type = myGetLocalStorage("setterType");
+                        this.id = setter.id
+                        this.mobile = setter.talent.mobile
+                        this.interviewerName = setter.talent.name
+                        this.positionName = setter.recruitment.positionName
+                        this.round = setter.round
+                        this.roundName = "第"+ setter.round +"轮"
+                        this.place = this.placeName = setter.place
+                        this.time = setter.time
+                        if (setter.time) {
+                            this.timeName = setter.time
+                        } else {
+                            this.timeName = '请选择'
+                        }
+                        this.interviewer = setter.interviewer
+                        if (setter.admin) {
+                            this.interviewerNames = setter.admin.name
+                        } else {
+                            this.interviewerNames = '请选择'
+                        }
+                        if (setter.memo) {
+                            this.memo = setter.memo
+                        } else {
+                            this.memo = ''
+                        }
+                        if (!setter.isSms) {
+                            this.isSms = ''
+                        }
+                        this.talentId = setter.talent.id
+                        this.recruitmentId = setter.recruitmentId
+                        this.round = setter.round
+                        if (type == "info") {
+                            this.disabledFlag = true
+                            var inputs = document.querySelectorAll("input[type='text']");
+                            for (var i = 0; i < inputs.length; i++) {
+                                inputs[i].setAttribute("readonly", true);
+                            }
+                            var checkboxs = document.querySelectorAll("input[type='checkbox']");
+                            for (var i = 0; i < checkboxs.length; i++) {
+                                checkboxs[i].setAttribute("disabled", true);
+                            }
+                            var textareas = document.querySelectorAll("textarea");
+                            for (var i = 0; i < textareas.length; i++) {
+                                textareas[i].setAttribute("readonly", true);
+                            }
+                            var simulationSelect = document.querySelectorAll(".simulation-select");
+                            for (var i = 0; i < simulationSelect.length; i++) {
+                                simulationSelect[i].setAttribute("disabled", true);
+                            }
+                        }
+                    },
+                    getInfo: function () {
+                        var that = this
+                        myLoading();
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + "/interview/user/getInterviewCondition.htm",
+                            params: {
+                                talentId: that.talentId,
+                                recruitmentId: that.recruitmentId,
+                                round: that.round + 1
+                            }
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                mySetLocalStorage("setter", datas.data[0]);
+                                that.initPage()
+                            } else {
+                                //myToast(datas.resultMsg);
+                            }
+                            myLoadingOver();
+                        }).catch(function (error) {
+                            myLoadingOver();
+                        })
+                    },
+                    // 面试时间
+                    setTime: function (e) {
+                        var that = e.target;
+                        this.dataPicker(that, "time")
+                    },
+                    // 日期选择
+                    dataPicker: function(that, box) {
+                        var optionsJson = that.getAttribute('data-options') || '{}';
+                        var options = JSON.parse(optionsJson);
+                        var picker = new mui.DtPicker(options);
+                        picker.show(function(rs) {
+                            if (box == "time") {
+                                interview.$data.timeName = interview.$data.time = rs.y.value + "/" + rs.m.value + "/" + rs.d.value + " " + rs.h.value + ":" + rs.i.value
+                            }
+                            picker.dispose();
+                        });
+                    },
+                    // 面试地点
+                    setPlace: function () {
+                        var that = this
+                        myLoading();
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + "/area/getAllNameArea.htm",
+                            params: {}
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                var cityData3 = datas.data;
+                                var cityPicker3 = new mui.PopPicker({
+                                    layer: 3
+                                });
+                                cityPicker3.setData(cityData3);
+                                cityPicker3.show(function(items) {
+                                    var pro = items[0].text;
+                                    var city = items[1].text;
+                                    var area = items[2].text;
+                                    if (city == "不限") {
+                                        city = "";
+                                    }
+                                    if (area == "不限") {
+                                        area = "";
+                                    }
+                                    if (pro == city) {
+                                        city = '';
+                                    }
+                                    that.placeName = pro + city + area
+                                    that.place = items[2].value
+                                });
+                            } else {
+                                myToast(datas.resultMsg);
+                            }
+                            myLoadingOver();
+                        }).catch(function (error) {
+                            myLoadingOver();
+                        })
+                    },
+                    // 面试官
+                    getInterviewer: function () {
+                        var that = this
+                        if (!that.disabledFlag) {
+                            myLoading();
+                            axios({
+                                method: 'post',
+                                url: global.apiURL + "/user/companyStaffs.htm",
+                                params: {
+                                    rows: 10000
+                                }
+                            }).then(function (response) {
+                                var datas = response.data;
+                                if (datas.success) {
+                                    var arrs = [];
+                                    for (var i = 0; i < datas.data.length; i++) {
+                                        var obj = {};
+                                        obj.id = datas.data[i].userId
+                                        obj.name = datas.data[i].userInfo.name
+                                        arrs.push(obj);
+                                    }
+                                    that.selects = arrs
+                                    var box = document.querySelector(".select-dialog ul");
+                                    document.querySelector(".select-dialog").style.display = "block";
+                                    document.querySelector(".select-dialog").setAttribute("id", "interviewers");
+                                } else {
+                                    myToast(datas.resultMsg);
+                                }
+                                myLoadingOver();
+                            }).catch(function (error) {
+                                myLoadingOver();
+                            })
+                        }
+                    },
+                    // 弹出层空白隐藏
+                    hideLayout: function (e) {
+                        document.querySelector(".select-dialog").style.display = "none";
+                        this.selects = []
+                        e.preventDefault();
+                    },
+                    // 弹出菜单选择
+                    bindSelect: function (e) {
+                        var boxId = document.querySelector(".select-dialog").getAttribute("id")
+                        var id = e.target.id
+                        var name = e.target.innerHTML
+                        if (boxId == "interviewers") {
+                            this.interviewer = id
+                            this.interviewerNames = name
+                        }
+                        document.querySelector(".select-dialog").style.display = "none";
+                        this.selects = []
+                    },
+                    // 是否短信通知
+                    isSendSMS: function () {
+                        if (!this.disabledFlag) {
+                            if (this.isSms == 1) {
+                                this.isSms = ''
+                            } else {
+                                this.isSms = 1
+                            }
+                        }
+                    },
+                    submit: function () {
+                        var that = this
+                        console.log(that.interviewerName)
+                        if (!that.time) {
+                            myToast("请选择面试时间");
+                        } else if (!that.place) {
+                            myToast("请选择面试地点");
+                        } else if (!that.interviewer) {
+                            myToast("请选择面试官");
+                        } else {
+                            myLoading();
+                            axios({
+                                method: 'post',
+                                url: global.apiURL + "/interview/user/updateInterview.htm",
+                                params: {
+                                    id: that.id,
+                                    mobile: that.mobile,
+                                    interviewerName: that.interviewerName,
+                                    recruitmentName: that.positionName,
+                                    roundText: that.round,
+                                    time: that.time,
+                                    place: that.place,
+                                    interviewer: that.interviewer,
+                                    memo: that.memo,
+                                    isSms: that.isSms
+                                }
+                            }).then(function (response) {
+                                var datas = response.data;
+                                if (datas.success) {
+                                    myRemoveLocalStorage("setter");
+                                    myOpenWindow("list.html", "list");
+                                } else {
+                                    myToast(datas.resultMsg);
+                                }
+                                myLoadingOver();
+                            }).catch(function (error) {
+                                myLoadingOver();
+                            })
+                        }
+                    }
+                },
+                mounted: function () {
+                    this.$nextTick(function () {
+                        mui.init();
+                        this.initPage()
+                        var type = myGetLocalStorage("setterType");
+                        if (type && type == "set") {
+                            this.getInfo()
+                        }
+                    });
+                },
+                filters: {
+
+                }
+            });
+        }
+    </script>
+</html>

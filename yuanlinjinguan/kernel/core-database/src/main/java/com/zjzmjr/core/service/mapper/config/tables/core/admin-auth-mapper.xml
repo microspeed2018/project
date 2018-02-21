@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.coredb.admin.AdminAuthDao">
+
+	<resultMap id="adminAuthResultMap" type="AdminAuth">
+		<id property="id" column="id" />
+		<result property="code" column="code" />
+		<result property="name" column="name" />
+		<result property="type" column="type" />
+		<result property="time" column="create_time" />
+		<result property="version" column="version" />
+	</resultMap>
+
+	<select id="SELECT_BY_ID" parameterType="int" resultMap="adminAuthResultMap"
+		resultType="AdminAuth">
+		SELECT * FROM t_auth WHERE id=#{id}
+	</select>
+
+	<select id="getByIds" parameterType="list" resultMap="adminAuthResultMap"
+		resultType="list">
+		SELECT * FROM t_auth WHERE id IN
+		<foreach collection="list" open="(" close=")" separator=","
+			item="item">
+			#{item}
+		</foreach>
+	</select>
+
+	<select id="SELECT_BY_CODE" parameterType="string" resultMap="adminAuthResultMap"
+		resultType="AdminAuth">
+		SELECT * FROM t_auth WHERE code=#{code}
+	</select>
+
+	<select id="count" parameterType="AdminAuthQuery"
+		resultType="int">
+		SELECT COUNT(*) FROM t_auth
+		<include refid="QUERY_WHERE" />
+	</select>
+	<select id="queryByPage" parameterType="AdminAuthQuery"
+		resultMap="adminAuthResultMap" resultType="list">
+		SELECT * FROM t_auth
+		<include refid="QUERY_WHERE" />
+		<choose>
+			<when test="orderBy != null">
+				ORDER BY #{orderBy}
+			</when>
+			<otherwise>
+				ORDER BY id ASC
+			</otherwise>
+		</choose>
+		limit #{pageBean.offset},#{pageBean.pageSize}
+	</select>
+
+	<insert id="create" keyProperty="id" parameterType="AdminAuth">
+		INSERT INTO
+		t_auth (code,name,type,create_time) VALUES
+		(#{code},#{name},#{type},#{time})
+	</insert>
+
+	<update id="update" parameterType="AdminAuth">
+		UPDATE t_auth
+		<set>
+			<if test="code != null">
+				code=#{code},
+			</if>
+			<if test="name != null">
+				name=#{name},
+			</if>
+			<if test="type != null">
+				type=#{type},
+			</if>
+			<if test="time != null">
+				create_time=#{time},
+			</if>
+		</set>
+		<where>
+			id=#{id}
+			<if test="version != null">
+				AND version=#{version}
+			</if>
+		</where>
+	</update>
+
+	<sql id="QUERY_WHERE">
+		<where>
+			<if test="code != null">
+<!-- 				code like '%'||#{code}||'%' -->
+				code like CONCAT(CONCAT('%', #{code}),'%')
+			</if>
+			<if test="name != null">
+<!-- 				AND name like '%'||#{name}||'%' -->
+				and name like CONCAT(CONCAT('%', #{name}),'%')
+			</if>
+			<if test="type != null and type.size()>0">
+				<choose>
+					<when test="type.size()==1">
+						AND type = #{type[0]}
+					</when>
+					<otherwise>
+						AND type IN
+						<foreach collection="type" open="(" close=")" separator=","
+							item="item">
+							#{item}
+						</foreach>
+					</otherwise>
+				</choose>
+			</if>
+		</where>
+	</sql>
+
+	<delete id="delete" parameterType="int">
+		DELETE FROM t_auth WHERE
+		id=#{id}
+	</delete>
+	
+  <select id="getAuths" parameterType="AdminAuthQuery" resultMap="adminAuthResultMap">
+    SELECT * FROM t_auth
+    <include refid="PAGE_WHERE"/>
+  </select>
+  
+  <sql id="PAGE_WHERE">
+    <where>
+      <if test="code != null">
+        code like '%'+#{code}+'%'
+      </if>
+      <if test="name != null">
+        AND name like '%'+#{name}+'%'
+      </if>
+      <if test="type != null and type.size()>0">
+        <choose>
+          <when test="type.size()==1">
+            AND type = #{type[0]}
+          </when>
+          <otherwise>
+            AND type IN 
+            <foreach collection="type" open="(" close=")" separator="," item="item">
+              #{item}
+            </foreach>
+          </otherwise>
+        </choose>
+      </if>
+    </where>
+  </sql>
+  
+</mapper>

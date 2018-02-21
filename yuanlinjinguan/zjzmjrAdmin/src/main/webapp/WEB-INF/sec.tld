@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+	version="2.0">
+	<description>YZTZ SECURITY TAG LIB</description>
+	<tlib-version>1.0</tlib-version>
+	<short-name>sec</short-name>
+	<uri>http://www.yztz.com/jsp/jstl/sec</uri>
+	
+	<function>
+		<description>获取已登录的用户ID</description>
+		<name>userId</name>
+		<function-class>com.zjzmjr.security.web.util.SpringSecurityUtil</function-class>
+		<function-signature>java.lang.Integer getIntPrincipal()</function-signature>
+	</function>
+	
+	<function>
+		<name>username</name>
+		<function-class>com.zjzmjr.security.web.util.SpringSecurityUtil</function-class>
+		<function-signature>java.lang.String getUserName()</function-signature>
+	</function>
+	
+	<function>
+		<name>authenticated</name>
+		<function-class>com.zjzmjr.security.web.util.SpringSecurityUtil</function-class>
+		<function-signature>java.lang.Boolean isAuthenticated()</function-signature>
+	</function>
+	
+	<function>
+		<name>source</name>
+		<function-class>com.zjzmjr.security.web.util.SpringSecurityUtil</function-class>
+		<function-signature>java.lang.String getSource()</function-signature>
+	</function>
+	
+	<function>
+		<name>hasAuth</name>
+		<function-class>com.zjzmjr.security.web.util.SpringSecurityUtil</function-class>
+		<function-signature>java.lang.Boolean hasAuth(java.lang.String)</function-signature>
+	</function>
+	
+</taglib>
+   

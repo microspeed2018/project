@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.project.BiddingInfoMapper" >
+  <resultMap id="BaseResultMap" type="BiddingInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="project_id" property="projectId" jdbcType="INTEGER" />
+    <result column="ranking" property="ranking" jdbcType="INTEGER" />
+    <result column="bid_company" property="bidCompany" jdbcType="INTEGER" />
+    <result column="bid_offer" property="bidOffer" jdbcType="DECIMAL" />
+    <result column="totle_score" property="totleScore" jdbcType="INTEGER" />
+    <result column="business_score" property="businessScore" jdbcType="INTEGER" />
+    <result column="technical_score" property="technicalScore" jdbcType="INTEGER" />
+    <result column="other_score" property="otherScore" jdbcType="INTEGER" />
+    <result column="project_leader" property="projectLeader" jdbcType="VARCHAR" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap type="TenderBidCompanyInfo" id="BidCompanyInfoResultMap" extends="BaseResultMap">
+    <association property="company" javaType="CompanyAssociated" column="bid_company">
+	    <id column="bid_company_id" property="id" jdbcType="INTEGER" />
+	    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+	    <result column="company_distinguish" property="companyDistinguish" jdbcType="INTEGER" />
+	    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+	    <result column="legal_person" property="legalPerson" jdbcType="VARCHAR" />
+	    <result column="legal_mobile" property="legalMobile" jdbcType="VARCHAR" />
+	    <result column="city_id" property="cityId" jdbcType="INTEGER" />
+	    <result column="address" property="address" jdbcType="VARCHAR" />
+	    <result column="introduction" property="introduction" jdbcType="VARCHAR" />
+	    <result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+	    <result column="account_no" property="accountNo" jdbcType="VARCHAR" />
+	    <result column="license_number" property="licenseNumber" jdbcType="VARCHAR" />
+	    <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+	    <result column="fax_phone" property="faxPhone" jdbcType="VARCHAR" />
+	    <result column="status" property="status" jdbcType="INTEGER" />
+    </association>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, company_id, project_id, ranking, bid_company, bid_offer, totle_score, business_score, 
+    technical_score, other_score, project_leader, memo, create_time, create_user_id, 
+    update_time, update_user_id, version
+  </sql>
+  <select id="getBiddingInfoCount" resultType="java.lang.Integer" parameterType="BiddingInfoQuery">
+    select COUNT(zbi.id)
+    from z_bidding_info zbi
+    left outer join z_company_associated zca on zbi.bid_company = zca.id
+  </select>
+  <select id="getBiddingInfoByCondition" resultMap="BidCompanyInfoResultMap" parameterType="BiddingInfoQuery" >
+    select zbi.*, zca.id bid_company_id, zca.company_distinguish, zca.company_name, zca.legal_person, zca.legal_mobile, 
+    zca.city_id, zca.address, zca.introduction, zca.mobile, zca.fax_phone, zca.status
+    from z_bidding_info zbi
+    left outer join z_company_associated zca on zbi.bid_company = zca.id
+    <include refid="where_clause"></include>
+    union 
+    select zbi.*, zca.id bid_company_id, '' company_distinguish, zca.company_name, zca.legal_person, '' legal_mobile, 
+    zca.city_id, zca.address, zca.introduction, zca.mobile, zca.fax_phone, zca.status
+    from z_bidding_info zbi
+    inner join z_company_info zca on zbi.bid_company = '999999' and zca.id = #{companyId,jdbcType=INTEGER}
+    <include refid="where_clause"></include>
+    <choose>
+        <when test="orderBy != null and orderBy!=''">
+            order by #{orderBy}
+        </when>
+        <otherwise>
+            order by ranking 
+        </otherwise>
+    </choose>
+    limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+  <sql id="where_clause">
+    <where>
+        <trim prefixOverrides="and">
+            <if test="id != null">
+                zbi.id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="companyId != null">
+                and zbi.company_id = #{companyId,jdbcType=INTEGER}
+            </if>
+	        <if test="projectId != null" >
+	            and zbi.project_id = #{projectId,jdbcType=INTEGER}
+	        </if>
+	        <if test="bidCompany != null" >
+	            and zbi.bid_company = #{bidCompany,jdbcType=INTEGER}
+	        </if>
+        </trim>
+    </where>
+  </sql>
+  <delete id="deleteBiddingInfoById" parameterType="java.lang.Integer" >
+    delete from z_bidding_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertBiddingInfo" parameterType="BiddingInfo" >
+    insert into z_bidding_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="projectId != null" >
+        project_id,
+      </if>
+      <if test="ranking != null" >
+        ranking,
+      </if>
+      <if test="bidCompany != null" >
+        bid_company,
+      </if>
+      <if test="bidOffer != null" >
+        bid_offer,
+      </if>
+      <if test="totleScore != null" >
+        totle_score,
+      </if>
+      <if test="businessScore != null" >
+        business_score,
+      </if>
+      <if test="technicalScore != null" >
+        technical_score,
+      </if>
+      <if test="otherScore != null" >
+        other_score,
+      </if>
+      <if test="projectLeader != null" >
+        project_leader,
+      </if>
+      <if test="memo != null" >
+        memo,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="projectId != null" >
+        #{projectId,jdbcType=INTEGER},
+      </if>
+      <if test="ranking != null" >
+        #{ranking,jdbcType=INTEGER},
+      </if>
+      <if test="bidCompany != null" >
+        #{bidCompany,jdbcType=INTEGER},
+      </if>
+      <if test="bidOffer != null" >
+        #{bidOffer,jdbcType=DECIMAL},
+      </if>
+      <if test="totleScore != null" >
+        #{totleScore,jdbcType=INTEGER},
+      </if>
+      <if test="businessScore != null" >
+        #{businessScore,jdbcType=INTEGER},
+      </if>
+      <if test="technicalScore != null" >
+        #{technicalScore,jdbcType=INTEGER},
+      </if>
+      <if test="otherScore != null" >
+        #{otherScore,jdbcType=INTEGER},
+      </if>
+      <if test="projectLeader != null" >
+        #{projectLeader,jdbcType=VARCHAR},
+      </if>
+      <if test="memo != null" >
+        #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateBiddingInfoById" parameterType="BiddingInfo" >
+    update z_bidding_info
+    <set >
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="projectId != null" >
+        project_id = #{projectId,jdbcType=INTEGER},
+      </if>
+      <if test="ranking != null" >
+        ranking = #{ranking,jdbcType=INTEGER},
+      </if>
+      <if test="bidCompany != null" >
+        bid_company = #{bidCompany,jdbcType=INTEGER},
+      </if>
+      <if test="bidOffer != null" >
+        bid_offer = #{bidOffer,jdbcType=DECIMAL},
+      </if>
+      <if test="totleScore != null" >
+        totle_score = #{totleScore,jdbcType=INTEGER},
+      </if>
+      <if test="businessScore != null" >
+        business_score = #{businessScore,jdbcType=INTEGER},
+      </if>
+      <if test="technicalScore != null" >
+        technical_score = #{technicalScore,jdbcType=INTEGER},
+      </if>
+      <if test="otherScore != null" >
+        other_score = #{otherScore,jdbcType=INTEGER},
+      </if>
+      <if test="projectLeader != null" >
+        project_leader = #{projectLeader,jdbcType=VARCHAR},
+      </if>
+      <if test="memo != null" >
+        memo = #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+        version = version + 1,
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

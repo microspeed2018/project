@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sec="http://www.springframework.org/schema/security"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+
+  <sec:http auto-config="false" use-expressions="true"
+    entry-point-ref="entryPoint">
+    <!-- 登录 -->
+    <sec:intercept-url pattern="/login/**" access="permitAll"/>
+    <!-- 资源 -->
+    <sec:intercept-url pattern="/res/**" access="permitAll" />
+    <!-- 外部人员 -->
+    <sec:intercept-url pattern="/external/**" access="permitAll" />
+    <!-- 富文本框 -->
+    <sec:intercept-url pattern="/umeditor/**" access="permitAll" />
+    <!-- 管理后台 -->
+    <sec:intercept-url pattern="/console/*" access="authenticated" />
+    <!-- 用户 -->
+	<sec:intercept-url pattern="/**/user/**" access="authenticated" />
+    <!-- 首页 -->
+    <sec:intercept-url pattern="/home/*" access="authenticated" />
+    <sec:intercept-url pattern="/**" access="permitAll" />
+    <sec:custom-filter position="FORM_LOGIN_FILTER" ref="formLoginFilter" />
+    <sec:logout logout-url="/j_spring_security_logout" invalidate-session="true" logout-success-url="${ctx.url}/login.htm"/>
+    <!-- <sec:logout success-handler-ref="formLogoutHandler"/> -->
+    <sec:session-management><sec:concurrency-control expired-url="${ctx.url}/login.htm" /></sec:session-management>
+  </sec:http>
+
+  <bean id="entryPoint"
+    class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+    <constructor-arg value="${ctx.url}/login.htm"></constructor-arg>
+  </bean>
+
+  <!-- 登录拦截器，带有验证码功能的 -->
+  <bean id="formLoginFilter"
+    class="com.zjzmjr.security.web.authentication.filter.FormCheckCodeAuthticationProcessingFilter">
+    <!-- 登录地址 -->
+    <constructor-arg value="/yztz_admin_login_check.htm"></constructor-arg>
+    <property name="authenticationManager" ref="authenticationManager"></property>
+    <property name="authenticationSuccessHandler" ref="loginSuccessHandler"></property>
+    <property name="authenticationFailureHandler" ref="loginFailHandler"></property>
+  </bean>
+
+  <!-- 验证码策略 -->
+  <bean id="checkCodeStrategy"
+    class="com.zjzmjr.security.web.authentication.strategy.NullCheckCodeStrategy"></bean>
+
+  <sec:authentication-manager alias="authenticationManager">
+    <sec:authentication-provider ref="formAuthenticationProvider"></sec:authentication-provider>
+  </sec:authentication-manager>
+
+  <!-- 用户登录认证器 -->
+  <bean id="formAuthenticationProvider"
+    class="com.zjzmjr.security.web.authentication.provider.UsernamePasswordAuthenticationProvider">
+    <property name="userLoginService" ref="adminLoginService"></property>
+  </bean>
+
+  <!-- 用户登录userDetailService -->
+  <bean id="adminLoginService"
+    class="com.zjzmjr.admin.web.home.service.AdminLoginServiceImpl">
+    <property name="adminFacade" ref="adminFacade"></property>
+    <property name="adminLoginAuthFacade" ref="adminLoginAuthFacade"></property>
+  </bean>
+
+  <!-- 登录成功处理 -->
+  <bean id="loginSuccessHandler"
+    class="com.zjzmjr.security.web.authentication.handler.FormAuthenticationSuccessHandler">
+    <constructor-arg value="${ctx.url}/home/index.htm"></constructor-arg>
+    <property name="successHook" ref="loginSuccessHook"></property>
+  </bean>
+
+  <!-- 登录失败处理器 -->
+  <bean id="loginFailHandler"
+    class="com.zjzmjr.security.web.authentication.handler.FormAuthenticationFailureHandler">
+    <property name="failureHook" ref="loginFailureHook"></property>
+    <property name="useForward" value="false"></property>
+    <property name="defaultFailureUrl" value="${ctx.url}/login.htm"></property>
+  </bean>
+  
+  <bean id="passwordEncodeStrategy" class="com.zjzmjr.core.base.security.ZjzmjrPasswordStrategy"/>
+    
+  <bean id="loginSuccessHook"
+    class="com.zjzmjr.admin.web.home.security.LoginSuccessHook">
+  </bean>
+
+  <bean id="loginFailureHook"
+    class="com.zjzmjr.admin.web.home.security.LoginFailureHook">
+  </bean>
+
+</beans>

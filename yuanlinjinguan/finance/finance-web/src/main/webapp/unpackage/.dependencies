@@ -1,0 +1,422 @@
+{
+  "tpl/password/reset-login-pwd.html": {
+    "href": "tpl/password/reset-login-pwd.html",
+    "resources": [],
+    "refer": [],
+    "priority": 1
+  },
+  "tpl/password/find-login-pwd.html": {
+    "href": "tpl/password/find-login-pwd.html",
+    "resources": [],
+    "refer": [],
+    "priority": 1
+  },
+  "tpl/single/message.html": {
+    "href": "tpl/single/message.html",
+    "resources": [],
+    "refer": [],
+    "priority": 10
+  },
+  "tpl/insurance/insurance-success-doctor.html": {
+    "href": "tpl/insurance/insurance-success-doctor.html",
+    "resources": [],
+    "refer": [],
+    "priority": 14
+  },
+  "tpl/insurance/insurance-select-doctor.html": {
+    "href": "tpl/insurance/insurance-select-doctor.html",
+    "resources": [],
+    "refer": [],
+    "priority": 13
+  },
+  "tpl/car/car-update.html": {
+    "href": "tpl/car/car-update.html",
+    "resources": [],
+    "refer": [],
+    "priority": 16
+  },
+  "tpl/car/car.html": {
+    "href": "tpl/car/car.html",
+    "resources": [],
+    "refer": [],
+    "priority": 15
+  },
+  "tpl/insurance/insurance-detail.html": {
+    "href": "tpl/insurance/insurance-detail.html",
+    "resources": [],
+    "refer": [],
+    "priority": 12
+  },
+  "tpl/insurance/insurance-list.html": {
+    "href": "tpl/insurance/insurance-list.html",
+    "resources": [],
+    "refer": [],
+    "priority": 7
+  },
+  "tpl/loan/loan-success.html": {
+    "href": "tpl/loan/loan-success.html",
+    "resources": [],
+    "refer": [],
+    "priority": 11
+  },
+  "tpl/loan/loan-apply.html": {
+    "href": "tpl/loan/loan-apply.html",
+    "resources": [],
+    "refer": [],
+    "priority": 11
+  },
+  "tpl/loan/loan-detail.html": {
+    "href": "tpl/loan/loan-detail.html",
+    "resources": [],
+    "refer": [],
+    "priority": 10
+  },
+  "tpl/loan/loan-list.html": {
+    "href": "tpl/loan/loan-list.html",
+    "resources": [],
+    "refer": [],
+    "priority": 5
+  },
+  "tpl/oilcard/oil-card-add.html": {
+    "href": "tpl/oilcard/oil-card-add.html",
+    "resources": [],
+    "refer": [],
+    "priority": 7
+  },
+  "tpl/oilcard/oil-card-update.html": {
+    "href": "tpl/oilcard/oil-card-update.html",
+    "resources": [],
+    "refer": [],
+    "priority": 8
+  },
+  "tpl/oilcard/oil-card-list.html": {
+    "href": "tpl/oilcard/oil-card-list.html",
+    "resources": [],
+    "refer": [],
+    "priority": 6
+  },
+  "tpl/loan/loan-apply-modify.html": {
+    "href": "tpl/loan/loan-apply-modify.html",
+    "resources": [],
+    "refer": [],
+    "priority": 8
+  },
+  "tpl/record/credit-record.html": {
+    "href": "tpl/record/credit-record.html",
+    "resources": [],
+    "refer": [],
+    "priority": 11
+  },
+  "tpl/loan/agent-again.html": {
+    "href": "tpl/loan/agent-again.html",
+    "resources": [],
+    "refer": [],
+    "priority": 15
+  },
+  "tpl/record/agent-record.html": {
+    "href": "tpl/record/agent-record.html",
+    "resources": [],
+    "refer": [],
+    "priority": 11
+  },
+  "tpl/loan/augment-apply.html": {
+    "href": "tpl/loan/augment-apply.html",
+    "resources": [],
+    "refer": [],
+    "priority": 11
+  },
+  "tpl/record/loan-record.html": {
+    "href": "tpl/record/loan-record.html",
+    "resources": [],
+    "refer": [],
+    "priority": 8
+  },
+  "tpl/repayment/repayment-success.html": {
+    "href": "tpl/repayment/repayment-success.html",
+    "resources": [],
+    "refer": [],
+    "priority": 10
+  },
+  "tpl/repayment/repayment.html": {
+    "href": "tpl/repayment/repayment.html",
+    "resources": [],
+    "refer": [],
+    "priority": 9
+  },
+  "tpl/repayment/repayment-detail.html": {
+    "href": "tpl/repayment/repayment-detail.html",
+    "resources": [],
+    "refer": [],
+    "priority": 8
+  },
+  "tpl/loan/loan-agent-apply.html": {
+    "href": "tpl/loan/loan-agent-apply.html",
+    "resources": [],
+    "refer": [],
+    "priority": 10
+  },
+  "tpl/record/withdrawals-record.html": {
+    "href": "tpl/record/withdrawals-record.html",
+    "resources": [],
+    "refer": [],
+    "priority": 11
+  },
+  "tpl/withdraw/withdraw-success.html": {
+    "href": "tpl/withdraw/withdraw-success.html",
+    "resources": [],
+    "refer": [],
+    "priority": 13
+  },
+  "tpl/withdraw/withdraw.html": {
+    "href": "tpl/withdraw/withdraw.html",
+    "resources": [],
+    "refer": [],
+    "priority": 11
+  },
+  "tpl/recharge/recharge-success.html": {
+    "href": "tpl/recharge/recharge-success.html",
+    "resources": [],
+    "refer": [],
+    "priority": 12
+  },
+  "tpl/record/recharge-record.html": {
+    "href": "tpl/record/recharge-record.html",
+    "resources": [],
+    "refer": [],
+    "priority": 13
+  },
+  "tpl/recharge/recharge.html": {
+    "href": "tpl/recharge/recharge.html",
+    "resources": [],
+    "refer": [],
+    "priority": 12
+  },
+  "tpl/withholdPay/success.html": {
+    "href": "tpl/withholdPay/success.html",
+    "resources": [],
+    "refer": [],
+    "priority": 15
+  },
+  "tpl/withholdPay/automatic.html": {
+    "href": "tpl/withholdPay/automatic.html",
+    "resources": [],
+    "refer": [],
+    "priority": 14
+  },
+  "tpl/withholdPay/automatic-list.html": {
+    "href": "tpl/withholdPay/automatic-list.html",
+    "resources": [],
+    "refer": [],
+    "priority": 13
+  },
+  "tpl/password/manage-pwd.html": {
+    "href": "tpl/password/manage-pwd.html",
+    "resources": [],
+    "refer": [],
+    "priority": 17
+  },
+  "tpl/password/set-trade-pwd.html": {
+    "href": "tpl/password/set-trade-pwd.html",
+    "resources": [],
+    "refer": [],
+    "priority": 16
+  },
+  "tpl/quickpay/quickPay-success.html": {
+    "href": "tpl/quickpay/quickPay-success.html",
+    "resources": [],
+    "refer": [],
+    "priority": 18
+  },
+  "tpl/quickpay/quick-pay-history.html": {
+    "href": "tpl/quickpay/quick-pay-history.html",
+    "resources": [],
+    "refer": [],
+    "priority": 19
+  },
+  "tpl/record/repayment-record.html": {
+    "href": "tpl/record/repayment-record.html",
+    "resources": [],
+    "refer": [],
+    "priority": 20
+  },
+  "tpl/quickpay/quick-pay.html": {
+    "href": "tpl/quickpay/quick-pay.html",
+    "resources": [],
+    "refer": [],
+    "priority": 18
+  },
+  "tpl/bind/update-bank-card.html": {
+    "href": "tpl/bind/update-bank-card.html",
+    "resources": [],
+    "refer": [],
+    "priority": 20
+  },
+  "tpl/withholdPay/detail.html": {
+    "href": "tpl/withholdPay/detail.html",
+    "resources": [],
+    "refer": [],
+    "priority": 23
+  },
+  "tpl/withholdPay/list.html": {
+    "href": "tpl/withholdPay/list.html",
+    "resources": [],
+    "refer": [],
+    "priority": 22
+  },
+  "tpl/bind/bind-bank-card.html": {
+    "href": "tpl/bind/bind-bank-card.html",
+    "resources": [],
+    "refer": [],
+    "priority": 23
+  },
+  "tpl/myuser/my-user.html": {
+    "href": "tpl/myuser/my-user.html",
+    "resources": [],
+    "refer": [],
+    "priority": 4
+  },
+  "tpl/bind/bind-IDcard-success.html": {
+    "href": "tpl/bind/bind-IDcard-success.html",
+    "resources": [],
+    "refer": [],
+    "priority": 6
+  },
+  "tpl/bind/bind-IDcard.html": {
+    "href": "tpl/bind/bind-IDcard.html",
+    "resources": [],
+    "refer": [],
+    "priority": 4
+  },
+  "tpl/reg/reg-success.html": {
+    "href": "tpl/reg/reg-success.html",
+    "resources": [],
+    "refer": [],
+    "priority": 3
+  },
+  "tpl/reg/reg.html": {
+    "href": "tpl/reg/reg.html",
+    "resources": [],
+    "refer": [],
+    "priority": 2
+  },
+  "tpl/login/login.html": {
+    "href": "tpl/login/login.html",
+    "resources": [],
+    "refer": [],
+    "priority": 0
+  },
+  "tpl/third/recharge-phone-success.html": {
+    "href": "tpl/third/recharge-phone-success.html",
+    "resources": [],
+    "refer": [],
+    "priority": 2
+  },
+  "tpl/third/recharge-phone.html": {
+    "href": "tpl/third/recharge-phone.html",
+    "resources": [],
+    "refer": [],
+    "priority": 1
+  },
+  "tpl/third/recharge-oilcard-tips.html": {
+    "href": "tpl/third/recharge-oilcard-tips.html",
+    "resources": [],
+    "refer": [],
+    "priority": 3
+  },
+  "tpl/third/recharge-oilcard-success.html": {
+    "href": "tpl/third/recharge-oilcard-success.html",
+    "resources": [],
+    "refer": [],
+    "priority": 5
+  },
+  "tpl/third/recharge-oilcard-select.html": {
+    "href": "tpl/third/recharge-oilcard-select.html",
+    "resources": [],
+    "refer": [],
+    "priority": 6
+  },
+  "tpl/third/recharge-oilcard.html": {
+    "href": "tpl/third/recharge-oilcard.html",
+    "resources": [],
+    "refer": [],
+    "priority": 3
+  },
+  "tpl/limitTest/limit-test-assessment.html": {
+    "href": "tpl/limitTest/limit-test-assessment.html",
+    "resources": [],
+    "refer": [],
+    "priority": 8
+  },
+  "tpl/limitTest/limit-test-QA.html": {
+    "href": "tpl/limitTest/limit-test-QA.html",
+    "resources": [],
+    "refer": [],
+    "priority": 8
+  },
+  "tpl/third/assess-record.html": {
+    "href": "tpl/third/assess-record.html",
+    "resources": [],
+    "refer": [],
+    "priority": 9
+  },
+  "tpl/third/assess-result.html": {
+    "href": "tpl/third/assess-result.html",
+    "resources": [],
+    "refer": [],
+    "priority": 9
+  },
+  "tpl/third/assess-select.html": {
+    "href": "tpl/third/assess-select.html",
+    "resources": [],
+    "refer": [],
+    "priority": 10
+  },
+  "tpl/third/assess-apply.html": {
+    "href": "tpl/third/assess-apply.html",
+    "resources": [],
+    "refer": [],
+    "priority": 9
+  },
+  "tpl/third/oil-price-history.html": {
+    "href": "tpl/third/oil-price-history.html",
+    "resources": [],
+    "refer": [],
+    "priority": 16
+  },
+  "tpl/third/oil-price.html": {
+    "href": "tpl/third/oil-price.html",
+    "resources": [],
+    "refer": [],
+    "priority": 15
+  },
+  "tpl/third/peccancy-result.html": {
+    "href": "tpl/third/peccancy-result.html",
+    "resources": [],
+    "refer": [],
+    "priority": 17
+  },
+  "tpl/third/peccancy-history.html": {
+    "href": "tpl/third/peccancy-history.html",
+    "resources": [],
+    "refer": [],
+    "priority": 18
+  },
+  "tpl/third/peccancy-query.html": {
+    "href": "tpl/third/peccancy-query.html",
+    "resources": [],
+    "refer": [],
+    "priority": 17
+  },
+  "tpl/car/car-insurance.html": {
+    "href": "tpl/car/car-insurance.html",
+    "resources": [],
+    "refer": [],
+    "priority": 20
+  },
+  "index.html": {
+    "href": "index.html",
+    "resources": [],
+    "refer": [],
+    "priority": 0
+  }
+}

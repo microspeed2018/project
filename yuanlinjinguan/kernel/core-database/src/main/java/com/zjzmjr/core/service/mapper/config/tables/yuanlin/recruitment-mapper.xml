@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.recruitment.RecruitmentMapper" >
+  <resultMap id="BaseResultMap" type="Recruitment" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="department_id" property="departmentId" jdbcType="INTEGER" />
+    <result column="position_name" property="positionName" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="age" property="age" jdbcType="VARCHAR" />
+    <result column="experience" property="experience" jdbcType="VARCHAR" />
+    <result column="education" property="education" jdbcType="VARCHAR" />
+    <result column="numbers" property="numbers" jdbcType="VARCHAR" />
+    <result column="salary" property="salary" jdbcType="VARCHAR" />
+    <result column="post_duties" property="postDuties" jdbcType="VARCHAR" />
+    <result column="qualification" property="qualification" jdbcType="VARCHAR" />
+    <result column="is_open" property="isOpen" jdbcType="INTEGER" />
+    <result column="is_valid" property="isValid" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="RecruitmentInfoResultMap" type="RecruitmentInfo" extends="BaseResultMap">
+     <result column="applicants" property="applicants" jdbcType="INTEGER" />
+     <association property="companyDepartment" column="department_id" javaType="CompanyDepartment" resultMap="CompanyDepartmentResultMap"/>
+  </resultMap>
+  <resultMap id="CompanyDepartmentResultMap" type="companyDepartment" >
+    <id column="company_department_id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, company_id, department_id, position_name, address, age, experience, education, 
+    numbers, salary, post_duties, qualification, is_open, is_valid, create_time, create_user_id, 
+    update_time, update_user_id, version
+  </sql>
+  <select id="getRecruitmentCount" resultType="java.lang.Integer" parameterType="RecruitmentQuery">
+  	 select count(zr.id) from z_recruitment zr
+  	 <include refid="where_clause"></include>
+  </select>
+  <select id="getRecruitment" resultMap="RecruitmentInfoResultMap" parameterType="RecruitmentQuery" >
+    select count(zt.id) applicants, zr.*, zd.name 
+    from z_recruitment zr
+    left outer join z_department zd on zd.id = zr.department_id  
+    left outer join z_talent zt on zr.id = zt.recruitment_id
+    <include refid="where_clause"></include>
+     GROUP BY (zr.id) 
+    <choose>
+        <when test="orderBy != null and orderBy!=''">
+            order by #{orderBy}
+        </when>
+        <otherwise>
+            order by zr.create_time desc
+        </otherwise>
+    </choose>    
+    limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+  <select id="getRecruitmentByCondition" resultMap="BaseResultMap" parameterType="RecruitmentQuery" >
+    select zr.* 
+    from z_recruitment zr
+    <include refid="where_clause"></include>
+  </select>  
+  <sql id="where_clause">
+	 <where>
+		<trim prefixOverrides="and">
+		  <if test="positionName != null" >
+	        and zr.position_name = #{positionName,jdbcType=VARCHAR}
+	      </if>
+	      <if test="address != null" >
+	        and zr.address = #{address,jdbcType=VARCHAR}
+	      </if>
+	      <if test="departmentId != null" >
+	        and zr.department_id = #{departmentId,jdbcType=VARCHAR}
+	      </if>
+	      <if test="education != null" >
+	        and zr.education = #{education,jdbcType=VARCHAR}
+	      </if>
+	      <if test="salary != null" >
+	        and zr.salary = #{salary,jdbcType=VARCHAR}
+	      </if>
+	      <if test="isValid != null" >
+	        and zr.is_valid = #{isValid,jdbcType=INTEGER}
+	      </if>
+	      <if test="isOpen != null" >
+	        and zr.is_open = #{isOpen,jdbcType=INTEGER}
+	      </if>
+	      <if test="createTimeStart != null">
+               <![CDATA[
+				and DATE_FORMAT(zr.create_time,'%Y%m%d') >= #{createTimeStart,jdbcType=TIMESTAMP}
+               ]]>
+		  </if>
+		  <if test="createTimeEnd != null">
+               <![CDATA[
+                   and DATE_FORMAT(zr.create_time,'%Y%m%d') <= #{createTimeEnd,jdbcType=TIMESTAMP}
+               ]]>
+		  </if>
+		</trim>
+	 </where>
+  </sql>
+	
+  <delete id="deleteRecruitmentById" parameterType="java.lang.Integer" >
+    delete from z_recruitment
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insertRecruitment" parameterType="Recruitment" >
+    insert into z_recruitment
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="departmentId != null" >
+        department_id,
+      </if>
+      <if test="positionName != null" >
+        position_name,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="age != null" >
+        age,
+      </if>
+      <if test="experience != null" >
+        experience,
+      </if>
+      <if test="education != null" >
+        education,
+      </if>
+      <if test="numbers != null" >
+        numbers,
+      </if>
+      <if test="salary != null" >
+        salary,
+      </if>
+      <if test="postDuties != null" >
+        post_duties,
+      </if>
+      <if test="qualification != null" >
+        qualification,
+      </if>
+      <if test="isOpen!= null" >
+        is_open,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="departmentId != null" >
+        #{departmentId,jdbcType=INTEGER},
+      </if>
+      <if test="positionName != null" >
+        #{positionName,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null" >
+        #{age,jdbcType=VARCHAR},
+      </if>
+      <if test="experience != null" >
+        #{experience,jdbcType=VARCHAR},
+      </if>
+      <if test="education != null" >
+        #{education,jdbcType=VARCHAR},
+      </if>
+      <if test="numbers != null" >
+        #{numbers,jdbcType=VARCHAR},
+      </if>
+      <if test="salary != null" >
+        #{salary,jdbcType=VARCHAR},
+      </if>
+      <if test="postDuties != null" >
+        #{postDuties,jdbcType=VARCHAR},
+      </if>
+      <if test="qualification != null" >
+        #{qualification,jdbcType=VARCHAR},
+      </if>
+      <if test="isOpen != null" >
+        #{isOpen,jdbcType=INTEGER},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateRecruitment" parameterType="Recruitment" >
+    update z_recruitment
+    <set >
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="departmentId != null" >
+        department_id = #{departmentId,jdbcType=INTEGER},
+      </if>
+      <if test="positionName != null" >
+        position_name = #{positionName,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null" >
+        age = #{age,jdbcType=VARCHAR},
+      </if>
+      <if test="experience != null" >
+        experience = #{experience,jdbcType=VARCHAR},
+      </if>
+      <if test="education != null" >
+        education = #{education,jdbcType=VARCHAR},
+      </if>
+      <if test="numbers != null" >
+        numbers = #{numbers,jdbcType=VARCHAR},
+      </if>
+      <if test="salary != null" >
+        salary = #{salary,jdbcType=VARCHAR},
+      </if>
+      <if test="postDuties != null" >
+        post_duties = #{postDuties,jdbcType=VARCHAR},
+      </if>
+      <if test="qualification != null" >
+        qualification = #{qualification,jdbcType=VARCHAR},
+      </if>
+      <if test="isOpen != null" >
+        is_open = #{isOpen,jdbcType=INTEGER},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+        version = version + 1
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

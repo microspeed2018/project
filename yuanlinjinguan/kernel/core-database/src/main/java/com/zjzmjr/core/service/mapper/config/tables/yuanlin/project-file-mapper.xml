@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.project.ProjectFileMapper" >
+  <resultMap id="BaseResultMap" type="ProjectFile" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_id" property="companyId" jdbcType="INTEGER" />
+    <result column="basic_id" property="basicId" jdbcType="INTEGER" />
+    <result column="attribute_name" property="attributeName" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="edit_job" property="editJob" jdbcType="VARCHAR" />
+    <result column="view_job" property="viewJob" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, company_id, basic_id, name, edit_job, view_job, status, create_time, create_user_id, update_time, update_user_id, 
+    version
+  </sql>
+  <select id="getAllProjectFileInfo" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from z_file
+    where status = 1
+  </select>
+  <select id="getProjectFileCount" resultType="java.lang.Integer" parameterType="ProjectFileQuery" >
+    select COUNT(id)
+    from z_file zf
+    <include refid="where_clause"></include>
+  </select>
+  
+  <select id="getProjectFileName" resultMap="BaseResultMap" parameterType="ProjectFileQuery" >
+     select zf.*
+     from z_file zf
+     left outer join t_basic tb on tb.id = zf.basic_id
+     where tb.category_id= #{categoryId,jdbcType=INTEGER} and tb.attribute_id = #{attributeId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getFileTypeByCondition" resultMap="BaseResultMap" parameterType="ProjectFileQuery">
+    select 
+    zf.id, zf.company_id, zf.basic_id, zf.name, zf.edit_job, zf.view_job, zf.status, zf.create_time, zf.create_user_id, zf.update_time, zf.update_user_id,
+    zf.version, tb.attribute_name
+    from z_file zf
+    left outer join t_basic tb on tb.id = zf.basic_id
+    <include refid="where_clause"></include>
+    <choose>
+        <when test="orderBy != null and orderBy!=''">
+            order by #{orderBy}
+        </when>
+        <otherwise>
+            order by zf.id desc 
+        </otherwise>
+    </choose>
+    limit #{pageBean.offset},#{pageBean.pageSize}
+  </select>
+  <sql id="where_clause">
+    <where>
+        <trim prefixOverrides="and">
+	      <if test="companyId != null" >
+	        and zf.company_id = #{companyId,jdbcType=INTEGER}
+	      </if>
+	      <if test="basicId != null" >
+	        and zf.basic_id = #{basicId,jdbcType=INTEGER}
+	      </if>
+	      <if test="fileName != null" >
+	        and zf.name like CONCAT('%', #{fileName,jdbcType=VARCHAR}, '%')
+	      </if>
+	      <if test="status != null" >
+	        and zf.status = #{status,jdbcType=INTEGER}
+	      </if>
+        </trim>
+    </where>
+  </sql>
+  
+  <delete id="deleteProjectFileById" parameterType="java.lang.Integer" >
+    delete from z_file
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertProjectFile" parameterType="ProjectFile" >
+    insert into z_file
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="companyId != null" >
+        company_id,
+      </if>
+      <if test="basicId != null" >
+        basic_id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="editJob != null">
+        edit_job,
+      </if>
+      <if test="viewJob != null">
+        view_job,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="basicId != null" >
+        #{basicId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="editJob != null">
+        #{editJob,jdbcType=VARCHAR},
+      </if>
+      <if test="viewJob != null">
+        #{viewJob,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateProjectFileById" parameterType="ProjectFile" >
+    update z_file
+    <set >
+      <if test="companyId != null" >
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="basicId != null" >
+        basic_id = #{basicId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="editJob != null">
+        edit_job = #{editJob,jdbcType=VARCHAR},
+      </if>
+      <if test="viewJob != null">
+        view_job = #{viewJob,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+        version = version + 1,
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

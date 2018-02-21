@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- - Copyright 1999-2011 Alibaba Group. - - Licensed under the Apache License, Version 2.0 (the "License"); 
+	- you may not use this file except in compliance with the License. - You may obtain a copy of the License 
+	at - - http://www.apache.org/licenses/LICENSE-2.0 - - Unless required by applicable law or agreed to 
+	in writing, software - distributed under the License is distributed on an "AS IS" BASIS, - WITHOUT WARRANTIES 
+	OR CONDITIONS OF ANY KIND, either express or implied. - See the License for the specific language governing 
+	permissions and - limitations under the License. -->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+	<!-- 监控包名 -->
+	<dubbo:annotation package="com.zjzmjr.core.provider" />
+	
+	<dubbo:service interface="com.zjzmjr.core.api.area.IAreaFacade" ref="areaFacade" group="${dubbo.group}" />
+	<dubbo:service interface="com.zjzmjr.core.api.message.IMessageFacade" ref="messageFacade" group="${dubbo.group}" />
+	<dubbo:service interface="com.zjzmjr.core.api.transaction.ITransactionFacade" ref="transactionFacade" group="${dubbo.group}"/>
+	<dubbo:service interface="com.zjzmjr.core.api.logo.ILogoManageFacade" ref="logoManageFacade" group="${dubbo.group}" />
+	
+	<dubbo:service interface="com.zjzmjr.core.api.app.IAppReleaseFacade" ref="appReleaseFacade" group="${dubbo.group}"/>
+    <dubbo:service interface="com.zjzmjr.core.api.face.IFaceFacade" ref="faceFacade" group="${dubbo.group}"/>
+	
+	<!-- 面向征信的接口 -->
+	<!-- <dubbo:service interface="com.zjzmjr.core.api.integration.IIntegrationFacade" ref="integrationFacade" group="${dubbo.group}" /> -->
+	
+	<!-- 面向管理端的接口 -->
+	<dubbo:service interface="com.zjzmjr.core.api.admin.IAdminFacade" ref="adminFacade" group="${dubbo.group}" />
+	<dubbo:service interface="com.zjzmjr.core.api.menu.IMenuFacade" ref="menuFacade" group="${dubbo.group}" />
+	<dubbo:service interface="com.zjzmjr.core.api.menu.IRoleMenuFacade" ref="roleMenuFacade" group="${dubbo.group}" />
+	<dubbo:service interface="com.zjzmjr.core.api.admin.IAdminAuthFacade" ref="adminAuthFacade" group="${dubbo.group}" />
+	<dubbo:service interface="com.zjzmjr.core.api.admin.IAdminLoginAuthFacade" ref="adminLoginAuthFacade" group="${dubbo.group}" />
+	<dubbo:service interface="com.zjzmjr.core.api.transaction.IAdminTransactionFacade" ref="adminTransactionFacade" group="${dubbo.group}" />
+	<dubbo:service interface="com.zjzmjr.core.api.holiday.IHolidayFacade" ref="holidayFacade" group="${dubbo.group}" />
+	<dubbo:service interface="com.zjzmjr.core.api.admin.IRoleAuthFacade" ref="roleAuthFacade" group="${dubbo.group}" />
+	<dubbo:service interface="com.zjzmjr.core.api.sms.INotifyFacade" ref="notifyFacade" group="${dubbo.group}" />
+		
+	<!-- 微信消息回复 -->
+	<dubbo:service interface="com.zjzmjr.core.api.weixin.IMsgReplyFacade" ref="msgReplyFacade" group="${dubbo.group}"/>
+	
+</beans>

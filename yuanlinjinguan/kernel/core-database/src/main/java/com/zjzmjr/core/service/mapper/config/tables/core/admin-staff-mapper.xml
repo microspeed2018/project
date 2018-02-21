@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zjzmjr.core.service.mapper.dao.coredb.admin.AdminStaffMapper">
+   <resultMap type="AdminStaff" id="AdminStaffResultMap" extends="com.zjzmjr.core.service.mapper.dao.coredb.admin.AdminDao.adminResultMap">
+		<result column="personnel_nature_name" property="personnelNatureName" jdbcType="VARCHAR" />
+        <result column="related_person_name" property="relatedPersonName" jdbcType="VARCHAR" />
+        <result column="depart_id" property="departId" jdbcType="INTEGER" />
+	    <result column="job_names" property="jobNames" jdbcType="VARCHAR" />
+	    <result column="department_name" property="departmentName" jdbcType="VARCHAR" />
+	    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+		<association property="staffInfo" resultMap="staffInfoResultMap" column="user_id" javaType="StaffInfo" />
+		<association property="externalPerson" resultMap="externalPersonResultMap" column="user_id" javaType="ExternalPerson" />
+    </resultMap>
+	<resultMap id="staffInfoResultMap" type="StaffInfo" >
+		<result column="staff_user_id" property="userId" jdbcType="INTEGER" />
+	    <result column="staff_employee_no" property="employeeNo" jdbcType="INTEGER" />
+	    <result column="staff_job_status" property="jobStatus" jdbcType="INTEGER" />
+	    <result column="staff_virtual_cornet" property="virtualMobile" jdbcType="VARCHAR" />
+	    <result column="staff_telephone" property="telephone" jdbcType="VARCHAR" />
+	    <result column="staff_telephone_cornet" property="shortTelephone" jdbcType="VARCHAR" />
+	    <result column="staff_email" property="email" jdbcType="VARCHAR" />
+	    <result column="staff_create_time" property="createTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<resultMap id="externalPersonResultMap" type="ExternalPerson" >
+		<result column="external_user_id" property="userId" jdbcType="INTEGER" />
+	    <result column="external_employee_no" property="employeeNo" jdbcType="INTEGER" />
+	    <result column="personnel_nature" property="personnelNature" jdbcType="INTEGER" />
+	    <result column="external_company" property="company" jdbcType="VARCHAR" />
+	    <result column="external_job" property="job" jdbcType="VARCHAR" />
+	    <result column="external_mobile" property="mobile" jdbcType="VARCHAR" />
+	    <result column="external_email" property="email" jdbcType="VARCHAR" />
+	    <result column="related_person" property="relatedPerson" jdbcType="INTEGER" />
+	    <result column="external_status" property="status" jdbcType="INTEGER" />
+	    <result column="external_create_time" property="createTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<select id="getAdminStaffCount" parameterType="StaffInfoQuery" resultType="java.lang.Integer">
+	    select count(ta.id) from t_admin ta	    
+	    left outer JOIN z_staff_info zsi on ta.id = zsi.user_id
+	    left outer JOIN z_external_person zep on ta.id = zep.user_id 
+	    left outer join z_job zj on zj.id = ta.job_id
+	    left outer join z_department zd on zd.id = zj.department_id    
+	    left outer join z_company_info zci on zci.id = zj.company_id
+	    left outer JOIN t_basic tb on tb.id = zep.personnel_nature
+	    left outer JOIN z_staff_info zui on zui.id = zep.related_person
+	    left outer join t_basic tbj on zui.job_status = tbj.id
+	    <include refid="where_clause"></include>	    
+	</select>
+	
+	<select id="getAdminStaff" parameterType="StaffInfoQuery" resultMap="AdminStaffResultMap">
+	    select ta.*, zsi.user_id staff_user_id, IFNULL(zsi.employee_no, zep.employee_no) staff_employee_no, zsi.job_status staff_job_status,
+	    zsi.telephone staff_telephone,zsi.create_time staff_create_time,zep.create_time external_create_time,
+	    zep.user_id external_user_id, zep.employee_no external_employee_no,zep.company external_company,zep.status external_status,
+	    zj.name job_names,zd.name department_name,zd.id depart_id,zci.company_name,tb.attribute_name personnel_nature_name,
+	    tbj.attribute_name job_status_attribute	    
+	    from t_admin ta
+	    left outer JOIN z_staff_info zsi on ta.id = zsi.user_id
+	    left outer JOIN z_external_person zep on ta.id = zep.user_id 
+	    left outer join z_job zj on zj.id = ta.job_id
+	    left outer join z_department zd on zd.id = zj.department_id    
+	    left outer join z_company_info zci on zci.id = zj.company_id
+	    left outer JOIN t_basic tb on tb.id = zep.personnel_nature
+	    left outer JOIN z_staff_info zui on zui.id = zep.related_person
+	    left outer join t_basic tbj on zui.job_status = tbj.id
+	    <include refid="where_clause"></include>
+	    <choose>
+	        <when test="orderBy != null and orderBy!=''">
+	            order by #{orderBy}
+	        </when>
+	        <otherwise>
+	            order by if(ISNULL(staff_employee_no),99999999, staff_employee_no), ta.id
+	        </otherwise>
+		    </choose>
+	    limit #{pageBean.offset},#{pageBean.pageSize}
+	</select>
+ 	<sql id="where_clause">
+    <where>
+        <trim prefixOverrides="and">
+            ta.id !=900000001
+            <if test="id != null">
+                and ta.id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="userId != null">
+	            and ta.user_id = #{userId,jdbcType=INTEGER}
+	        </if>
+            <if test="mobile != null">
+                and ta.mobile = #{mobile,jdbcType=VARCHAR}
+            </if>
+            <if test="name != null">
+                and ta.name like CONCAT(#{name,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="name != null">
+                and ta.name like CONCAT(#{name,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="createTimeStart != null">
+                <![CDATA[
+					and (DATE_FORMAT(zsi.create_time,'%Y%m%d') >= #{createTimeStart,jdbcType=TIMESTAMP} or DATE_FORMAT(zep.create_time,'%Y%m%d') >= #{createTimeStart,jdbcType=TIMESTAMP})
+                ]]>
+			</if>
+			<if test="createTimeEnd != null">
+                <![CDATA[
+                    and (DATE_FORMAT(zsi.create_time,'%Y%m%d') < #{createTimeEnd,jdbcType=TIMESTAMP} or DATE_FORMAT(zep.create_time,'%Y%m%d') < #{createTimeEnd,jdbcType=TIMESTAMP})
+                ]]>
+			</if>          
+        </trim>
+    </where>
+  </sql>
+</mapper>

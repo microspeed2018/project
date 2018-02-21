@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:ctx="http://www.springframework.org/schema/context" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+  http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+  http://code.alibabatech.com/schema/dubbo 
+  http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <!-- 声明需要暴露的服务接口 -->
+    <dubbo:reference id="companyInfoFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+        interface="com.zjzmjr.core.api.company.ICompanyInfoFacade" group="${dubbo.group}"/>
+    <dubbo:reference id="companyBasicInfoFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+        interface="com.zjzmjr.core.api.company.ICompanyBasicInfoFacade" group="${dubbo.group}"/>
+    <dubbo:reference id="gardenProjectFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+        interface="com.zjzmjr.core.api.project.IGardenProjectFacade" group="${dubbo.group}"/>
+    <dubbo:reference id="projectFileInfoFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+        interface="com.zjzmjr.core.api.project.IProjectFileInfoFacade" group="${dubbo.group}"/>
+    <dubbo:reference id="companyDepartmentFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+        interface="com.zjzmjr.core.api.company.ICompanyDepartmentFacade" group="${dubbo.group}"/>
+    <dubbo:reference id="projectContractFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+        interface="com.zjzmjr.core.api.project.IProjectContractFacade" group="${dubbo.group}"/>
+    <dubbo:reference id="staffPersonFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+        interface="com.zjzmjr.core.api.user.IStaffPersonFacade" group="${dubbo.group}"/>
+    <dubbo:reference id="jobAuthFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+        interface="com.zjzmjr.core.api.company.IJobAuthFacade" group="${dubbo.group}"/>
+    <dubbo:reference id="gardenProjectAuditFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+        interface="com.zjzmjr.core.api.audit.IGardenProjectAuditFacade" group="${dubbo.group}"/>   
+    <dubbo:reference id="administrativeSealFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+        interface="com.zjzmjr.core.api.audit.IAdministrativeSealFacade" group="${dubbo.group}"/>    
+    <dubbo:reference id="projectTaskFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+        interface="com.zjzmjr.core.api.task.IProjectTaskFacade" group="${dubbo.group}"/>  
+    <dubbo:reference id="outDataHandlerFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+        interface="com.zjzmjr.core.api.data.IOutDataHandlerFacade" group="${dubbo.group}"/> 
+    <dubbo:reference id="projectContractInfoFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+        interface="com.zjzmjr.core.api.project.IProjectContractInfoFacade" group="${dubbo.group}"/>
+    <dubbo:reference id="reportStatisticFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+        interface="com.zjzmjr.core.api.project.IReportStatisticFacade" group="${dubbo.group}"/>
+    <dubbo:reference id="staffWagesFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+        interface="com.zjzmjr.core.api.user.IStaffWagesFacade" group="${dubbo.group}"/>
+    <dubbo:reference id="recruitmentFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+        interface="com.zjzmjr.core.api.recruitment.IRecruitmentFacade" group="${dubbo.group}"/>
+    <dubbo:reference id="sharedFileFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+        interface="com.zjzmjr.core.api.file.ISharedFileFacade" group="${dubbo.group}"/>
+    <dubbo:reference id="talentFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+        interface="com.zjzmjr.core.api.talent.ITalentFacade" group="${dubbo.group}"/>
+    <dubbo:reference id="interviewFacade" timeout="1200000" url="dubbo://127.0.0.1:20880"
+        interface="com.zjzmjr.core.api.interview.IInterviewFacade" group="${dubbo.group}"/>   
+        
+</beans>

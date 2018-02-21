@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no">
+        <title>找回登录密码</title>
+        <link href="../../css/mui.min.css" rel="stylesheet" />
+        <link href="../../css/base.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div id="findPwd">
+            <header class='header'>
+                <img src="../../images/svg/left.svg" class="icon-40" id="goback" @click='back' />
+                <span class='tit'>{{ title }}</span>
+                <i></i>
+            </header>
+            <div class='wrap login-wrap'>
+                <dl>
+                    <dd>
+                        <input type="tel" placeholder="请输入手机号" maxlength="11" class="input input-max" v-model='mobile' />
+                    </dd>
+                    <dd class='validate-box' style="display: block;">
+                        <input type="text" placeholder="请输入验证码" class="input input-max" id="validate-code" v-model='validateCode' />
+                        <button type="button" class='validate-btn' id='getCode' style="background: #dd062c; color: #fff; border: 0; left: 8.5rem;" @click="getCode" :disabled='!validateCodeFlag'>获取验证码</button>
+                    </dd>
+                    <dd>
+                        <input type="password" placeholder="请输入新密码" maxlength="20" class="input input-max" id="new-pwd" v-model='newPwd' />
+                    </dd>
+                    <dd>
+                        <input type="password" placeholder="请再次输入密码" maxlength="20" class="input input-max" id="new-pwd-again" v-model='newPwdAgain' />
+                    </dd>
+                </dl>
+            </div>
+            <div class='wrap'>
+                <input type="button" value='提交' class='btn btn-max btn-top' id="submit" @click='saveHandler' :disabled='!validateCodeFlag || newPwd == "" || newPwdAgain == "" || validateCode == ""' />
+            </div>
+        </div>
+    </body>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../js/axios.min.js"></script>
+    <script src="../../js/common.min.js?v.7"></script>
+    <script type="text/javascript">
+        // 校验app或wap
+        myInit(indexFun);
+        function indexFun() {
+            var findPwd = new Vue({
+                el: "#findPwd",
+                data: {
+                    title: "找回登录密码",
+                    newPwd: "",
+                    newPwdAgain: "",
+                    validateCode: "",
+                    mobile: "",
+                    validateCodeFlag: false
+                },
+                watch: {
+                    ['mobile']: {
+                        handler: function(val, oldVal){
+                            if (zjzm.mobileValidate(val)) {
+                                return this.validateCodeFlag = true;
+                            } else {
+                                return this.validateCodeFlag = false;
+                            }
+                        },
+                        // 深度观察
+                        deep: true
+                    }
+                },
+                methods: {
+                    back: function () {
+                        myOpenWindow("/tpl/login/login.html", 'login');
+                    },
+                    getCode: function (e) {
+                        var _this = this;
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + '/register/findPasswordSendcode.htm',
+                            params: {
+                                mobile: _this.mobile
+                            }
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                zjzm.countDown(e.target, 60);
+                                myToast("验证码已发送，请注意查收");
+                            } else {
+                                myToast(datas.resultMsg);
+                            }
+                        }).catch(function (error) {
+                            //myToast(error);
+                        })
+                    },
+                    saveHandler: function () {
+                        let msg = "";
+                        if (!zjzm.mobileValidate(this.mobile)) {
+                            myToast("请输入正确的手机号码");
+                        } else if (this.newPwd != this.newPwdAgain) {
+                            myToast("两次输入的密码不一致");
+                        } else if(!this.newPwd || !this.newPwdAgain || !this.validateCode || !this.mobile) {
+                            myToast("请输入完整信息");
+                        } else {
+                            this.submit();
+                        }
+                    },
+                    submit: function () {
+                        var _this = this;
+                        axios({
+                            method: 'post',
+                            url: global.apiURL + '/register/findPassword.htm',
+                            params: {
+                                mobile: _this.mobile,
+                                checkcode: _this.validateCode,
+                                password: _this.newPwd
+                            }
+                        }).then(function (response) {
+                            var datas = response.data;
+                            if (datas.success) {
+                                myOpenWindow("/tpl/login/login.html", 'login');
+                            } else {
+                                myToast(datas.resultMsg);
+                            }
+                        }).catch(function (error) {
+                            //myToast(error);
+                        })
+                    }
+                },
+                mounted: function () {
+                    this.$nextTick(function () {
+                        mui.init();
+                    });
+                }
+            });
+        }
+    </script>
+</html>
